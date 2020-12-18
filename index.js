@@ -27,9 +27,7 @@ const app= express();
 
 //app.use(express.json());
 
-// latest test
-//test999
-
+// bas yala
 mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<dbname>?retryWrites=true&w=majority')
 .then(()=>{
     app.use(express.json());
