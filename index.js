@@ -58,7 +58,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         
 
 
-        const u = new user({
+        var u = new user({
             Email: req.body.Email,
             name: req.body.name,
             ID: idv,
@@ -75,10 +75,36 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             
 
         })
+
+              
        
         res.send('Registration successful');
         //res.send(ID);
         await u.save();
+
+         u =await user.findOne({Email: req.body.Email})
+          //Initialize attendance for user
+          u.hours[0] = {date: new Date().toLocaleDateString(), hoursspent: 0};
+          console.log(u.hours[0].date);
+          console.log(u.hours[0].hoursspent);
+  
+          var datecount=1;
+  
+          for(let i =1; i<30; i++){
+              var olddate=new Date();
+              olddate.setDate(olddate.getDate()+datecount); // .toString().substring(1, 10);;
+              //var dates=olddate.toString();
+              var dates=olddate.toLocaleDateString();
+  
+              u.hours[i] =  {date: dates, hoursspent: 0}; // new Date(u.hours[i-1].date +1);
+              datecount=datecount+1;
+              
+              console.log(u.hours[i].date);
+              console.log(u.hours[i].hoursspent);
+  
+              
+          }  
+          await u.save();    
 
     })
 
@@ -239,6 +265,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             inhour = new Date().getHours();
             inmin = new Date().getMinutes();
 
+        
+
         u.save; 
         signedin=true;
         res.send(`Signin successful ${u.signintime}`);   
@@ -262,47 +290,24 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         diffhour = outhour-inhour;
         diffmin=outmin-inmin;
         totalmin=(diffhour*60) + diffmin;
-
-        //new Date().getDay()
-        //new Date().getMonth()
-       // new Date().getYear()
-
-      // let todaysdate= new Date().toLocaleDateString();
-        //console.log(todaysdate);
-
-        for(let i =0; i<150; i++){
-            u.hours[i] = {date: '', hoursspent: 0};
-        }  //initialize array needs to be on top of code
-
-        //for(let i =0; i<150; i++){
-          //  u.hours[i] = {date: '', hoursspent: 0};
-        //}
-
-
-        for(let i =0; i<150; i++){
-            if (u.hours[i]==undefined){
-                u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: totalmin};
-               // u.hours[i].hoursspent=totalmin;
-            } //fill array need to azabat el conditions
         
-            u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: u.hours[i].hoursspent+totalmin};
+        //To fill attendance
+        for(let i =0; i<30; i++){
+            var stringd = u.hours[i].date.toLocaleDateString();;
+            var stringt = new Date().toLocaleDateString();
+
+            console.log(stringd);
+            console.log(stringt);
+
+            if (stringd == stringt){
+               // u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: u.hours[i].hoursspent+totalmin};
+               u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: 5};
+               console.log('yes');
+               console.log(i);
+            } 
         }
-               // u.hours[0]={date:'fuc2k', hoursspent: 0};
-                console.log(u.hours[0].date);
-                console.log(u.hours[0].hoursspent);
 
-               
-               // var myDate=u.hours[0].date;
-               // myDate.setDate(myDate.setDate() + 1);
-             //  var myDate = new Date(todaysdate);
-               //myDate.setDate(myDate.getDate()+1);
-                //console.log(myDate);
-
-            //}
-
-        //}
-       
-        
+              
 
         u.save;
         signedin=false;
