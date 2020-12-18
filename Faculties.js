@@ -1,0 +1,1 @@
+//array containing all faculties we have
