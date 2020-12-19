@@ -282,7 +282,13 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
        // u.password= new password
     })
 
-    app.get('/attendance', async(req,res)=>{
+    app.post('/attendance', async(req,res)=>{
+        const u =await user.findOne({Email: req.body.Email});
+        for(let i =0; i<30; i++){
+            console.log(u.hours[i].date);
+            console.log(u.hours[i].hoursspent);
+
+        }
 
         res.send('This is your attendance');
     })
@@ -348,8 +354,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             var stringd = u.hours[i].date;//.toLocaleDateString(); //Date in index i
             var stringt = new Date().toLocaleDateString(); //Todays date
 
-            console.log(stringd);
-            console.log(stringt);
+            //console.log(stringd);
+            //console.log(stringt);
 
            
             if (stringd == stringt){ //if date in index i == todays date
@@ -362,8 +368,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
                
             } 
         }
-        console.log(u.hours[x].date);
-        console.log(u.hours[x].hoursspent);
+        //console.log(u.hours[x].date);
+        //console.log(u.hours[x].hoursspent);
               
         
          u.save;
