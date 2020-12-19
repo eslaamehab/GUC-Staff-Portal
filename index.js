@@ -84,7 +84,9 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
          u =await user.findOne({Email: req.body.Email})
           //Initialize attendance for user
-          u.hours[0] = {date: new Date().toLocaleDateString(), hoursspent: 0};
+         
+          var stringg = (new Date().toLocaleDateString());
+          u.hours[0] = {date: stringg, hoursspent: 0};
           console.log(u.hours[0].date);
           console.log(u.hours[0].hoursspent);
   
@@ -293,23 +295,28 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         
         //To fill attendance
         for(let i =0; i<30; i++){
-            var stringd = u.hours[i].date.toLocaleDateString();;
-            var stringt = new Date().toLocaleDateString();
+            var stringd = u.hours[i].date;//.toLocaleDateString(); //Date in index i
+            var stringt = new Date().toLocaleDateString(); //Todays date
 
             console.log(stringd);
             console.log(stringt);
 
-            if (stringd == stringt){
+           
+            if (stringd == stringt){ //if date in index i == todays date
                // u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: u.hours[i].hoursspent+totalmin};
-               u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: 5};
+               u.hours[i] = {date: stringt, hoursspent: 5};
                console.log('yes');
-               console.log(i);
+               var x = i;
+               //console.log(u.hours[i].hoursspent);
+           
+               
             } 
         }
-
+        console.log(u.hours[x].date);
+        console.log(u.hours[x].hoursspent);
               
-
-        u.save;
+        
+         u.save;
         signedin=false;
        // console.log(diffhour);
        // res.send(`signout successful ${diffmin}`);
