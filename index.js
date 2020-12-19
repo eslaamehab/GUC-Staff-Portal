@@ -350,7 +350,23 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         res.send('These are your missing days');
     })
 
-    app.get('/hours', async(req,res)=>{
+    app.get('/missinghours', async(req,res)=>{
+        //each day lazem 8hrs 24mins = 504 mins
+        //missing hours for each day = 504-totalmins
+        //missing hours can be compensated throughout the month
+        const u = await user.findOne({Email: emailTest});
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u.hours[i].date).getDay();
+            var misshours=504-(u.hours[i].hoursspent);
+            
+                    console.log(u.hours[i].date);
+                    console.log(misshours);
+                
+//DONT FORGET TO ZABAT FORMAT HAGAT KTIR (HOURS HERE)
+
+
+        }
 
         res.send('These are your hours');
     })
