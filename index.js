@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('./user.js');
+const location=require('./location.js');
+const departements =require('./departements')
+
 //const attendance = require('./attendance.js');
 const { isNullOrUndefined } = require('util');
 const key = 'jsvjdxbvjkdbuifhdwalsknvk';
@@ -16,7 +19,9 @@ let outmin=0;
 let diffhour=0;
 let diffmin=0;
 let totalmin=0;
+//hjfjg
 
+var firstTime;
 
 var emailTest='';
 
@@ -55,7 +60,25 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             ACcounter=ACcounter+1;
             df=req.body.dayoff;
         }
-        
+        const o = await location.findOne({roomName:req.body.officelocation});
+        console.log(o.roomName);
+        let locationCount= o.Count + 1;
+        console.log('locationCount '+locationCount);
+        console.log("Capacity" + o.Capacity);
+
+        if(o.type=="office" && locationCount>o.Capacity){
+
+            console.log("Capacity "+ o.Capacity);
+            res.send("office location unavailable")
+             //u.officelocation=o.roomName;
+             //o.Count=locationCount;
+    
+           }
+           else{
+            o.Count=locationCount;
+            console.log("o.Count "+ o.Count);
+
+           }
 
 
         var u = new user({
@@ -196,10 +219,34 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     app.post('/updateProfile', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
         const u2 =await user.findOne({Email: req.body.Email}); //User to be updated
+        const o = await location.findOne({roomName:req.body.officelocation});
+        console.log(o.roomName);
         if(u.type=="HR"){
+            console.log("inside HR condition");
+            let locationCount= o.Count + 1;
+            console.log('locationCount '+locationCount);
+            console.log("Capacity" + o.Capacity);
+        if(u2.officelocation==o.roomName){
+            res.send("staff member is already located in this office");
+        } 
+        if(o.type=="office" && locationCount<=o.Capacity){
+
+            console.log("Capacity "+ o.Capacity);
+ 
+             u2.officelocation=o.roomName;
+             o.Count=locationCount;
+ 
+             
+             
+             o.save();
+           }  
+           else{
+             res.send("this room cannot accomodate your staff member")
+ 
+           }
             // await user.findOne({Email: req.body.Email}).update({$set:{signintime: timestamp}});
            // u2.update({$set:{officelocation: req.body.officelocation}})
-            u2.officelocation=req.body.officelocation;
+    
             u2.department=req.body.deaprtment;
             u2.faculty=req.body.faculty;
             u2.salary=req.body.salary;
@@ -208,10 +255,13 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             u2.save();
             res.send('update successful');
         }
-        res.send('This action can only be done if you are an HR member');
 
         
-    })
+    
+    
+    res.send('This action can only be done if you are an HR member');
+    
+})
 
     app.post('/updatePassword', async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
@@ -334,6 +384,120 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         res.send('Not Deleted')
     }
         )
+
+        app.delete('/DeleteLocation', async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+             //User to be deleted
+            if(u.type=="HR"){
+                const l =await location.deleteOne({roomName: req.body.roomName});
+                res.send('Deleted')
+            }
+            res.send('Not Deleted')
+        }
+            )
+
+   app.post('/LocationDetails',async(req,res)=>{
+        const u=new location({
+
+            
+
+            roomName:req.body.roomName,
+            Capacity:req.body.Capacity,
+
+           Count:req.body.Count,
+            type:req.body.type
+            
+
+        })
+        await u.save();
+        res.send('location has been created ');
+
+
+    }) 
+
+    app.delete('/DeleteLocation', async(req,res)=>{
+        const u =await user.findOne({Email: emailTest}); //HR User
+         //User to be deleted
+        if(u.type=="HR"){
+            const l =await location.deleteOne({roomName: req.body.roomName});
+            res.send('Deleted')
+        }
+        res.send('Not Deleted')
+    }
+        )
+        
+            
+        app.post('/AddFaculty', async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+                if(u.type=="HR"){
+                const u = new faculty({
+                facultyName:req.body.facultyName,
+                departmentsInFaculties:req.body.departmentsInFaculties,
+               //{$push{departmentsInfaculties:name}} ,
+                departmentsCount:req.body.departmentsCount
+                })
+                res.send("faculty created");
+                await u.save();
+            }
+            else{
+                res.send("HR ONLY");
+            }
+            }) 
+    
+             //updateMany
+        app.delete('/deleteFaculty', async(req,res)=>{
+                const u =await user.findOne({Email: emailTest}); //HR User
+                if(u.type=="HR"){
+                    console.log("aho ha delete aho");
+                    const l =await faculty.findByIdAndDelete({id: req.body.departmentName});
+                    res.send('Deleted')
+                }
+                res.send('Not Deleted')
+              })
+               
+    
+        app.post('/UpdateFaculty', async(req,res)=>{
+                const u =await user.findOne({Email: emailTest}); //HR User
+                if(u.type=="HR"){
+                 await faculty.findByIdAndUpdate(
+                    req.body.id,
+                    {
+                        $push : {
+                        departmentsInFaculties : req.body.departmentName
+                    }}
+                )
+                res.send("faculty Updated") ;
+                }
+                else{
+                    res.send("HR ONLY") ;
+                }
+            }) 
+    
+        app.post('/addDepartments' ,async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+            if(u.type=="HR"){
+                let fId = await faculty.findById( req.body.Facultyid)
+                if( fId){
+               
+                }
+                else{
+                    res.send("faculty msh mwgooda")
+                }
+                const d = new departments({
+                    DepartmentName:req.body.DepartmentName,
+                    FacultyName:req.body.FacultyName,
+                    Facultyid:req.body.Facultyid
+                    
+            })
+            res.send("Department Added")
+            await  d.save()
+        }
+            else{
+                res.send("HR ONLY")
+            }
+        
+        })
+    
 
 
         

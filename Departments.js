@@ -1,1 +1,0 @@
-//array contain faculty and its departments
