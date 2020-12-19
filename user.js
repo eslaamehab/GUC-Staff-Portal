@@ -6,7 +6,7 @@ const schema = mongoose.Schema;
 //const attendance = require('./attendance.js');
 
 var block = mongoose.Schema({
-    date: Date,
+    date: String,
     hoursspent: Number
   });
 
