@@ -310,6 +310,42 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     })
 
     app.get('/missingdays', async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        let day;
+        
+        switch (u.dayoff) {
+            case "sunday":
+              day = 0;
+              break;
+            case "monday":
+                day = 1;
+              break;
+            case "tuesday":
+                day = 2;
+              break;
+            case "wednesday":
+              day = 3;
+              break;
+            case "thursday":
+              day = 4;
+              break;
+            case "friday":
+              day = 5;
+              break;
+            case "saturday":
+              day = 6;
+          }
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u.hours[i].date).getDay();
+            if(u.hours[i].hoursspent == 0 )
+                if( day != x){
+                    console.log(u.hours[i].date);
+                    console.log('Absent');
+                }
+
+
+        }
 
         res.send('These are your missing days');
     })
