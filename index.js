@@ -285,12 +285,28 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     app.post('/attendance', async(req,res)=>{
         const u =await user.findOne({Email: req.body.Email});
         for(let i =0; i<30; i++){
-            console.log(u.hours[i].date);
-            console.log(u.hours[i].hoursspent);
+            //input month
+            //compared with first or second elemnts of date string (u.hours[i].date)
+            var m = (u.hours[i].date); //month in array
+            var d = new Date(u.hours[i].date).getMonth();
+            d=d+1;
 
+            var month = req.body.month; //month we want
+           
+
+            if(d==month){
+               // console.log(x);
+                console.log(u.hours[i].date)
+                console.log(u.hours[i].hoursspent)
+
+            }
+
+           
+            
         }
-
-        res.send('This is your attendance');
+        
+        res.send(u.hours);
+       // res.send('This is your attendance');
     })
 
     app.get('/missingdays', async(req,res)=>{
@@ -360,11 +376,12 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
            
             if (stringd == stringt){ //if date in index i == todays date
                // u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: u.hours[i].hoursspent+totalmin};
-               u.hours[i] = {date: stringt, hoursspent: 5};
-               console.log('yes');
-               var x = i;
-               //console.log(u.hours[i].hoursspent);
-           
+               //u.hours[i] = {date: stringt, hoursspent: 5};
+               //u.hours[i].hoursspent=5;
+               u.hours[i].hoursspent = u.hours[i].hoursspent+totalmin
+                u.update();
+                u.save();
+               
                
             } 
         }
