@@ -310,11 +310,63 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     })
 
     app.get('/missingdays', async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        let day;
+        
+        switch (u.dayoff) {
+            case "sunday":
+              day = 0;
+              break;
+            case "monday":
+                day = 1;
+              break;
+            case "tuesday":
+                day = 2;
+              break;
+            case "wednesday":
+              day = 3;
+              break;
+            case "thursday":
+              day = 4;
+              break;
+            case "friday":
+              day = 5;
+              break;
+            case "saturday":
+              day = 6;
+          }
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u.hours[i].date).getDay();
+            if(u.hours[i].hoursspent == 0 )
+                if( day != x){
+                    console.log(u.hours[i].date);
+                    console.log('Absent');
+                }
+
+
+        }
 
         res.send('These are your missing days');
     })
 
-    app.get('/hours', async(req,res)=>{
+    app.get('/missinghours', async(req,res)=>{
+        //each day lazem 8hrs 24mins = 504 mins
+        //missing hours for each day = 504-totalmins
+        //missing hours can be compensated throughout the month
+        const u = await user.findOne({Email: emailTest});
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u.hours[i].date).getDay();
+            var misshours=504-(u.hours[i].hoursspent);
+            
+                    console.log(u.hours[i].date);
+                    console.log(misshours);
+                
+//DONT FORGET TO ZABAT FORMAT HAGAT KTIR (HOURS HERE)
+
+
+        }
 
         res.send('These are your hours');
     })
