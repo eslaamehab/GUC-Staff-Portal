@@ -109,9 +109,9 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
           //Initialize attendance for user
          
           var stringg = (new Date().toLocaleDateString());
-          u.hours[0] = {date: stringg, hoursspent: 0};
-          console.log(u.hours[0].date);
-          console.log(u.hours[0].hoursspent);
+          u.attendance[0] = {date: stringg, minsspent: 0};
+          console.log(u.attendance[0].date);
+          console.log(u.attendance[0].minsspent);
   
           var datecount=1;
   
@@ -121,11 +121,11 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
               //var dates=olddate.toString();
               var dates=olddate.toLocaleDateString();
   
-              u.hours[i] =  {date: dates, hoursspent: 0}; // new Date(u.hours[i-1].date +1);
+              u.attendance[i] =  {date: dates, minsspent: 0}; // new Date(u.attendance[i-1].date +1);
               datecount=datecount+1;
               
-              console.log(u.hours[i].date);
-              console.log(u.hours[i].hoursspent);
+              console.log(u.attendance[i].date);
+              console.log(u.attendance[i].minsspent);
   
               
           }  
@@ -286,9 +286,9 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         const u =await user.findOne({Email: req.body.Email});
         for(let i =0; i<30; i++){
             //input month
-            //compared with first or second elemnts of date string (u.hours[i].date)
-            var m = (u.hours[i].date); //month in array
-            var d = new Date(u.hours[i].date).getMonth();
+            //compared with first or second elemnts of date string (u.attendance[i].date)
+            var m = (u.attendance[i].date); //month in array
+            var d = new Date(u.attendance[i].date).getMonth();
             d=d+1;
 
             var month = req.body.month; //month we want
@@ -296,8 +296,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
             if(d==month){
                // console.log(x);
-                console.log(u.hours[i].date)
-                console.log(u.hours[i].hoursspent)
+                console.log(u.attendance[i].date)
+                //console.log(u.attendance[i].minsspent)
+
+                var num = u.attendance[i].minsspent; 
+                var hours = Math.floor(num / 60);  
+                var minutes = num % 60;
+                //return hours + ":" + minutes;     
+                console.log("hours: " + hours + " minutes: " + minutes);
 
             }
 
@@ -305,7 +311,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             
         }
         
-        res.send(u.hours);
+        res.send(u.attendance);
        // res.send('This is your attendance');
     })
 
@@ -337,10 +343,10 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
           }
 
         for(let i =0; i<30; i++){
-            var x = new Date(u.hours[i].date).getDay();
-            if(u.hours[i].hoursspent == 0 )
+            var x = new Date(u.attendance[i].date).getDay();
+            if(u.attendance[i].minsspent == 0 )
                 if( day != x){
-                    console.log(u.hours[i].date);
+                    console.log(u.attendance[i].date);
                     console.log('Absent');
                 }
 
@@ -357,11 +363,17 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         const u = await user.findOne({Email: emailTest});
 
         for(let i =0; i<30; i++){
-            var x = new Date(u.hours[i].date).getDay();
-            var misshours=504-(u.hours[i].hoursspent);
+            var x = new Date(u.attendance[i].date).getDay();
+            var misshours=504-(u.attendance[i].minsspent);
             
-                    console.log(u.hours[i].date);
-                    console.log(misshours);
+            console.log(u.attendance[i].date);
+
+            var num = misshours; 
+            var hours = Math.floor(num / 60);  
+            var minutes = num % 60;
+            //return hours + ":" + minutes;     
+            console.log("missing hours: " + hours + " missing minutes: " + minutes);
+                   // console.log(misshours);
                 
 //DONT FORGET TO ZABAT FORMAT HAGAT KTIR (HOURS HERE)
 
@@ -419,7 +431,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         
         //To fill attendance
         for(let i =0; i<30; i++){
-            var stringd = u.hours[i].date;//.toLocaleDateString(); //Date in index i
+            var stringd = u.attendance[i].date;//.toLocaleDateString(); //Date in index i
             var stringt = new Date().toLocaleDateString(); //Todays date
 
             //console.log(stringd);
@@ -427,10 +439,18 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
            
             if (stringd == stringt){ //if date in index i == todays date
-               // u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: u.hours[i].hoursspent+totalmin};
-               //u.hours[i] = {date: stringt, hoursspent: 5};
-               //u.hours[i].hoursspent=5;
-               u.hours[i].hoursspent = u.hours[i].hoursspent+totalmin
+               // u.hours[i] = {date: new Date().toLocaleDateString(), minsspent: u.hours[i].minsspent+totalmin};
+               //u.hours[i] = {date: stringt, minsspent: 5};
+               //u.hours[i].minsspent=5;
+               u.attendance[i].minsspent = u.attendance[i].minsspent+totalmin
+
+               var num = u.attendance[i].minsspent; 
+               var hours = Math.floor(num / 60);  
+               var minutes = num % 60;
+               //return hours + ":" + minutes;     
+               console.log("hours: " + hours + " minutes: " + minutes);
+
+
                 u.update();
                 u.save();
                
@@ -438,7 +458,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             } 
         }
         //console.log(u.hours[x].date);
-        //console.log(u.hours[x].hoursspent);
+        //console.log(u.hours[x].minsspent);
               
         
          u.save;
@@ -448,6 +468,85 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         res.send(`signout successful ${u.signouttime}`);
 
     })
+
+    app.post('/manualsigninout', async(req,res)=>{
+        const u =await user.findOne({Email: emailTest}); //HR USER 
+
+        if(emailTest != req.body.Email && u.type == 'HR'){
+            const u2 =await user.findOne({Email: req.body.Email}); //User to be updated
+            //Take Date
+            //Take SigninTime
+            //Take SignoutTime
+            //Add to attendance of u2
+            var date = req.body.date;
+            var signin = req.body.signin;
+            var signout = req.body.signout;
+    
+            //console.log(date); //12/20/2020
+            //console.log(signin); //4:57:13 PM
+            //console.log(signout);
+    
+            u2.signintime = signin;
+            u2.signouttime = signout;
+            
+            
+    
+            var signi = signin.split(':');
+            inhour = signi[0];
+            inmin = signi[1];
+            var signo = signout.split(':');
+            outhour = signo[0];
+            outmin = signo[1];
+    
+            diffhour = outhour-inhour;
+            diffmin=outmin-inmin;
+            totalmin=(diffhour*60) + diffmin;
+    
+    
+    
+            for(let i =0; i<30; i++){
+                var stringd = u2.attendance[i].date;//.toLocaleDateString(); //Date in index i
+                var stringt = date; //Date to edit
+    
+                //console.log(stringd);
+                //console.log(stringt);
+    
+               
+                if (stringd == stringt){ //if date in index i == todays date
+                   // u.hours[i] = {date: new Date().toLocaleDateString(), minsspent: u.hours[i].minsspent+totalmin};
+                   //u.hours[i] = {date: stringt, minsspent: 5};
+                   //u.hours[i].minsspent=5;
+                   u2.attendance[i].minsspent = u2.attendance[i].minsspent+totalmin;
+    
+                   var num = u2.attendance[i].minsspent; 
+                   var hours = Math.floor(num / 60);  
+                   var minutes = num % 60;
+                   //return hours + ":" + minutes; 
+                   console.log("Date: " + date);    
+                   console.log("hours: " + hours + " minutes: " + minutes);
+                   
+                } 
+            }
+    
+            u2.update();
+            u2.save();
+           
+    
+            
+    
+            res.send('Updated Successfuly');
+
+        }
+        
+        else{
+            if(u.type == 'HR')
+                res.send("Are you trying to sign yourself in for real??");
+            else
+                res.send("You are not HR member");
+        }
+        
+
+        })
 
     app.delete('/deleteMember', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
@@ -460,7 +559,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     }
         )
 
-        app.delete('/DeleteLocation', async(req,res)=>{
+    app.delete('/DeleteLocation', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
              //User to be deleted
             if(u.type=="HR"){
@@ -471,7 +570,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         }
             )
 
-   app.post('/LocationDetails',async(req,res)=>{
+    app.post('/LocationDetails',async(req,res)=>{
         const u=new location({
 
             
@@ -502,7 +601,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         )
         
             
-        app.post('/AddFaculty', async(req,res)=>{
+    app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
                 if(u.type=="HR"){
                 const u = new faculty({
@@ -520,7 +619,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             }) 
     
              //updateMany
-        app.delete('/deleteFaculty', async(req,res)=>{
+    app.delete('/deleteFaculty', async(req,res)=>{
                 const u =await user.findOne({Email: emailTest}); //HR User
                 if(u.type=="HR"){
                     console.log("aho ha delete aho");
@@ -531,7 +630,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
               })
                
     
-        app.post('/UpdateFaculty', async(req,res)=>{
+    app.post('/UpdateFaculty', async(req,res)=>{
                 const u =await user.findOne({Email: emailTest}); //HR User
                 if(u.type=="HR"){
                  await faculty.findByIdAndUpdate(
@@ -548,7 +647,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
                 }
             }) 
     
-        app.post('/addDepartments' ,async(req,res)=>{
+    app.post('/addDepartments' ,async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
             if(u.type=="HR"){
                 let fId = await faculty.findById( req.body.Facultyid)
