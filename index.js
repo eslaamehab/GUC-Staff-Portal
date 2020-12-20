@@ -146,14 +146,20 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         if(!equal)
         return res.status(403).send('Wrong Pass')
 
-        if(u.firstTime==0){      
-        u.firstTime=1;
-        console.log('update')
-        const salt = await bcrypt.genSalt(12);
-        const hashedPassword= await bcrypt.hash(req.body.newpassword,salt);
-        u.password=hashedPassword;
-        res.send("your password has been updated successfully, please try to login with your new password");
-        u.save();
+        if(u.firstTime==0){   
+
+            if(req.body.newpassword!=null){
+                u.firstTime=1;
+                console.log('update')
+                const salt = await bcrypt.genSalt(12);
+                const hashedPassword= await bcrypt.hash(req.body.newpassword,salt);
+                u.password=hashedPassword;
+                res.send("your password has been updated successfully, please try to login with your new password");
+                u.save();
+            }
+            else
+            res.send("You need to enter your new password at first login!");
+            
 
     
     }
@@ -373,9 +379,9 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             var minutes = num % 60;
             //return hours + ":" + minutes;     
             console.log("missing hours: " + hours + " missing minutes: " + minutes);
-                   // console.log(misshours);
-                
-//DONT FORGET TO ZABAT FORMAT HAGAT KTIR (HOURS HERE)
+
+
+
 
 
         }
@@ -672,8 +678,210 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         
         })
     
+    app.post('/accessAttendance' ,async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
+        if(u.type=="HR"){
+            const u2 =await user.findOne({Email: req.body.Email});
+            for(let i =0; i<30; i++){
+                //input month
+                //compared with first or second elemnts of date string (u.attendance[i].date)
+                var m = (u2.attendance[i].date); //month in array
+                //console.log(m);
+                var d = new Date(u2.attendance[i].date).getMonth();
+                d=d+1;
+                //console.log(d);
+    
+                var month = req.body.month; //month we want
+               
+    
+                if(d==month){
+                   // console.log(x);
+                    console.log(u2.attendance[i].date)
+                    //console.log(u.attendance[i].minsspent)
+    
+                    var num = u2.attendance[i].minsspent; 
+                    var hours = Math.floor(num / 60);  
+                    var minutes = num % 60;
+                    //return hours + ":" + minutes;     
+                    console.log("hours: " + hours + " minutes: " + minutes);
+    
+                }
+    
+               
+                
+            }
+                res.send(u2.attendance);
+            
+        }
+        else
+            res.send('Only HR members can access attendance record!');
+    })
 
+    app.post('/accessMissingHours' ,async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        const u2 = await user.findOne({Email: req.body.Email});
 
+        if(u.type=="HR"){
+
+        
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u2.attendance[i].date).getDay();
+            var misshours=504-(u2.attendance[i].minsspent);
+            
+            console.log(u2.attendance[i].date);
+
+            var num = misshours; 
+            var hours = Math.floor(num / 60);  
+            var minutes = num % 60;
+            //return hours + ":" + minutes;     
+            console.log("missing hours: " + hours + " missing minutes: " + minutes);  
+
+        }
+
+        res.send('These are the hours');
+
+    }
+    else
+        res.send('Only HR members can acceess missing hours!');
+    })
+
+    app.post('/accessMissingDays' ,async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        const u2 = await user.findOne({Email: req.body.Email});
+
+        if(u.type=="HR"){
+
+        
+
+            let day;
+        
+            switch (u2.dayoff) {
+                case "sunday":
+                  day = 0;
+                  break;
+                case "monday":
+                    day = 1;
+                  break;
+                case "tuesday":
+                    day = 2;
+                  break;
+                case "wednesday":
+                  day = 3;
+                  break;
+                case "thursday":
+                  day = 4;
+                  break;
+                case "friday":
+                  day = 5;
+                  break;
+                case "saturday":
+                  day = 6;
+              }
+    
+            for(let i =0; i<30; i++){
+                var x = new Date(u2.attendance[i].date).getDay();
+                if(u2.attendance[i].minsspent == 0 )
+                    if( day != x){
+                        console.log(u2.attendance[i].date);
+                        console.log('Absent');
+                    }
+    
+    
+            }
+    
+            res.send('These are your missing days');
+
+    }
+    else
+        res.send('Only HR members can acceess missing days!');
+    })
+
+    app.post('/updateSalary' ,async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        const u2 = await user.findOne({Email: req.body.Email});
+        
+        if(u.type=="HR"){
+            //up to 2 hours 59 mins per month --> no deduction
+
+            //for each missing day per month --> salary = salary - salary/60
+
+            //for more than 2 hours 59 mins per month --> Every Hour --> salary = salary - salary/180
+            //                                            Every Min  --> salary = salary - salary/(180*60)
+            let day;
+        switch (u2.dayoff) {
+            case "sunday":
+              day = 0;
+              break;
+            case "monday":
+                day = 1;
+              break;
+            case "tuesday":
+                day = 2;
+              break;
+            case "wednesday":
+              day = 3;
+              break;
+            case "thursday":
+              day = 4;
+              break;
+            case "friday":
+              day = 5;
+              break;
+            case "saturday":
+              day = 6;
+          }
+            
+            var totalh=0, totalm=0;
+
+            for(let i =0; i<30; i++){
+                var x = new Date(u2.attendance[i].date).getDay();
+                var misshours=504-(u2.attendance[i].minsspent);
+                
+                console.log(u2.attendance[i].date);
+    
+                var num = misshours; 
+                var hours = Math.floor(num / 60);  
+                totalh += hours;
+                var minutes = num % 60;
+                totalm += minutes;    
+                //console.log("missing hours: " + hours + " missing minutes: " + minutes); 
+                console.log("total missing hours: " + totalh + " total missing minutes: " + totalm);  
+    
+            }
+
+            var totalt = totalm + 60*totalh;
+
+            if(totalt <= ((2*60)+59) )
+                u2.updatedSalary = u2.salary;
+
+            if(totalt > ((2*60)+59) ){
+                //Every Min  --> salary = salary - salary/(180*60)
+                //Every Hour --> salary = salary - salary/180
+                u2.updatedSalary = u2.salary - (totalh * (u2.salary/180) - totalm *(u2.salary/(180*60)));
+                
+            }
+            
+            
+        for(let j =0; j<30; j++){
+            var y = new Date(u2.attendance[j].date).getDay();
+            if(u2.attendance[j].minsspent == 0 )
+                if( day != y){
+                    // console.log(u2.attendance[i].date);
+                    // console.log('Absent');
+                    u2.updatedSalary -= u2.updatedSalary/60;
+                }
+            }
+            
+            u2.update();
+            u2.save();
+            console.log(u2.updatedSalary);
+            res.send('Salary Updated Successfully!');
+        }
+        else
+            res.send('Only HR members can acceess missing days!');
+
+    })
         
     function authenticate (req,res,next){
         const token = req.header('auth-token');

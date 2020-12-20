@@ -27,7 +27,8 @@ const userSchema = new schema({
     firstTime:0,
     newpassword: String,
     dayoff: String,
-    attendance: [block]
+    attendance: [block],
+    updatedSalary: Number
 
 
 
