@@ -399,9 +399,18 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     app.post('/signin', async(req,res)=>{
         timestamp=(new Date()).toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
-        const u =await user.findOne({Email: req.body.Email})
+        var x = timestamp.split(' ');
+        var y = x[1].split(':');
+        //console.log(y[0]);
+
+        if(!(y[0]<7)){
+            const u =await user.findOne({Email: req.body.Email})
         if (!u)
         return res.status(403).send('Not found')
+
+        //signin.split(' ');
+        //signin.split(':');
+        
 
         await user.findOne({Email: req.body.Email}).update({$set:
             {signintime: timestamp}});
@@ -413,7 +422,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         u.save; 
         signedin=true;
-        res.send(`Signin successful ${u.signintime}`);   
+        res.send(`Signin successful ${u.signintime}`);  
+        }
+
+        else{
+            res.send('Cannot sign in before 7 AM');
+        }
+        
+         
 
     })
 
@@ -425,53 +441,65 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         timestamp=(new Date()).toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
 
-        await user.findOne({Email: req.body.Email}).update({$set:
-            {signouttime: timestamp}});
+        var x = timestamp.split(' ');
+        var y = x[1].split(':');
 
-        outhour = new Date().getHours();
-        outmin = new Date().getMinutes();
+        if(!(y[0]>7)){
+            await user.findOne({Email: req.body.Email}).update({$set:
+                {signouttime: timestamp}});
+    
+            outhour = new Date().getHours();
+            outmin = new Date().getMinutes();
+                
+            diffhour = outhour-inhour;
+            diffmin=outmin-inmin;
+            totalmin=(diffhour*60) + diffmin;
             
-        diffhour = outhour-inhour;
-        diffmin=outmin-inmin;
-        totalmin=(diffhour*60) + diffmin;
-        
-        //To fill attendance
-        for(let i =0; i<30; i++){
-            var stringd = u.attendance[i].date;//.toLocaleDateString(); //Date in index i
-            var stringt = new Date().toLocaleDateString(); //Todays date
-
-            //console.log(stringd);
-            //console.log(stringt);
-
-           
-            if (stringd == stringt){ //if date in index i == todays date
-               // u.hours[i] = {date: new Date().toLocaleDateString(), minsspent: u.hours[i].minsspent+totalmin};
-               //u.hours[i] = {date: stringt, minsspent: 5};
-               //u.hours[i].minsspent=5;
-               u.attendance[i].minsspent = u.attendance[i].minsspent+totalmin
-
-               var num = u.attendance[i].minsspent; 
-               var hours = Math.floor(num / 60);  
-               var minutes = num % 60;
-               //return hours + ":" + minutes;     
-               console.log("hours: " + hours + " minutes: " + minutes);
-
-
-                u.update();
-                u.save();
+            //To fill attendance
+            for(let i =0; i<30; i++){
+                var stringd = u.attendance[i].date;//.toLocaleDateString(); //Date in index i
+                var stringt = new Date().toLocaleDateString(); //Todays date
+    
+                //console.log(stringd);
+                //console.log(stringt);
+    
                
-               
-            } 
+                if (stringd == stringt){ //if date in index i == todays date
+                   // u.hours[i] = {date: new Date().toLocaleDateString(), minsspent: u.hours[i].minsspent+totalmin};
+                   //u.hours[i] = {date: stringt, minsspent: 5};
+                   //u.hours[i].minsspent=5;
+                   u.attendance[i].minsspent = u.attendance[i].minsspent+totalmin
+    
+                   var num = u.attendance[i].minsspent; 
+                   var hours = Math.floor(num / 60);  
+                   var minutes = num % 60;
+                   //return hours + ":" + minutes;     
+                   console.log("hours: " + hours + " minutes: " + minutes);
+    
+    
+                    u.update();
+                    u.save();
+                   
+                   
+                } 
+            }
+            //console.log(u.hours[x].date);
+            //console.log(u.hours[x].minsspent);
+                  
+            
+             u.save;
+            signedin=false;
+           // console.log(diffhour);
+           // res.send(`signout successful ${diffmin}`);
+            res.send(`signout successful ${u.signouttime}`);
         }
-        //console.log(u.hours[x].date);
-        //console.log(u.hours[x].minsspent);
-              
+
+        else{
+            res.send('Cannot sign out after 7 PM');
+        }
+
+
         
-         u.save;
-        signedin=false;
-       // console.log(diffhour);
-       // res.send(`signout successful ${diffmin}`);
-        res.send(`signout successful ${u.signouttime}`);
 
     })
 
