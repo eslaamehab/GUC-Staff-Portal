@@ -4,10 +4,19 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('./user.js');
 const location=require('./location.js');
-const departements =require('./departements')
+const schedule=require('./schedule.js');
+const slotlinkingrequest=require('./slotlinkingrequest.js');
+const dayoffrequest=require('./dayoffrequest.js');
+
+
+const slot=require('./slot.js');
+
+const departements =require('./departements.js');
 
 //const attendance = require('./attendance.js');
 const { isNullOrUndefined } = require('util');
+const e = require('express');
+const { update } = require('./user.js');
 const key = 'jsvjdxbvjkdbuifhdwalsknvk';
 
 let signedin = false;
@@ -391,16 +400,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     }
         )
 
-        app.delete('/DeleteLocation', async(req,res)=>{
-            const u =await user.findOne({Email: emailTest}); //HR User
-             //User to be deleted
-            if(u.type=="HR"){
-                const l =await location.deleteOne({roomName: req.body.roomName});
-                res.send('Deleted')
-            }
-            res.send('Not Deleted')
-        }
-            )
+       
 
    app.post('/LocationDetails',async(req,res)=>{
         const u=new location({
@@ -503,8 +503,583 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             }
         
         })
-    
 
+        app.post('/createSchedule',async(req,res)=>{
+            var v1=0;
+            var v2=0;
+            var v3=0;
+           var v4=0;
+            var v5=0;
+            var v6=0;
+
+
+            
+            const u =await user.findOne({Email: emailTest}); //HR User
+            if(u.type=="HR"){
+
+                var sat=req.body.saturday;
+                
+                var satlen= sat.length;
+                if(satlen>5){
+                    sat=[];
+                    v1=1;
+
+                }
+
+                
+
+                var sun=req.body.sunday;
+                var sunlen= sun.length;
+                if(sunlen>5){
+                   sun=[];
+                    v2=2
+                }
+
+                var mon=req.body.monday;
+                var monlen= mon.length;
+                if(monlen>5){
+                   mon=[];
+                    //res.send("you cant exceed more than 5 slots per day");
+                     v3=3;
+
+                }
+
+                var tues=req.body.tuesday;
+                var tueslen= tues.length;
+                if(tueslen>5){
+                    tues=[];
+                    //res.send("you cant exceed more than 5 slots per day");
+                    v4=4;
+
+                }
+
+                 var wed=req.body.wednesday;
+                 var wedlen= wed.length;
+                 if(wedlen>5){
+                     wed=[]
+                   // res.send("you cant exceed more than 5 slots per day");
+                     v5=5;
+
+                }
+                var thurs=req.body.thursday;
+                var thurslen= thurs.length;
+                if(thurslen>5){
+                    thurs=[];
+                    v6=6
+                   // res.send("you cant exceed more than 5 slots per day");
+
+
+                }
+                
+
+                 console.log("sat.length "+ satlen)
+
+              /* if(satlen>5 || sunlen>5 || monlen>5 || tueslen>5 || wedlen>5 || thurslen>5){
+                    res.send("you cant exceed more than 5 slots per day");
+
+                }*/
+                //else{
+           
+                
+
+
+                const s = new schedule({
+                    Email:req.body.Email,
+
+                    saturday:sat,
+                    sunday:sun,
+                    monday:mon,
+                    tuesday:tues,
+                    wednesday:wed,
+                    thursday:thurs
+                   
+                    
+                    
+            })
+
+
+
+
+           
+            let x="";
+            if(v1==1){
+               // sat=[];
+                x="cant exceed more than 5 slots per day update saturday";
+                //s.save();
+
+            }
+            if(v2==2){
+                //sun=[];
+                x=x+" update sunday"
+                //s.save();
+            }
+            if(v3==3){
+                //mon=[];
+                x=x+" update monday";
+                //s.save();
+            }
+            if(v4==4){
+                //tues=[];
+                x=x+" update tuesday";
+                //s.save();
+            }
+            if(v5==5){
+               // wed=[];
+                x=x+" update wednesday";
+                //s.save();
+            }
+            if(v6==6){
+                //thurs=[];
+                x=x+" update thursday";
+                //s.save();
+            }
+
+            s.save();
+
+            res.send(x+" schedule created")
+
+                }
+
+            
+
+
+
+
+        })
+
+        app.post('/createSlot',async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+            
+            if(u.type=="coursecoordinator"){
+                console.log("creating")
+                var emailz=req.body.Email;
+                const u1=await user.findOne({Email: emailz});
+                var dayoffz=u1.dayoff;
+                var dayz=req.body.day;
+                var noz=req.body.no;
+                const p =await slot.findOne({
+                 Email:emailz, day:dayz, no:noz
+                })
+
+                console.log(p);
+
+                if(p!=null){
+
+                    res.send("this slot is already scheduled")
+                }
+                if(noz>5){
+                    res.send("you have maximum of 5 slots to choose from")
+                }
+                if(dayz==dayoffz){
+                    res.send("you cant schedule a slot on academic member's day off")
+                }
+
+                const s=new slot({
+                    Email:emailz,
+                    day:dayz,
+                    no:noz,
+                    time:req.body.time,
+                    location:req.body.location,
+                    course:req.body.course
+
+
+
+                })
+                console.log("creating"+s.Email)
+
+                s.save();
+                res.send("slot created");
+            }
+        res.send("you should be a course coordinator to be able to create an academic member's slot")
+        
+        })
+
+        app.get('/viewSlot',async(req,res)=>{
+        const o =await user.findOne({Email:emailTest})
+        if(o.type=="HR" || o.type=="coursecoordinator"){
+        const u =await slot.find({Email: req.body.Email}); //HR User
+        let x=u.Email;
+        res.send(u)
+        console.log(u);
+        }
+        else{
+        const u =await slot.find({Email: emailTest}); 
+        let x=u.Email;
+        res.send(u)
+        console.log(u);
+
+
+        }
+
+
+        })
+
+
+
+        app.post('/updateSlot',async(req,res)=>{
+        var mail=req.body.Email;
+        var dayz=req.body.day;
+        var noz=req.body.no;
+        var newday=req.body.newday;
+        var newno=req.body.newno;
+        var newtime=req.body.newtime;
+        var newloc=req.body.newlocation;
+        var newcourse=req.body.newcourse;
+    const o=await user.findOne({Email:emailTest});
+    const u =await slot.findOne({Email: mail,day:dayz,no:noz})
+    if(o.type=="coursecoordinator"){
+       if(newday!=null){
+           console.log("bamoottttt");
+           u.day=newday;
+       }    
+
+        if(newno!=null){
+            u.no=newno;
+            }
+
+        if(newtime!=null){
+                u.time=newtime;
+        }
+
+         if(newloc!=null){
+        u.location=newloc 
+        }
+        
+         if(newcourse!=null){
+        u.course=newcourse;    
+        }
+        //const x=u[0];
+      /*  console.log(u.day);
+        var timez=x.time;
+        var locationz=x.location;
+        var coursez=x.course
+*/
+
+         //   u.update();
+       
+
+            await u.save();
+            res.send("updated")
+    }
+    else{
+            res.send("you should be a course coordinator to be able to update an academic member's slot")}
+            //console.log(d);
+    }
+
+        )
+
+
+        app.delete('/deleteSlot',async(req,res)=>{
+        const c =await user.findOne({Email: emailTest});
+        if(c.type=="coursecoordinator"){
+
+            var mail=req.body.Email;
+            var dayz=req.body.day;
+            var noz=req.body.no;
+    
+        const u =await slot.findOneAndDelete({Email: mail,day:dayz,no:noz})
+           
+    
+                u.save();
+                res.send("deleted")
+                //console.log(d);
+        }
+        else{
+            res.send("you should be a course coordinator to be granted this privilege")
+        }
+    
+            })
+    
+        app.delete('/deleteSchedule',async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+            if(u.type=="HR"){
+                console.log("aho ha delete aho");
+                const l =await schedule.findOneAndDelete({Email: req.body.Email});
+                
+                res.send('Deleted')
+            }
+            res.send('Not Deleted')
+
+            
+        })
+
+       app.post('/updateSchedule',async(req,res)=>{
+        var v1=0;
+        var v2=0;
+        var v3=0;
+       var v4=0;
+        var v5=0;
+        var v6=0;
+ 
+        const u =await user.findOne({Email: emailTest});
+         //HR User
+        if(u.type=="HR"){
+            ///get the schedule of the ta with taNAme x
+            const o=await schedule.findOne({Email: req.body.Email});
+            ///ask for the day you want to update
+            var day=req.body.day;
+            console.log(day);
+            /*if(day="saturday"||day="sunday"||day!="monday"||day!="tuesday"||day!="wednesday"||day!="thursday"){
+                res.send("enter a valid day");
+            }*/
+            ///ask for slot you want to update
+            slot=req.body.slot;
+            //slot=slot-1;
+            console.log(slot);
+            if(slot<0 || slot>4){
+                res.send("please choose a valid slot")
+            }
+            //ask for course to update with
+            var x=req.body.course;
+            console.log(x);
+            //update
+            
+            switch(day) {
+                case "saturday":
+                  o.saturday[slot]=x;
+                  break;
+                case "sunday":
+                    let z =""+x+"";
+                    console.log(o.sunday);
+                    //var sun=o.sunday;
+                    //sun[slot]=z;
+                    o.sunday[slot]=z;
+                    //o.sunday.save();
+                    console.log("z: "+z);
+                    //console.log("sun: "+sun);
+                    console.log(o.sunday);
+                    o.update();
+                    o.save();
+
+                    
+      
+                    
+      
+
+                  break;
+                  case "monday":
+                    o.monday[slot]=x;
+
+                  break;
+                  case "tuesday":
+                    o.tuesday[slot]=x;
+
+                  break;
+                  case "wednesday":
+                    o.wednesday[slot]=x;
+
+                  break;
+                  case "thursday":
+                    o.thursday[slot]=x;
+
+                  break;
+                default:
+                    res.send("updated");
+              }
+
+
+
+            
+              
+        res.send(" schedule updated");
+
+            }
+
+
+
+
+
+
+       })
+       
+       app.get('/viewSchedule',async(req,res)=>{
+        
+            try{// const u =await user.findOne({Email: req.header('Email')});
+             const u =await schedule.findOne({Email: emailTest});
+             const o=await user.findOne({Email:emailTest});
+             console.log(o.type);
+            if(o.type=="TA" || o.type=="instructor"){
+             console.log(o.name);
+             //res.send(`login successful ${u.name}`);
+            var x= "saturday: " + u.saturday +'\n' + "sunday: " + u.sunday+'\n' +"monday: " + u.monday+'\n' + "tuesday: " +
+             u.tuesday+ '\n' +"wednesday: " + u.wednesday+ '\n' +"thursday: " + u.thursday;
+            console.log(x);
+             res.send("here is your schedule " + '\n' + x);
+             
+            }
+            else{
+                res.send(" you should be academic staff to be able to view your schedule" )
+            }
+            }
+
+            catch(err){
+                console.log(err);
+            }
+        
+        
+
+
+
+
+       })
+
+       app.post('/sendslotlinkingrequest',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
+            if(u.type=="TA"){
+            const s = new slotlinkingrequest({
+            Email:emailTest,
+            CourseCoordinatorEmail:req.body.CourseCoordinatorEmail,
+            day:req.body.day,
+            slot:req.body.slot,
+            course:req.body.course,
+            accepted:0
+            
+        })
+        s.save();
+        res.send("slot linking request sent")}
+        else{
+            res.send("you have to be an academic member to be able to send a slot linking request")}
+
+        
+        
+
+
+
+       })
+       app.get('/viewslotlinkingrequest',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
+
+        if(u.type=="coursecoordinator"){
+
+            const u1 =await slotlinkingrequest.find({CourseCoordinatorEmail: emailTest});
+            res.send(u1);
+        }
+
+        res.send("you should be a course coordinator to be able to view slot linking requests")
+       })
+
+
+       app.get('/acceptslotlinkingrequest',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
+        
+        if(u.type=="coursecoordinator"){
+//getting slot linking request
+        const u1 =await slotlinkingrequest.findById(req.body.id);
+       /* console.log(u1);
+        for(let i=0;i<ux.length;i++){
+         console.log("kosom acl")
+        const u1=ux[i];*/
+
+        var mailz= u1.Email; //ta mail
+        var dayz=u1.day;//day of slot
+        var slotz=u1.slot;//slot no
+        var coursez=u1.course;//course
+//getting day off
+        const u2= await user.findOne({Email:mailz})
+
+        var userdayoff=u2.dayoff; //getting dayoff
+
+        console.log(mailz)
+        console.log(userdayoff)
+        
+//checking to see if we have a slot at the sametime of the request     
+        const u3 =await slot.findOne({Email: mailz,day:dayz,no:slotz})
+        console.log("bakrah acl  "+u3);
+
+        if(dayz==userdayoff){
+            res.send("you cant add a slot on your dayoff")
+
+        }
+
+        if(u3!=null){
+            res.send("you already have this slot scheduled")
+            
+        }
+
+
+
+
+
+
+            var ax=req.body.accepted;
+            u1.accepted=ax;
+            console.log(ax);
+            console.log(mailz);
+            
+            u1.update();
+            u1.save();
+            if(ax==1){
+                
+                const s=new slot({
+                    Email:mailz,
+                    day:dayz,
+                    no:slotz,
+                    time:req.body.time,
+                    location:req.body.location,
+                    course:coursez
+
+
+
+                })
+                s.save()
+                res.send("viewed")
+
+
+            }}
+            res.send("you should be a course coordinator to be granted this privilege")
+            
+
+
+            
+        
+
+
+
+       })
+
+       app.post('/submitdayoffrequest',async(req,res)=>{
+        
+        const u =await user.findOne({Email: emailTest});
+            if(u.type=="TA"){
+            const d = new dayoffrequest({
+            Email:emailTest,
+            headOfDepartementEmail:req.body.headOfDepartementEmail,
+            requestedDayOff:req.body.requestedDayOff,
+            accepted:0
+            
+        })
+        d.save();
+        res.send("day off request submiited")}
+        else{
+            res.send("you should be an academic member to be granted this privilege")
+
+        }
+
+
+       })
+
+       app.get('/viewdayoffrequests',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
+        if(u.type=="HOD"){
+            const u1 =await dayoffrequest.find({headOfDepartementEmail: emailTest});
+
+            res.send(u1);
+
+
+        }
+        else{
+
+            res.send("Only the head of departement is granted this privilege")
+        }
+
+
+       })
+
+       app.get('/acceptdayoffrequests',async(req,res)=>{
+        
+
+
+       })
 
         
     function authenticate (req,res,next){
