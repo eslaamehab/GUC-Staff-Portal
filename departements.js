@@ -1,9 +1,8 @@
-
 const { Double } = require('bson');
 const { time } = require('console');
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
-const departmentsSchema = new schema({
+const departmentSchema = new schema({
 
     DepartmentName:String,
     FacultyName:String,
@@ -16,4 +15,4 @@ const departmentsSchema = new schema({
  
 
 })
-module.exports=mongoose.model('departments', departmentsSchema)
+module.exports=mongoose.model('departements', departmentSchema)

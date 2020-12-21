@@ -4,10 +4,12 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const facultySchema = new schema({
 
+
     facultyName:String,
     departmentsInFaculties:[String],
-    departmentsCount:Number
+   
+    
  
 
 })
-module.exports=mongoose.model('faculty', facultySchema)
+module.exports=mongoose.model('faculties', facultySchema)
