@@ -118,9 +118,9 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
           //Initialize attendance for user
          
           var stringg = (new Date().toLocaleDateString());
-          u.hours[0] = {date: stringg, hoursspent: 0};
-          console.log(u.hours[0].date);
-          console.log(u.hours[0].hoursspent);
+          u.attendance[0] = {date: stringg, minsspent: 0};
+          console.log(u.attendance[0].date);
+          console.log(u.attendance[0].minsspent);
   
           var datecount=1;
   
@@ -130,11 +130,11 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
               //var dates=olddate.toString();
               var dates=olddate.toLocaleDateString();
   
-              u.hours[i] =  {date: dates, hoursspent: 0}; // new Date(u.hours[i-1].date +1);
+              u.attendance[i] =  {date: dates, minsspent: 0}; // new Date(u.attendance[i-1].date +1);
               datecount=datecount+1;
               
-              console.log(u.hours[i].date);
-              console.log(u.hours[i].hoursspent);
+              console.log(u.attendance[i].date);
+              console.log(u.attendance[i].minsspent);
   
               
           }  
@@ -155,14 +155,20 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         if(!equal)
         return res.status(403).send('Wrong Pass')
 
-        if(u.firstTime==0){      
-        u.firstTime=1;
-        console.log('update')
-        const salt = await bcrypt.genSalt(12);
-        const hashedPassword= await bcrypt.hash(req.body.newpassword,salt);
-        u.password=hashedPassword;
-        res.send("your password has been updated successfully, please try to login with your new password");
-        u.save();
+        if(u.firstTime==0){   
+
+            if(req.body.newpassword!=null){
+                u.firstTime=1;
+                console.log('update')
+                const salt = await bcrypt.genSalt(12);
+                const hashedPassword= await bcrypt.hash(req.body.newpassword,salt);
+                u.password=hashedPassword;
+                res.send("your password has been updated successfully, please try to login with your new password");
+                u.save();
+            }
+            else
+            res.send("You need to enter your new password at first login!");
+            
 
     
     }
@@ -294,20 +300,100 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     app.post('/attendance', async(req,res)=>{
         const u =await user.findOne({Email: req.body.Email});
         for(let i =0; i<30; i++){
-            console.log(u.hours[i].date);
-            console.log(u.hours[i].hoursspent);
+            //input month
+            //compared with first or second elemnts of date string (u.attendance[i].date)
+            var m = (u.attendance[i].date); //month in array
+            var d = new Date(u.attendance[i].date).getMonth();
+            d=d+1;
 
+            var month = req.body.month; //month we want
+           
+
+            if(d==month){
+               // console.log(x);
+                console.log(u.attendance[i].date)
+                //console.log(u.attendance[i].minsspent)
+
+                var num = u.attendance[i].minsspent; 
+                var hours = Math.floor(num / 60);  
+                var minutes = num % 60;
+                //return hours + ":" + minutes;     
+                console.log("hours: " + hours + " minutes: " + minutes);
+
+            }
+
+           
+            
         }
-
-        res.send('This is your attendance');
+        
+        res.send(u.attendance);
+       // res.send('This is your attendance');
     })
 
     app.get('/missingdays', async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        let day;
+        
+        switch (u.dayoff) {
+            case "sunday":
+              day = 0;
+              break;
+            case "monday":
+                day = 1;
+              break;
+            case "tuesday":
+                day = 2;
+              break;
+            case "wednesday":
+              day = 3;
+              break;
+            case "thursday":
+              day = 4;
+              break;
+            case "friday":
+              day = 5;
+              break;
+            case "saturday":
+              day = 6;
+          }
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u.attendance[i].date).getDay();
+            if(u.attendance[i].minsspent == 0 )
+                if( day != x){
+                    console.log(u.attendance[i].date);
+                    console.log('Absent');
+                }
+
+
+        }
 
         res.send('These are your missing days');
     })
 
-    app.get('/hours', async(req,res)=>{
+    app.get('/missinghours', async(req,res)=>{
+        //each day lazem 8hrs 24mins = 504 mins
+        //missing hours for each day = 504-totalmins
+        //missing hours can be compensated throughout the month
+        const u = await user.findOne({Email: emailTest});
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u.attendance[i].date).getDay();
+            var misshours=504-(u.attendance[i].minsspent);
+            
+            console.log(u.attendance[i].date);
+
+            var num = misshours; 
+            var hours = Math.floor(num / 60);  
+            var minutes = num % 60;
+            //return hours + ":" + minutes;     
+            console.log("missing hours: " + hours + " missing minutes: " + minutes);
+
+
+
+
+
+        }
 
         res.send('These are your hours');
     })
@@ -322,9 +408,18 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     app.post('/signin', async(req,res)=>{
         timestamp=(new Date()).toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
-        const u =await user.findOne({Email: req.body.Email})
+        var x = timestamp.split(' ');
+        var y = x[1].split(':');
+        //console.log(y[0]);
+
+        if(!(y[0]<7)){
+            const u =await user.findOne({Email: req.body.Email})
         if (!u)
         return res.status(403).send('Not found')
+
+        //signin.split(' ');
+        //signin.split(':');
+        
 
         await user.findOne({Email: req.body.Email}).update({$set:
             {signintime: timestamp}});
@@ -336,7 +431,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         u.save; 
         signedin=true;
-        res.send(`Signin successful ${u.signintime}`);   
+        res.send(`Signin successful ${u.signintime}`);  
+        }
+
+        else{
+            res.send('Cannot sign in before 7 AM');
+        }
+        
+         
 
     })
 
@@ -348,46 +450,146 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         timestamp=(new Date()).toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
 
-        await user.findOne({Email: req.body.Email}).update({$set:
-            {signouttime: timestamp}});
+        var x = timestamp.split(' ');
+        var y = x[1].split(':');
 
-        outhour = new Date().getHours();
-        outmin = new Date().getMinutes();
+        if(!(y[0]>7)){
+            await user.findOne({Email: req.body.Email}).update({$set:
+                {signouttime: timestamp}});
+    
+            outhour = new Date().getHours();
+            outmin = new Date().getMinutes();
+                
+            diffhour = outhour-inhour;
+            diffmin=outmin-inmin;
+            totalmin=(diffhour*60) + diffmin;
             
-        diffhour = outhour-inhour;
-        diffmin=outmin-inmin;
-        totalmin=(diffhour*60) + diffmin;
-        
-        //To fill attendance
-        for(let i =0; i<30; i++){
-            var stringd = u.hours[i].date;//.toLocaleDateString(); //Date in index i
-            var stringt = new Date().toLocaleDateString(); //Todays date
-
-            //console.log(stringd);
-            //console.log(stringt);
-
-           
-            if (stringd == stringt){ //if date in index i == todays date
-               // u.hours[i] = {date: new Date().toLocaleDateString(), hoursspent: u.hours[i].hoursspent+totalmin};
-               u.hours[i] = {date: stringt, hoursspent: 5};
-               console.log('yes');
-               var x = i;
-               //console.log(u.hours[i].hoursspent);
-           
+            //To fill attendance
+            for(let i =0; i<30; i++){
+                var stringd = u.attendance[i].date;//.toLocaleDateString(); //Date in index i
+                var stringt = new Date().toLocaleDateString(); //Todays date
+    
+                //console.log(stringd);
+                //console.log(stringt);
+    
                
-            } 
+                if (stringd == stringt){ //if date in index i == todays date
+                   // u.hours[i] = {date: new Date().toLocaleDateString(), minsspent: u.hours[i].minsspent+totalmin};
+                   //u.hours[i] = {date: stringt, minsspent: 5};
+                   //u.hours[i].minsspent=5;
+                   u.attendance[i].minsspent = u.attendance[i].minsspent+totalmin
+    
+                   var num = u.attendance[i].minsspent; 
+                   var hours = Math.floor(num / 60);  
+                   var minutes = num % 60;
+                   //return hours + ":" + minutes;     
+                   console.log("hours: " + hours + " minutes: " + minutes);
+    
+    
+                    u.update();
+                    u.save();
+                   
+                   
+                } 
+            }
+            //console.log(u.hours[x].date);
+            //console.log(u.hours[x].minsspent);
+                  
+            
+             u.save;
+            signedin=false;
+           // console.log(diffhour);
+           // res.send(`signout successful ${diffmin}`);
+            res.send(`signout successful ${u.signouttime}`);
         }
-        //console.log(u.hours[x].date);
-        //console.log(u.hours[x].hoursspent);
-              
+
+        else{
+            res.send('Cannot sign out after 7 PM');
+        }
+
+
         
-         u.save;
-        signedin=false;
-       // console.log(diffhour);
-       // res.send(`signout successful ${diffmin}`);
-        res.send(`signout successful ${u.signouttime}`);
 
     })
+
+    app.post('/manualsigninout', async(req,res)=>{
+        const u =await user.findOne({Email: emailTest}); //HR USER 
+
+        if(emailTest != req.body.Email && u.type == 'HR'){
+            const u2 =await user.findOne({Email: req.body.Email}); //User to be updated
+            //Take Date
+            //Take SigninTime
+            //Take SignoutTime
+            //Add to attendance of u2
+            var date = req.body.date;
+            var signin = req.body.signin;
+            var signout = req.body.signout;
+    
+            //console.log(date); //12/20/2020
+            //console.log(signin); //4:57:13 PM
+            //console.log(signout);
+    
+            u2.signintime = signin;
+            u2.signouttime = signout;
+            
+            
+    
+            var signi = signin.split(':');
+            inhour = signi[0];
+            inmin = signi[1];
+            var signo = signout.split(':');
+            outhour = signo[0];
+            outmin = signo[1];
+    
+            diffhour = outhour-inhour;
+            diffmin=outmin-inmin;
+            totalmin=(diffhour*60) + diffmin;
+    
+    
+    
+            for(let i =0; i<30; i++){
+                var stringd = u2.attendance[i].date;//.toLocaleDateString(); //Date in index i
+                var stringt = date; //Date to edit
+    
+                //console.log(stringd);
+                //console.log(stringt);
+    
+               
+                if (stringd == stringt){ //if date in index i == todays date
+                   // u.hours[i] = {date: new Date().toLocaleDateString(), minsspent: u.hours[i].minsspent+totalmin};
+                   //u.hours[i] = {date: stringt, minsspent: 5};
+                   //u.hours[i].minsspent=5;
+                   u2.attendance[i].minsspent = u2.attendance[i].minsspent+totalmin;
+    
+                   var num = u2.attendance[i].minsspent; 
+                   var hours = Math.floor(num / 60);  
+                   var minutes = num % 60;
+                   //return hours + ":" + minutes; 
+                   console.log("Date: " + date);    
+                   console.log("hours: " + hours + " minutes: " + minutes);
+                   
+                } 
+            }
+    
+            u2.update();
+            u2.save();
+           
+    
+            
+    
+            res.send('Updated Successfuly');
+
+        }
+        
+        else{
+            if(u.type == 'HR')
+                res.send("Are you trying to sign yourself in for real??");
+            else
+                res.send("You are not HR member");
+        }
+        
+
+        })
 
     app.delete('/deleteMember', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
@@ -401,8 +603,18 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         )
 
        
+    app.delete('/DeleteLocation', async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+             //User to be deleted
+            if(u.type=="HR"){
+                const l =await location.deleteOne({roomName: req.body.roomName});
+                res.send('Deleted')
+            }
+            res.send('Not Deleted')
+        }
+            )
 
-   app.post('/LocationDetails',async(req,res)=>{
+    app.post('/LocationDetails',async(req,res)=>{
         const u=new location({
 
             
@@ -433,7 +645,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         )
         
             
-        app.post('/AddFaculty', async(req,res)=>{
+    app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
                 if(u.type=="HR"){
                 const u = new faculty({
@@ -451,7 +663,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             }) 
     
              //updateMany
-        app.delete('/deleteFaculty', async(req,res)=>{
+    app.delete('/deleteFaculty', async(req,res)=>{
                 const u =await user.findOne({Email: emailTest}); //HR User
                 if(u.type=="HR"){
                     console.log("aho ha delete aho");
@@ -462,7 +674,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
               })
                
     
-        app.post('/UpdateFaculty', async(req,res)=>{
+    app.post('/UpdateFaculty', async(req,res)=>{
                 const u =await user.findOne({Email: emailTest}); //HR User
                 if(u.type=="HR"){
                  await faculty.findByIdAndUpdate(
@@ -479,7 +691,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
                 }
             }) 
     
-        app.post('/addDepartments' ,async(req,res)=>{
+    app.post('/addDepartments' ,async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
             if(u.type=="HR"){
                 let fId = await faculty.findById( req.body.Facultyid)
@@ -1076,11 +1288,233 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
        })
 
        app.get('/acceptdayoffrequests',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
         
+        if(u.type=="HOD"){
+//getting slot linking request
+        const u1 =await dayoffrequest.findById(req.body.id);     
+        var mailz=u1.Email; 
+        var dayoffz=u1.requestedDayOff;
+        var accept=req.body.accepted;
+        if(accept==1){
+            const ta =await user.findOne({Email:mailz});     
+            u1.accepted=accept;
+            ta.dayoff=dayoffz;
+            u1.save();
+            ta.save();
+            res.send("TA's day off has been accepted successfully")
+        }
+        res.send("TA's day off has been rejected successfully")
 
+
+
+        }
 
        })
+    app.post('/accessAttendance' ,async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
+        if(u.type=="HR"){
+            const u2 =await user.findOne({Email: req.body.Email});
+            for(let i =0; i<30; i++){
+                //input month
+                //compared with first or second elemnts of date string (u.attendance[i].date)
+                var m = (u2.attendance[i].date); //month in array
+                //console.log(m);
+                var d = new Date(u2.attendance[i].date).getMonth();
+                d=d+1;
+                //console.log(d);
+    
+                var month = req.body.month; //month we want
+               
+    
+                if(d==month){
+                   // console.log(x);
+                    console.log(u2.attendance[i].date)
+                    //console.log(u.attendance[i].minsspent)
+    
+                    var num = u2.attendance[i].minsspent; 
+                    var hours = Math.floor(num / 60);  
+                    var minutes = num % 60;
+                    //return hours + ":" + minutes;     
+                    console.log("hours: " + hours + " minutes: " + minutes);
+    
+                }
+    
+               
+                
+            }
+                res.send(u2.attendance);
+            
+        }
+        else
+            res.send('Only HR members can access attendance record!');
+    })
 
+    app.post('/accessMissingHours' ,async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        const u2 = await user.findOne({Email: req.body.Email});
+
+        if(u.type=="HR"){
+
+        
+
+        for(let i =0; i<30; i++){
+            var x = new Date(u2.attendance[i].date).getDay();
+            var misshours=504-(u2.attendance[i].minsspent);
+            
+            console.log(u2.attendance[i].date);
+
+            var num = misshours; 
+            var hours = Math.floor(num / 60);  
+            var minutes = num % 60;
+            //return hours + ":" + minutes;     
+            console.log("missing hours: " + hours + " missing minutes: " + minutes);  
+
+        }
+
+        res.send('These are the hours');
+
+    }
+    else
+        res.send('Only HR members can acceess missing hours!');
+    })
+
+    app.post('/accessMissingDays' ,async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        const u2 = await user.findOne({Email: req.body.Email});
+
+        if(u.type=="HR"){
+
+        
+
+            let day;
+        
+            switch (u2.dayoff) {
+                case "sunday":
+                  day = 0;
+                  break;
+                case "monday":
+                    day = 1;
+                  break;
+                case "tuesday":
+                    day = 2;
+                  break;
+                case "wednesday":
+                  day = 3;
+                  break;
+                case "thursday":
+                  day = 4;
+                  break;
+                case "friday":
+                  day = 5;
+                  break;
+                case "saturday":
+                  day = 6;
+              }
+    
+            for(let i =0; i<30; i++){
+                var x = new Date(u2.attendance[i].date).getDay();
+                if(u2.attendance[i].minsspent == 0 )
+                    if( day != x){
+                        console.log(u2.attendance[i].date);
+                        console.log('Absent');
+                    }
+    
+    
+            }
+    
+            res.send('These are your missing days');
+
+    }
+    else
+        res.send('Only HR members can acceess missing days!');
+    })
+
+    app.post('/updateSalary' ,async(req,res)=>{
+        const u = await user.findOne({Email: emailTest});
+        const u2 = await user.findOne({Email: req.body.Email});
+        
+        if(u.type=="HR"){
+            //up to 2 hours 59 mins per month --> no deduction
+
+            //for each missing day per month --> salary = salary - salary/60
+
+            //for more than 2 hours 59 mins per month --> Every Hour --> salary = salary - salary/180
+            //                                            Every Min  --> salary = salary - salary/(180*60)
+            let day;
+        switch (u2.dayoff) {
+            case "sunday":
+              day = 0;
+              break;
+            case "monday":
+                day = 1;
+              break;
+            case "tuesday":
+                day = 2;
+              break;
+            case "wednesday":
+              day = 3;
+              break;
+            case "thursday":
+              day = 4;
+              break;
+            case "friday":
+              day = 5;
+              break;
+            case "saturday":
+              day = 6;
+          }
+            
+            var totalh=0, totalm=0;
+
+            for(let i =0; i<30; i++){
+                var x = new Date(u2.attendance[i].date).getDay();
+                var misshours=504-(u2.attendance[i].minsspent);
+                
+                console.log(u2.attendance[i].date);
+    
+                var num = misshours; 
+                var hours = Math.floor(num / 60);  
+                totalh += hours;
+                var minutes = num % 60;
+                totalm += minutes;    
+                //console.log("missing hours: " + hours + " missing minutes: " + minutes); 
+                console.log("total missing hours: " + totalh + " total missing minutes: " + totalm);  
+    
+            }
+
+            var totalt = totalm + 60*totalh;
+
+            if(totalt <= ((2*60)+59) )
+                u2.updatedSalary = u2.salary;
+
+            if(totalt > ((2*60)+59) ){
+                //Every Min  --> salary = salary - salary/(180*60)
+                //Every Hour --> salary = salary - salary/180
+                u2.updatedSalary = u2.salary - (totalh * (u2.salary/180) - totalm *(u2.salary/(180*60)));
+                
+            }
+            
+            
+        for(let j =0; j<30; j++){
+            var y = new Date(u2.attendance[j].date).getDay();
+            if(u2.attendance[j].minsspent == 0 )
+                if( day != y){
+                    // console.log(u2.attendance[i].date);
+                    // console.log('Absent');
+                    u2.updatedSalary -= u2.updatedSalary/60;
+                }
+            }
+            
+            u2.update();
+            u2.save();
+            console.log(u2.updatedSalary);
+            res.send('Salary Updated Successfully!');
+        }
+        else
+            res.send('Only HR members can acceess missing days!');
+
+    })
         
     function authenticate (req,res,next){
         const token = req.header('auth-token');
