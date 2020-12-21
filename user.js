@@ -7,7 +7,7 @@ const schema = mongoose.Schema;
 
 var block = mongoose.Schema({
     date: String,
-    hoursspent: Number
+    minsspent: Number
   });
 
 const userSchema = new schema({
@@ -27,7 +27,9 @@ const userSchema = new schema({
     firstTime:0,
     newpassword: String,
     dayoff: String,
-    hours: [block]
+    attendance: [block],
+    updatedSalary: Number
+
 
 
 
