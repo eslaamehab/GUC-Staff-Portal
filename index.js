@@ -591,39 +591,58 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         }
         res.send('Not Deleted')
     }
-        )
+    )
 
-    app.delete('/DeleteLocation', async(req,res)=>{
-            const u =await user.findOne({Email: emailTest}); //HR User
-             //User to be deleted
+    app.post('/AddLocation',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest}); //HR User
+        //const f =await Faculties.findById({FacultyName:req.body.FacultyName})
+        
             if(u.type=="HR"){
-                const l =await location.deleteOne({roomName: req.body.roomName});
-                res.send('Deleted')
-            }
-            res.send('Not Deleted')
-        }
-            )
-
-    app.post('/LocationDetails',async(req,res)=>{
         const u=new location({
-
-            
 
             roomName:req.body.roomName,
             Capacity:req.body.Capacity,
 
            Count:req.body.Count,
             type:req.body.type
-            
-
         })
         await u.save();
         res.send('location has been created ');
+        }
+        else{
+            res.send("HR ONLY") ;
+        }
+
+      
+      
 
 
     }) 
+     
+   app.post('/updateLocation',async(req,res)=>{
+    const u =await user.findOne({Email: emailTest});
+    const l = await location.findById(req.body.id)
+    if(l){
 
-    app.delete('/DeleteLocation', async(req,res)=>{
+    }
+    else{
+        res.send("not found")
+    }
+    if(u.type =="HR"){
+        l.roomName = req.body.roomName,
+        l.Capacity =req.body.Capacity,
+        l.Count =req.body.Count,
+         l.type=req.body.type
+
+      await l.save()
+      res.send("Location Updated")
+    }
+    else{
+        res.send("HR ONLY")
+    }
+   })
+
+   app.delete('/DeleteLocation', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
          //User to be deleted
         if(u.type=="HR"){
@@ -631,81 +650,196 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             res.send('Deleted')
         }
         res.send('Not Deleted')
-    }
-        )
+    })
+
         
-            
-    app.post('/AddFaculty', async(req,res)=>{
+   app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
+            //const f =await Faculties.findOne({FacultyName:req.body.FacultyName})
+            
                 if(u.type=="HR"){
-                const u = new faculty({
+                const u = new faculties({
+                 facultyId:req.body.facultyId,
                 facultyName:req.body.facultyName,
                 departmentsInFaculties:req.body.departmentsInFaculties,
                //{$push{departmentsInfaculties:name}} ,
-                departmentsCount:req.body.departmentsCount
+               
                 })
                 res.send("faculty created");
                 await u.save();
-            }
+                    }
+
             else{
                 res.send("HR ONLY");
             }
-            }) 
-    
-             //updateMany
-    app.delete('/deleteFaculty', async(req,res)=>{
-                const u =await user.findOne({Email: emailTest}); //HR User
-                if(u.type=="HR"){
-                    console.log("aho ha delete aho");
-                    const l =await faculty.findByIdAndDelete({id: req.body.departmentName});
-                    res.send('Deleted')
-                }
-                res.send('Not Deleted')
-              })
+        
+        
+            })   
+   app.post('/UpdateFaculty', async(req,res)=>{
+              /*  
                
-    
-    app.post('/UpdateFaculty', async(req,res)=>{
-                const u =await user.findOne({Email: emailTest}); //HR User
-                if(u.type=="HR"){
-                 await faculty.findByIdAndUpdate(
+                 await Faculties.findByIdAndUpdate(
                     req.body.id,
                     {
                         $push : {
                         departmentsInFaculties : req.body.departmentName
                     }}
-                )
-                res.send("faculty Updated") ;
-                }
-                else{
-                    res.send("HR ONLY") ;
-                }
-            }) 
+                )*/
+                
+
+    const u =await user.findOne({Email: emailTest}); //HR User
+    const c = await faculties.findById(req.body.id)
+    if(u.type=="HR"){
+        
+        c.facultyName = req.body.facultyName
+        //c.Departmentid = req.body.Departmentid
+        console.log(c.facultyName)
+        await c.save()
+    res.send("faculty updated")
+    }
+    else{
+        res.send("HR ONLY")
+    }
+   })
+   
+   app.delete('/deleteFaculty', async(req,res)=>{
+            const u =await user.findOne({Email: emailTest}); //HR User
+            
+            //User to be deleted
+           if(u.type=="HR"){
+               const l =await Faculties.deleteOne({facultyName: req.body.facultyName});
+               res.send('Deleted')
+           }
+           res.send('HR ONLY')
+       })
     
     app.post('/addDepartments' ,async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-            if(u.type=="HR"){
-                let fId = await faculty.findById( req.body.Facultyid)
+              /*let fId = await Faculties.findById({Facultyid: req.body.Facultyid})
                 if( fId){
                
                 }
                 else{
-                    res.send("faculty msh mwgooda")
-                }
-                const d = new departments({
+                    res.send("not found")
+                }*/
+            if(u.type=="HR"){
+                const d = await new departements({
                     DepartmentName:req.body.DepartmentName,
                     FacultyName:req.body.FacultyName,
                     Facultyid:req.body.Facultyid
-                    
             })
             res.send("Department Added")
-            await  d.save()
+            await  d.save();
         }
             else{
                 res.send("HR ONLY")
             }
         
         })
+    app.post('/UpdateDepartment',async(req,res)=>{
+        const u =await user.findOne({Email: emailTest}); //HR User
+        const d = await departements.findById(req.body.id)
+    if(d){
+
+    }
+    else{
+        res.send("not found")
+    }
+    if(u.type=="HR"){
+        // await courses.updateOne({courseName: req.body.courseName})
+          //await courses.updateOne({DepartmentName: req.body.DepartmentName})
+        d.DepartmentName = req.body.DepartmentName
+        d.FacultyName =req.body.FacultyName
+        console.log(d.FacultyName)
+        //c.Departmentid = req.body.Departmentid
+    console.log(d.DepartmentName)
+    await d.save()
+    await d.save()
+    res.send("department updated")
+    }
+    else{
+        res.send("HR ONLY")
+    }
+   })
     
+    app.delete('/deleteDepartement', async(req,res)=>{
+        const u =await user.findOne({Email: emailTest}); //HR User
+        const l =await departements.findOne({Facultyid:req.body.Facultyid})
+        if(l){
+
+        }
+        else{
+            res.send("not found")
+        }
+       if(u.type=="HR"){
+           const l =await departements.deleteOne({Facultyid: req.body.Facultyid});
+           res.send('Deleted')
+       }
+       res.send('HR ONLY')
+   })
+
+   app.post('/Addcourses', async(req,res)=>{
+    const u =await user.findOne({Email: emailTest}); //HR User
+   
+        if(u.type=="HR"){
+            
+            const x = await new courses({
+                courseName:req.body.courseName,
+                DepartmentName:req.body.DepartmentName,
+                Departmentid:req.body.Departmentid
+                
+            })
+            res.send("course added");
+            await x.save();
+                }
+    
+        else{
+            res.send("HR ONLY");
+        }
+        }) 
+    
+   app.post('/updateCourse',async(req,res)=>{
+    const u =await user.findOne({Email: emailTest}); //HR User
+    const c = await courses.findById(req.body.id)
+    if(c){
+
+    }
+    else{
+        res.send("not found")
+    }
+    if(u.type=="HR"){
+        // await courses.updateOne({courseName: req.body.courseName})
+          //await courses.updateOne({DepartmentName: req.body.DepartmentName})
+        c.courseName = req.body.courseName
+        c.DepartmentName =req.body.DepartmentName
+        c.Departmentid = req.body.Departmentid
+    console.log(c.DepartmentName)
+    await c.save()
+    await c.save()
+    res.send("course updated")
+    }
+    else{
+        res.send("HR ONLY")
+    }
+   })
+
+   app.delete('/deleteCourse',async(req,res)=>{
+    const u =await user.findOne({Email: emailTest}); //HR User
+    const c = await courses.findOne({Departmentid: req.body.Departmentid})
+    if(c){
+
+    }
+    else{
+        res.send("not found")
+    }
+    //User to be deleted
+     if(u.type=="HR"){
+       const c =await courses.deleteOne({courseName: req.body.courseName});
+       res.send('Deleted')
+   }
+   res.send('HR ONLY')
+})
+
     app.post('/accessAttendance' ,async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
         if(u.type=="HR"){
