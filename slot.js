@@ -5,6 +5,7 @@ const schema = mongoose.Schema;
 const slotSchema = new schema({
     Email:String,
     day:String,
+    date:String,
     no:Number,
     time:String,
     location:String,
