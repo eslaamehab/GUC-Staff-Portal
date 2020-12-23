@@ -215,7 +215,6 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     })
 
-
     app.use(authenticate); //works on  any route under it
 
     app.get('/profile', async(req,res)=>{
@@ -232,6 +231,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             } 
     })
 
+
     app.post('/logout', async(req,res)=>{
         const u =await user.findOne({Email: req.body.Email})
 
@@ -244,6 +244,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
        u.save;
         res.send(`logout successful`);
     })
+
 
     app.post('/updateProfile', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
@@ -292,6 +293,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     
 })
 
+
     app.post('/updatePassword', async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
         var oldpassword = req.body.oldpassword;
@@ -310,6 +312,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         res.send('Update not successful');
        // u.password= new password
     })
+
 
     app.post('/attendance', async(req,res)=>{
         const u =await user.findOne({Email: req.body.Email});
@@ -343,6 +346,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         res.send(u.attendance);
        // res.send('This is your attendance');
     })
+
 
     app.get('/missingdays', async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
@@ -405,12 +409,15 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
 
 
-
-
         }
+
+        })
+
+    app.get('/hours', async(req,res)=>{
 
         res.send('These are your hours');
     })
+
 
     app.delete('/deleteUser', (req,res)=>{
         const payload = jwt.verify(req.header('auth-token'),key);
@@ -419,6 +426,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         res.send('User Deleted');
     })
+
 
     app.post('/signin', async(req,res)=>{
         timestamp=(new Date()).toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
@@ -455,6 +463,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
          
 
     })
+
 
     app.post('/signout', async(req,res)=>{
         if(signedin==false){
@@ -605,6 +614,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         })
 
+
     app.delete('/deleteMember', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
          //User to be deleted
@@ -675,6 +685,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         res.send('Not Deleted')
     })
     
+
+        
    app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
             //const f =await Faculties.findOne({FacultyName:req.body.FacultyName})
@@ -1940,6 +1952,7 @@ else{
     }
 
    })
+
     function authenticate (req,res,next){
         const token = req.header('auth-token');
         if(!token)
