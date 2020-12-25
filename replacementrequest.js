@@ -16,6 +16,8 @@ const replacementrequestschema = new schema({
     verifiedByHOD:Number,
     status:String,
     reasonOfrejection:String
+    
+    //departmentsCount:Number
  
 
 })

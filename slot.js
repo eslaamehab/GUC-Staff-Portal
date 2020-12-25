@@ -18,6 +18,7 @@ const slotSchema = new schema({
     newlocation:String,
     newcourse:String,
     date:String
+
     //departmentsCount:Number
  
 
