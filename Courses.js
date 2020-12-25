@@ -6,6 +6,7 @@ const coursesSchema = new schema({
 
    courseName:String,
    DepartmentName:String,
+   CourseInstructor:String,
    Departmentid:{ type:mongoose.Schema.ObjectId,
         ref:'departements'},
  
