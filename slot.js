@@ -3,7 +3,8 @@ const { time } = require('console');
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const slotSchema = new schema({
-    Email:String,
+
+   Email:String,
     day:String,
     type:String,
     no:Number,
