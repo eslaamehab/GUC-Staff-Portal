@@ -3,19 +3,21 @@ const { time } = require('console');
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const slotSchema = new schema({
-    Email:String,
+
+   Email:String,
     day:String,
-    date:String,
+    type:String,
     no:Number,
     time:String,
     location:String,
     course:String,
+    available:Number,
     newday:String,
     newno:Number,
     newtime:String,
     newlocation:String,
-    newcourse:String
-
+    newcourse:String,
+    date:String
     //departmentsCount:Number
  
 

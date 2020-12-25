@@ -29,7 +29,9 @@ const userSchema = new schema({
     newpassword: String,
     dayoff: String,
     attendance: [block],
-    updatedSalary: Number
+    updatedSalary: Number,
+    annualLeaveBalance:Number,
+    accidentalLeaveBalance:Number
 
 
 
