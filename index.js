@@ -6,6 +6,7 @@ const user = require('./user.js');
 const location=require('./location.js');
 const slotlinkingrequest=require('./slotlinkingrequest.js');
 const dayoffrequest=require('./dayoffrequest.js');
+const leaves=require('./leaves.js');
 const notification=require('./notification.js')
 const replacementrequest=require('./replacementrequest.js')
 const courses=require('./Courses.js');
@@ -41,17 +42,107 @@ let ACcounter =1;
 let HRcounter =1; 
 
 const app= express();
-
-//app.use(express.json());
-
-// latest test
-//test999
-// ess gamed N
-//this is sparta
-
 mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<dbname>?retryWrites=true&w=majority')
 .then(()=>{
     app.use(express.json());
+
+    var y = new Date().toLocaleDateString().split('/'); //Gets today's day
+    //console.log(y[1]); 
+    if(y[1] == '11'){ //today is the 11th (beginning of any month)
+        //Loop on users and add 2.5 days to annualLeaveBalance
+        for(let g = 0; g<user.length; g++){
+            user[g].annualLeaveBalance = user[g].annualLeaveBalance + 2.5;
+            user[g].update();
+            user[g].save();
+        }
+
+    }
+//----------------------------------------------------------------------------
+    (async function(){
+        var r = new Date().toLocaleDateString().split('/');
+        if(r[1] == '10'){
+            var userboyz = await user.find();
+            console.log(userboyz[1]);
+
+            for(let z = 0; z<user.length;z++){
+                var userboy = userboyz[z];
+                var day;
+                
+                switch (userboy.dayoff) {
+                    case "sunday":
+                      day = 0;
+                      break;
+                    case "monday":
+                        day = 1;
+                      break;
+                    case "tuesday":
+                        day = 2;
+                      break;
+                    case "wednesday":
+                      day = 3;
+                      break;
+                    case "thursday":
+                      day = 4;
+                      break;
+                    case "friday":
+                      day = 5;
+                      break;
+                    case "saturday":
+                      day = 6;
+                  } 
+                 
+                  var totalh=0, totalm=0;
+    
+                  for(let i =0; i<30; i++){
+                      var x = new Date(userboy.attendance[i].date).getDay();
+                      var misshours=504-(userboy.attendance[i].minsspent);
+                      
+                      console.log(userboy.attendance[i].date);
+          
+                      var num = misshours; 
+                      var hours = Math.floor(num / 60);  
+                      totalh += hours;
+                      var minutes = num % 60;
+                      totalm += minutes;    
+                      //console.log("missing hours: " + hours + " missing minutes: " + minutes); 
+                      console.log("total missing hours: " + totalh + " total missing minutes: " + totalm);  
+          
+                  }
+      
+                  var totalt = totalm + 60*totalh;
+      
+                  if(totalt <= ((2*60)+59) )
+                  userboy.updatedSalary = userboy.salary;
+      
+                  if(totalt > ((2*60)+59) ){
+                      //Every Min  --> salary = salary - salary/(180*60)
+                      //Every Hour --> salary = salary - salary/180
+                      userboy.updatedSalary = userboy.salary - (totalh * (userboy.salary/180) - totalm *(userboy.salary/(180*60)));
+                      
+                  }
+                  
+                  
+              for(let j =0; j<30; j++){
+                  var y = new Date(userboy.attendance[j].date).getDay();
+                  if(userboy.attendance[j].minsspent == 0 ){
+                      if( day != y){
+                          // console.log(u2.attendance[i].date);
+                          // console.log('Absent');
+                          userboy.updatedSalary -= userboy.updatedSalary/60;
+                      }
+                  }
+                }
+                  
+                  userboy.update();
+                  userboy.save();
+                  console.log(userboy.updatedSalary);
+                  console.log('Salary Updated Successfully!');
+                  
+        }}
+        
+       }
+       
+       )();
 
     app.post('/register', async (req,res)=>{
 
@@ -135,6 +226,10 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             firstTime:req.body.firstTime,
             newpassword:req.body.newpassword,
             dayoff:df,
+            annualLeaveBalance:0,
+            accidentalLeaveBalance:6,
+            
+
             courses:c
         })
        
@@ -297,9 +392,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
        // u.password= new password
     })
 
-
-    app.post('/attendance', async(req,res)=>{
-        const u =await user.findOne({Email: req.body.Email});
+    app.get('/attendance', async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
         for(let i =0; i<30; i++){
             //input month
             //compared with first or second elemnts of date string (u.attendance[i].date)
@@ -609,8 +703,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             res.send('Deleted')
         }
         res.send('Not Deleted')
-    }
-    )
+    })
+    
 //-------------------------------------------------------------------------------------------------------------------------------------------------
     app.post('/AddLocation',async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
@@ -1726,9 +1820,9 @@ if(o.type=="Coordinator"){
 else{
         res.send("you should be a course coordinator to be able to update an academic member's slot")}
         //console.log(d);
-}
+})
 
-    )//tamam
+    //tamam
 
 
     app.delete('/deleteSlot',async(req,res)=>{
@@ -2117,7 +2211,356 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
         console.log("err");
     }
 
-   })//tamam
+   })
+
+
+   app.post('/sendLeaveRequest', async (req,res)=>{
+
+        //Email , type, startDate, endDate, courseName, replacementDay, replacementStaffMember, replacementStaffEmail, document, skippedDay
+
+    const u =await user.findOne({Email: req.body.Email});
+    const HOD =await user.findOne({department: u.department , type: "HOD"});
+    const StaffMember =await user.findOne({department: u.department , Email: req.body.replacementStaffEmail});
+    var leaveType = req.body.type;
+    var sDate=new Date(req.body.startDate);
+    var subDate=new Date();//.toLocaleDateString();
+    var l;
+
+    var olddate=new Date();
+   // olddate.setDate(olddate.getDate()+3);
+    olddate.setDate(olddate.getDate()); //current date
+    var dates=olddate.toLocaleDateString();
+    
+
+    var go = false;
+
+    //u.annualLeaveBalance to be updated
+    //console.log(subDate);
+    //console.log(dates);
+
+    //console.log(sDate.getTime());
+    //console.log(subDate.getTime());
+
+   // if(subDate == dates){
+     //   console.log('true');
+    //}
+
+
+    
+
+//------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Annual"){  //Annual Leave
+        var diff = sDate.getTime()- subDate.getTime() ;
+       
+
+        
+        if (diff>0){
+           
+           
+            if(u.annualLeaveBalance>=1){
+               
+
+                var l = new leaves({
+                    Email: req.body.Email,
+                    ID: u.ID,
+            
+                    type:leaveType,
+            
+                    startDate:req.body.startDate, 
+                    endDate:req.body.endDate,
+            
+                    courseName:req.body.course,
+                    departmentName:u.department,
+                    submissionDate:subDate,
+            
+            
+                    replacementDay:req.body.replacementDay, //in Case of annual leave 
+                    replacementStaffMember:req.body.replacementStaffMember, //in Case of annual leave 
+                    replacementStaffEmail:req.body.replacementStaffEmail, //in Case of annual leave 
+            
+                    
+                   // HODemail:HOD.Email (when replacementStatus == accepted)
+            
+            
+                })
+
+                // Request is sent to the Staff Member Chosen and replacementStatus is awaiting to be updated
+                //Request sent to HOD if replacementStatus == True
+                // if status == true (HOD Accepeted)
+                //Update annualLeaveBalance accordingly
+                await  l.save();
+            }
+            
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Sick"){
+        console.log('sick leave');
+       // console.log(subDate.getTime() - sDate.getTime());
+        var diff = subDate.getTime() - sDate.getTime();
+        if(diff < 86400000 *3){
+            
+        
+        //console.log(new Date(subDate.getTime() - sDate.getTime()));
+        //1 Day == 86400000ms
+        //decrement date by 3 and compare using ==
+
+        
+           
+             l = new leaves({
+                Email: req.body.Email,
+                ID: u.ID,
+        
+                type:leaveType,
+        
+                startDate:req.body.startDate, 
+                endDate:req.body.endDate,
+        
+                courseName:req.body.course,
+                departmentName:u.department,
+                submissionDate:subDate,
+                    
+                document: req.body.document,  // In case of maternity or sick leaves
+        
+                HODemail:HOD.Email
+        
+        
+            })
+
+            await l.update();
+            await  l.save();
+            //Send to HOD
+        }
+        
+
+    }
+
+    //------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Maternity"){
+        if( (u.gender == "female") ){
+             l = new leaves({
+                Email: req.body.Email,
+                ID: u.ID,
+        
+                type:leaveType,
+        
+                startDate:req.body.startDate, 
+                endDate:req.body.endDate,
+        
+                courseName:req.body.course,
+                departmentName:u.department,
+                submissionDate:new Date().toLocaleDateString(),
+        
+                
+                document: req.body.document,  // In case of maternity or sick leaves
+        
+                HODemail:HOD.Email
+        
+        
+            })
+            //Send to HOD
+        }
+        await  l.save();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Accidental"){
+        
+            if(endDate - startDate <=6){
+                //Send to HOD
+                //Update annualLeaveBalance accordingly
+                 l = new leaves({
+                    Email: req.body.Email,
+                    ID: u.ID,
+            
+                    type:leaveType,
+            
+                    startDate:req.body.startDate, 
+                    endDate:req.body.endDate,
+            
+                    courseName:req.body.course,
+                    departmentName:u.department,
+                    submissionDate:new Date().toLocaleDateString(),
+            
+                    document: req.body.document,  // In case of maternity or sick leaves
+                    
+            
+                    HODemail:HOD.Email
+            
+            
+                })
+            }
+            await  l.save();
+
+    }
+
+
+    //------------------------------------------------------------------------------------------------------
+
+
+    if(leaveType == "Compensation"){
+       var startDate1=req.body.startDate;
+        if(u.dayOff == startDate1.getDay){
+
+             l = new leaves({
+                Email: req.body.Email,
+                ID: u.ID,
+        
+                type:leaveType,
+        
+                startDate:startDate1,
+                endDate:req.body.endDate,
+        
+                courseName:req.body.course,
+                departmentName:u.department,
+                submissionDate:new Date().toLocaleDateString(),
+     
+                HODemail:HOD.Email
+        
+        
+            })
+            
+            //Send request to HOD
+            //Update status (usually accepted (logically))
+            //Adjust Salary to avoid deduction (Loop on days off to find if there are any hours, if found add them to total hours in the month (global variable))
+                //By updating signintime and signouttime for that day (will auto adjust salary calculation at the end of the month)
+                //Also remember that updated salary needs to run automatically at the end of the month
+        }
+        await  l.save();
+            
+    }
+
+    
+    
+
+    res.send('leave sent successfuly');
+   })
+
+
+   app.get('/viewLeaveRequests',async(req,res)=>{ //HOD app.get(ViewLeaveRequests)
+    //View all requests sent to this HOD (all types of leaves)
+    var x = await leaves.find({HODemail: emailTest});
+    console.log(x);
+    res.send(x);
+    //for(let i =0; i<leaves.length; i++){
+       
+       // if(leaves[i].HODemail==emailTest){
+         //   console.log(leaves[i]);
+        //}
+        
+   // }
+   })
+
+   app.get('/viewReplacementRequests',async(req,res)=>{ //Staff app.get(ViewReplacementRequests)
+    //View all replacement requests sent to this staff member (in case of annual leaves)
+    var x = await leaves.find({replacementStaffEmail: emailTest});
+    for(let i =0; i<x.length; i++){
+        if(x[i].replacementStaffEmail==emailTest){
+            console.log(x[i]);
+
+        }
+        
+    }
+    res.send('here are your replacement requests')
+   })
+
+   app.post('/leaveRequestResponse',async(req,res)=>{ //HOD app.post(LeaveRequestResponse)
+    //change status (accept/reject) requests sent to this HOD
+    //Email of requester
+    //status
+
+    var x = await leaves.find({Email: req.body.Email});
+    var u = await user.findOne({Email: req.body.Email});
+
+    for(let i =0; i<x.length; i++){
+
+        if(x[i].HODemail==emailTest){
+        
+            x[i].status = req.body.status;
+            console.log('status updated');
+
+            if(req.body.status == "accepted" && x[i].type == "Annual"){
+                u.annualLeaveBalance = u.annualLeaveBalance-1;
+                console.log("Annual Leave Accepted");
+            }
+            if(req.body.status == "accepted" && x[i].type == "Compensation"){
+                //Update salary
+                console.log("Compensation Accepted");
+            }
+
+            if(req.body.status == "accepted" && x[i].type == "Accidental"){
+                u.annualLeaveBalance = u.annualLeaveBalance - (x[i].endDate - x[i].startDate);
+                u.accidentalLeaveBalance= u.accidentalLeaveBalance - (x[i].endDate - x[i].startDate);
+                console.log("Accidental Leave Accepted");
+            }
+
+            if(req.body.status == "accepted" && x[i].type == "Sick"){
+               // u.annualLeaveBalance = u.annualLeaveBalance-1;
+                console.log("Sick Leave Accepted");
+            }
+
+            if(req.body.status == "accepted" && x[i].type == "Maternity"){
+                // u.annualLeaveBalance = u.annualLeaveBalance-1;
+                 console.log("Maternity Leave Accepted");
+             }
+
+            
+            x[i].update();
+            x[i].save();
+            u.update();
+            u.save();
+            res.send('Thank you');
+
+        
+        
+    }
+    else {
+        res.send('Not found/Not Authorized');
+    }
+}
+
+   })
+
+   app.post('/replacementRequestResponse',async(req,res)=>{ //Staff app.post(ReplacementRequestResponse)
+    //change replacementStatus (accept/reject) requests sent to this Staff Member
+    //Email of requester
+    //replacementStatus
+    var x = await leaves.find({Email: req.body.Email});
+    var u = await user.findOne({Email: req.body.Email});
+    var HOD =await user.findOne({department: u.department , type: "HOD"});
+
+    for(let i =0; i<x.length; i++){
+        if(x[i].Email==req.body.Email && x[i].type == "Annual"){
+            x[i].replacementStatus = req.body.replacementStatus;
+
+            if(req.body.replacementStatus == "accepted"){
+                x[i].HODemail= HOD.Email;
+            }
+
+            x[i].update();
+            x[i].save();
+            u.update();
+            u.save();
+            res.send('Thank you');
+
+        }
+        
+    }
+
+  
+   })
+   
+   
+
+   
+   
+   //tamam
 
    app.get('/viewmynotification',async(req,res)=>{
     const u1 =await notification.find({Email: emailTest});

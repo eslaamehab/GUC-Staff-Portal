@@ -30,8 +30,9 @@ const userSchema = new schema({
     dayoff: String,
     attendance: [block],
     updatedSalary: Number,
-    annualLeaveBalance:Number,
+    annualLeaveBalance:Number, //Updated Every month
     accidentalLeaveBalance:Number
+    
 
 
 

@@ -11,6 +11,7 @@ const slotlinkingSchema = new schema({
     course:String,
     accepted:Number,
     status:String
+    
     //departmentsCount:Number
  
 
