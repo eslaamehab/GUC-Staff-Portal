@@ -24,11 +24,14 @@ const userSchema = new schema({
     gender: String,
     officelocation: String,
     courses: [String], //check how to add array
+    course:String,
     firstTime:0,
     newpassword: String,
     dayoff: String,
     attendance: [block],
-    updatedSalary: Number
+    updatedSalary: Number,
+    annualLeaveBalance:Number,
+    accidentalLeaveBalance:Number
 
 
 
