@@ -6,7 +6,10 @@ const dayoffSchema = new schema({
     Email:String,
     headOfDepartementEmail:String,
     requestedDayOff:String,
-    accepted:Number
+    accepted:Number,
+    status:String,
+    reasonOfrequest:String,
+    reasonOfRejection:String
     
     //departmentsCount:Number
  

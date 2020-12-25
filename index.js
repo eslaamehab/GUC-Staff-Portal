@@ -4,12 +4,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('./user.js');
 const location=require('./location.js');
-const schedule=require('./schedule.js');
 const slotlinkingrequest=require('./slotlinkingrequest.js');
 const dayoffrequest=require('./dayoffrequest.js');
 const courses=require('./Courses.js');
 const HOD = require('./HOD.js');
-
+const faculties = require('./faculties');
 
 const slot=require('./slot.js');
 
@@ -75,7 +74,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         //validate data first
         const salt = await bcrypt.genSalt(12);
-        const hashedPassword= await bcrypt.hash(req.body.password,salt);
+        const hashedPassword= await bcrypt.hash("12345",salt);
         if(req.body.type=="HR"){
            //var idv = "HR" + HRcounter;
            var idv2 = HRcounter.toString();
@@ -90,6 +89,12 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             df=req.body.dayoff;
         }
         const o = await location.findOne({roomName:req.body.officelocation});
+        if(o){
+
+        }
+        else{
+            res.send("Location not found")
+        }
         console.log(o.roomName);
         let locationCount= o.Count + 1;
         console.log('locationCount '+locationCount);
@@ -108,14 +113,17 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             console.log("o.Count "+ o.Count);
 
            }
-          
+           var typetest= req.body.type;
+           if(typetest=="Coordinator"){
+               res.send("The course instructor only can register a course coordinator")
+           }
         
 
         var u = new user({
             Email: req.body.Email,
             name: req.body.name,
             ID: idv,
-            type: req.body.type,
+            type:typetest,
             password: hashedPassword,
             salary:req.body.salary,
             faculty:f,
@@ -216,7 +224,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     })
 
     app.use(authenticate); //works on  any route under it
-
+///
     app.get('/profile', async(req,res)=>{
 
         try{
@@ -224,14 +232,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             const u =await user.findOne({Email: emailTest});
             //console.log(u.name);
             //res.send(`login successful ${u.name}`);
-            res.send('Here is your profile' + '\n' + u.name + ' ' +  u.ID);
+            res.send(u);
             }
             catch(err){
             console.log('err');
             } 
     })
 
-
+//
     app.post('/logout', async(req,res)=>{
         const u =await user.findOne({Email: req.body.Email})
 
@@ -241,59 +249,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
            // {signouttime: timestamp}});
        // u.signouttime = current.toLocaleDateString() + current.toLocaleTimeString()
        // res.send("Sign out time: " + signouttime);
-       u.save;
+      // u.save;
         res.send(`logout successful`);
     })
 
+//
+   
 
-    app.post('/updateProfile', async(req,res)=>{
-        const u =await user.findOne({Email: emailTest}); //HR User
-        const u2 =await user.findOne({Email: req.body.Email}); //User to be updated
-        const o = await location.findOne({roomName:req.body.officelocation});
-        console.log(o.roomName);
-        if(u.type=="HR"){
-            console.log("inside HR condition");
-            let locationCount= o.Count + 1;
-            console.log('locationCount '+locationCount);
-            console.log("Capacity" + o.Capacity);
-        if(u2.officelocation==o.roomName){
-            res.send("staff member is already located in this office");
-        } 
-        if(o.type=="office" && locationCount<=o.Capacity){
-
-            console.log("Capacity "+ o.Capacity);
- 
-             u2.officelocation=o.roomName;
-             o.Count=locationCount;
- 
-             
-             
-             o.save();
-           }  
-           else{
-             res.send("this room cannot accomodate your staff member")
- 
-           }
-            // await user.findOne({Email: req.body.Email}).update({$set:{signintime: timestamp}});
-           // u2.update({$set:{officelocation: req.body.officelocation}})
-    
-            u2.department=req.body.deaprtment;
-            u2.faculty=req.body.faculty;
-            u2.salary=req.body.salary;
-            u2.ID=req.body.ID;
-            u2.name=req.body.name;
-            u2.save();
-            res.send('update successful');
-        }
-
-        
-    
-    
-    res.send('This action can only be done if you are an HR member');
-    
-})
-
-
+///
     app.post('/updatePassword', async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
         var oldpassword = req.body.oldpassword;
@@ -413,12 +376,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         })
 
-    app.get('/hours', async(req,res)=>{
-
-        res.send('These are your hours');
-    })
-
-
+//
     app.delete('/deleteUser', (req,res)=>{
         const payload = jwt.verify(req.header('auth-token'),key);
         if(payload.type!='HR')
@@ -614,9 +572,16 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         })
 
-
+//
     app.delete('/deleteMember', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        const u3 =await user.findOne({Email: req.body.Email});
+        if(u3){
+
+        }
+        else{
+            res.send("user not found")
+        }
          //User to be deleted
         if(u.type=="HR"){
             const u2 =await user.deleteOne({Email: req.body.Email});
@@ -628,8 +593,11 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 //-------------------------------------------------------------------------------------------------------------------------------------------------
     app.post('/AddLocation',async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
-        //const f =await Faculties.findById({FacultyName:req.body.FacultyName})
-        
+        const l =await location.findOne({roomName:req.body.roomName})
+        if(l){
+            res.send("This Location is already created")
+        }
+        else{
             if(u.type=="HR"){
         const u=new location({
 
@@ -647,7 +615,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         }
 
       
-      
+    }
 
 
     }) 
@@ -677,23 +645,32 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
    app.delete('/DeleteLocation', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        const m = await location.findOne({roomName: req.body.roomName})
+        if(m){
+
+        }
+        else{
+            res.send("Not found")
+        }
          //User to be deleted
         if(u.type=="HR"){
             const l =await location.deleteOne({roomName: req.body.roomName});
             res.send('Deleted')
         }
-        res.send('Not Deleted')
+        res.send('HR ONLY')
     })
     
 
         
    app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-            //const f =await Faculties.findOne({FacultyName:req.body.FacultyName})
-            
+            const f =await faculties.findOne({facultyName:req.body.facultyName})
+            if(f){
+                res.send("this faculty already created")
+            }
+            else{
                 if(u.type=="HR"){
                 const u = new faculties({
-                 facultyId:req.body.facultyId,
                 facultyName:req.body.facultyName,
                 departmentsInFaculties:req.body.departmentsInFaculties,
                //{$push{departmentsInfaculties:name}} ,
@@ -706,27 +683,23 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             else{
                 res.send("HR ONLY");
             }
-        
+            }
         
             })   
-   app.post('/UpdateFaculty', async(req,res)=>{
-              /*  
-               
-                 await Faculties.findByIdAndUpdate(
-                    req.body.id,
-                    {
-                        $push : {
-                        departmentsInFaculties : req.body.departmentName
-                    }}
-                )*/
-                
 
+   app.post('/UpdateFaculty', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
-    const c = await faculties.findById(req.body.id)
+    const c = await faculties.findById(req.body.id);
+    if(c){
+
+    }
+    else{
+        res.send("not Found")
+    }
     if(u.type=="HR"){
         
         c.facultyName = req.body.facultyName
-        //c.Departmentid = req.body.Departmentid
+        c.departmentsInFaculties = req.body.departmentsInFaculties
         console.log(c.facultyName)
         await c.save()
     res.send("faculty updated")
@@ -738,10 +711,16 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
    
    app.delete('/deleteFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-            
+            const m = await faculties.findOne({facultyName: req.body.facultyName})
+            if(m){
+    
+            }
+            else{
+                res.send("Not found")
+            }
             //User to be deleted
            if(u.type=="HR"){
-               const l =await Faculties.deleteOne({facultyName: req.body.facultyName});
+               const l =await faculties.deleteOne({facultyName: req.body.facultyName});
                res.send('Deleted')
            }
            res.send('HR ONLY')
@@ -749,18 +728,27 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     
     app.post('/addDepartments' ,async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-              /*let fId = await Faculties.findById({Facultyid: req.body.Facultyid})
-                if( fId){
-               
+              const fId = await departements.findOne({DepartmentName: req.body.DepartmentName})
+              const f = await faculties.findById(req.body.id)
+              console.log(f)
+              if(f){
+
+              }
+              else{
+                  res.send("faculty Not Found")
+              }
+
+                if(fId){
+                    res.send("this department is already created")
                 }
                 else{
-                    res.send("not found")
-                }*/
+                    
+                
             if(u.type=="HR"){
                 const d = await new departements({
                     DepartmentName:req.body.DepartmentName,
                     FacultyName:req.body.FacultyName,
-                    Facultyid:req.body.Facultyid
+                    Facultyid:req.body.id
             })
             res.send("Department Added")
             await  d.save();
@@ -768,7 +756,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             else{
                 res.send("HR ONLY")
             }
-        
+                }
         })
 
 
@@ -800,15 +788,15 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     
     app.delete('/deleteDepartement', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
-        const l =await departements.findOne({Facultyid:req.body.Facultyid})
-        if(l){
+        const m =await departements.findOne({DepartmentName:req.body.DepartmentName})
+        if(m){
 
         }
         else{
             res.send("not found")
         }
        if(u.type=="HR"){
-           const l =await departements.deleteOne({Facultyid: req.body.Facultyid});
+           const l =await departements.deleteOne({DepartmentName:req.body.DepartmentName});
            res.send('Deleted')
        }
        res.send('HR ONLY')
@@ -816,17 +804,24 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
    app.post('/Addcourses', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
-    let ci;
-    if(u.type == "HOD"){
-         ci = req.body.CourseInstructor
+    const x = await courses.findOne({courseName:req.body.courseName});
+    const y = await departements.findById(req.body.id);
+    if(y){
+
     }
-   
-        if(u.type=="HR" || u.type == "HOD"){
+    else{
+        res.send(" department NOT FOUND")
+    }
+    if(x){
+     res.send("this course already created")
+    }
+    else{
+        if(u.type=="HR" ){
             
             const x = await new courses({
                 courseName:req.body.courseName,
                 DepartmentName:req.body.DepartmentName,
-                CourseInstructor:ci,
+                CourseInstructor:" ",
                 Departmentid:req.body.Departmentid
                 
             })
@@ -837,6 +832,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         else{
             res.send("HR ONLY");
         }
+    }
         }) 
     
    app.post('/updateCourse',async(req,res)=>{
@@ -846,14 +842,13 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     }
     else{
-        res.send("not found")
+        res.send("course not found")
     }
     if(u.type=="HR"){
         // await courses.updateOne({courseName: req.body.courseName})
           //await courses.updateOne({DepartmentName: req.body.DepartmentName})
         c.courseName = req.body.courseName
         c.DepartmentName =req.body.DepartmentName
-        c.CourseInstructor =req.body.CourseInstructor
         c.Departmentid = req.body.Departmentid
     console.log(c.DepartmentName)
     await c.save()
@@ -867,22 +862,22 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
    app.delete('/deleteCourse',async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
-    const c = await courses.findOne({Departmentid: req.body.Departmentid})
+    const c = await courses.findOne({courseName: req.body.courseName})
     if(c){
 
     }
     else{
-        res.send("not found")
+        res.send("course not found")
     }
     //User to be deleted
      if(u.type=="HR"){
-       const c =await courses.deleteOne({courseName: req.body.courseName});
+       const m =await courses.deleteOne({courseName: req.body.courseName});
        res.send('Deleted')
    }
    res.send('HR ONLY')
 })
 
-app.post('/updateInstructor', async(req,res)=>{
+  app.post('/AddUpdateInstructor', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
     const c = await courses.findById(req.body.id)
     if(c){
@@ -922,7 +917,7 @@ app.delete('/deleteinstructor',async(req,res)=>{
 
     }
     else{
-        res.send("not found")
+        res.send("COURSE not found")
     }
     if(u.type=="HOD"){
         c.CourseInstructor =""
@@ -937,12 +932,9 @@ app.delete('/deleteinstructor',async(req,res)=>{
 app.get('/ViewStaffByDepartment',async(req,res)=>{
     const y =await user.findOne({Email: emailTest});
     const c  =  req.body.department//u.HODdepartment
-    const m = req.body.courses
+   
    if(y.type == "HOD"){
-      if(c == null){
-        const n = await user.find({courses:m})
-         res.send(n)
-      }
+      
      const x = await user.find({department:c})
      
      res.send(x)
@@ -956,43 +948,59 @@ app.get('/ViewStaffByDepartment',async(req,res)=>{
 
 app.get('/ViewStaffdayoff',async(req,res)=>{
     const y =await user.findOne({Email: emailTest});
-    const c  =  req.body.department//u.HODdepartment
-    const u =await user.findOne({Email: emailTest});
     const u1 =await user.findOne({department: req.body.department});
+   // if(u1.department == y.department){
+
+   if(u1){
+
+   }
+   else{
+       res.send("Department not found")
+   }
    if(y.type == "HOD"){
-      
     // const x = await user.find({department:c})
-     
-     res.send("Day OFF:  " + u.dayoff)
+     res.send("Day OFF:  " + u1.dayoff)
     
     }
     else{
         res.send("HOD ONLY")
     }
-
+    //}
+    //else{
+    //res.send("NOT IN YOUR DEPARTMENT")
+    //}
 })
 
 app.get('/viewTeachingAssignments',async(req,res)=>{
-    const u = await user.findOne({DepartmentName: req.body.DepartmentName})
-    const u1 = await user.findOne({Email:req.body.Email})
+    const u1 = await user.findOne({Email:emailTest})
     const u2 = await user.findOne({Email:req.body.Email})
+    console.log(u1.Email)
      if(u1.type == "HOD"){
-        console.log(u2.Email)
+        if(u2.department == u1.department){
      const x  =  await slot.find({Email:u2.Email})
 
-     console.log(x[0].no)
-     res.send("Slot Name   " + x[0].no)
+     console.log(x)
+     res.send(x)
     }
+    else{
+        res.send("Not in your department")
+    }
+}
     else{
         res.send("HOD ONLY")
     }
 })
 
 app.get('/viewCoverage',async(req,res)=>{
+    const u1 = await user.findOne({Email:emailTest})
     const u = await user.find({type:req.body.type,department:req.body.department})
     const s = await slot.find({course:req.body.course})
+   
+    if(u1.type == "HOD"){
     let Coverage =0;
     let x;
+    if(u){
+        if(s){
     for(let i = 0; i<= u.length;i++){
          x = i+1;
        // res.send(i)
@@ -1010,17 +1018,32 @@ app.get('/viewCoverage',async(req,res)=>{
     Coverage = (y/x)*100
     console.log(Coverage)
     res.send("Coverage" +"="+ Coverage +"%")
+}
+else{
+    res.send("not found")
+}
+    }
+    else{
+    res("not found")
+
+    }
+}
+else{
+    res.send("HOD ONLY")
+}
 })
 
 app.get('/viewCoverageOfAssignedCourse', async(req,res)=>{
+    const u1 = await user.findOne({Email:emailTest})
     const u = await user.find({type:req.body.type,course:req.body.course})
     const s = await slot.find({course:req.body.course})
+
+    if(u1.type == "Instructor"){
     let Coverage =0;
     let x;
     for(let i = 0; i<= u.length;i++){
          x = i+1;
        // res.send(i)
-      
     }
     console.log(x)
    
@@ -1034,32 +1057,48 @@ app.get('/viewCoverageOfAssignedCourse', async(req,res)=>{
     Coverage = (y/x)*100
     console.log(Coverage)
     res.send("Coverage" +"="+ Coverage +"%")
+}
+else{
+    res.send("INSTRUCTORS ONLY")
+}
 })
 
 app.get('/viewAssignedSlots',async(req,res)=>{
+    const u = await user.findOne({Email:emailTest})
     const s = await slot.find({Email:req.body.Email})
-    res.send(s)
+    const s1 = await slot.findOne({Email:req.body.Email})
+
+    if(s1){
+        
+    }
+    else{
+         res.send("not found")
+    }
+    if(u.type == "Instructor"){
+        res.send(s)
+        }
+        else{
+            res.send("INSTRUCTORS ONLY")
+        }
+
+   
 })
 
 app.get('/ViewAllStaffForInstructor',async(req,res)=>{
-const u = await user.findOne({Email:req.body.Email})
-const u1 = await user.find({department:req.body.department})
-//const u2 = await user.find({course:req.body.course})
-/*let x;
-for(let i =0;i<u.course;i++){
-    if(u.course[i]==req.body.course){
-    x =u.course[i]
-    }
-    else{
-        res.send("course not found")
-    }
-}*/
-console.log(u1)
-if(u.type =="Instructor"){
-   // if(u){
-     //   res.send(u1 + "" + u)
-    //}
-   res.send(u1)
+const u = await user.findOne({Email:emailTest})
+const u1 = await user.findOne({department:req.body.department})
+const u2 = await user.find({department:req.body.department})
+if(u1){
+    
+}
+else{
+    res.send("department not found")
+}
+
+  if(u.type == "Instructor"){
+     console.log(u2)
+
+   res.send(u2)
 }
 else{
     res.send("instructors ONLY")
@@ -1067,78 +1106,52 @@ else{
 })
 
 app.post('/AssignUpdateDeleteTA',async(req,res)=>{//date:req.body.date,   time:  req.body.time,     no: req.body.no, 
+    const u1 = await user.findOne({Email:emailTest})
    const u = await slot.findOne({ day: req.body.day, time:  req.body.time,     no: req.body.no ,date:req.body.date})
-  // if(u){
+
+   if(u1.type == "Instructor"){
+   if(u){
     
-   //}
+   }
+   else{
+       res.send("unavailable slot")
+   }
    console.log(u)
    var x=req.body.Email;
    u.Email = x;
     u.save();
-   res.send("TA assigned")
+   res.send("DONE")
+}
+else{
+    res.send("INSTRUCTORS ONLY")
+}
    
 })
+
 app.post('/AssignCoordinator',async(req,res)=>{
+const u1 = await user.findOne({Email:emailTest})
  const u = await user.findOne({Email:req.body.Email})
- u.type == "Coordinator"
- await u.save()
- res.send("Coordinator Assigned")
+ if(u){
+
+ }
+ else{
+     res.send("user not found")
+ }
+ if(u1.type == "Instructor"){
+    u.type = "Coordinator"
+    await u.save()
+    console.log(u.type)
+    res.send("Coordinator Assigned")
+ }
+ else{
+     res.send("INSTRUCTOR ONLY")
+ }
 })
 
-app.post('/createEmptySlot',async(req,res)=>{
-    try{
-    //const u =await user.findOne({Email: emailTest}); //HR User
-    
-    //if(u.type=="Coordinator"){
-        console.log("creating") 
-        var dayz=req.body.day;
-        var noz=req.body.no;
-        var locationz=req.body.location;
-        const p =await slot.find({
-         location:locationz, day:dayz, no:noz
-        })
-
-        console.log(p);
-
-        if(p.length>0){
-
-            res.send("this slot is already scheduled");
-        }
-        if(noz>5){
-            res.send("you have maximum of 5 slots to choose from")
-        }
-       
-
-        if(p.length==0 && noz<=5 ){
-        const s=new slot({
-            Email:"",
-            day:dayz,
-            no:noz,
-            time:req.body.time,
-            location:locationz,
-            course:req.body.course,
-            date:req.body.date
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-        })
-        console.log(s)
-        console.log("creating"+s.Email)
-
-        s.save();
-
-        res.send("slot created");
-    }
-  //  }
-//res.send("you should be a course coordinator to be able to create an academic member's slot")
-    }
-    catch(error){
-        console.log("err")
-    }
-})
-
-
-app.post('/createSlot',async(req,res)=>{
+   app.post('/createSlot',async(req,res)=>{
     try{
     const u =await user.findOne({Email: emailTest}); //HR User
     
@@ -1192,11 +1205,7 @@ res.send("you should be a course coordinator to be able to create an academic me
     catch(error){
         console.log("err")
     }
-})
-
-
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  })
 
     app.post('/accessAttendance' ,async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
