@@ -4,12 +4,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const user = require('./user.js');
 const location=require('./location.js');
-const schedule=require('./schedule.js');
 const slotlinkingrequest=require('./slotlinkingrequest.js');
 const dayoffrequest=require('./dayoffrequest.js');
+const leaves=require('./leaves.js');
+const notification=require('./notification.js')
+const replacementrequest=require('./replacementrequest.js')
 const courses=require('./Courses.js');
 const HOD = require('./HOD.js');
-
+const faculties = require('./faculties');
 
 const slot=require('./slot.js');
 
@@ -40,17 +42,107 @@ let ACcounter =1;
 let HRcounter =1; 
 
 const app= express();
-
-//app.use(express.json());
-
-// latest test
-//test999
-// ess gamed N
-//this is sparta
-
 mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<dbname>?retryWrites=true&w=majority')
 .then(()=>{
     app.use(express.json());
+
+    var y = new Date().toLocaleDateString().split('/'); //Gets today's day
+    //console.log(y[1]); 
+    if(y[1] == '11'){ //today is the 11th (beginning of any month)
+        //Loop on users and add 2.5 days to annualLeaveBalance
+        for(let g = 0; g<user.length; g++){
+            user[g].annualLeaveBalance = user[g].annualLeaveBalance + 2.5;
+            user[g].update();
+            user[g].save();
+        }
+
+    }
+//----------------------------------------------------------------------------
+    (async function(){
+        var r = new Date().toLocaleDateString().split('/');
+        if(r[1] == '10'){
+            var userboyz = await user.find();
+            console.log(userboyz[1]);
+
+            for(let z = 0; z<user.length;z++){
+                var userboy = userboyz[z];
+                var day;
+                
+                switch (userboy.dayoff) {
+                    case "sunday":
+                      day = 0;
+                      break;
+                    case "monday":
+                        day = 1;
+                      break;
+                    case "tuesday":
+                        day = 2;
+                      break;
+                    case "wednesday":
+                      day = 3;
+                      break;
+                    case "thursday":
+                      day = 4;
+                      break;
+                    case "friday":
+                      day = 5;
+                      break;
+                    case "saturday":
+                      day = 6;
+                  } 
+                 
+                  var totalh=0, totalm=0;
+    
+                  for(let i =0; i<30; i++){
+                      var x = new Date(userboy.attendance[i].date).getDay();
+                      var misshours=504-(userboy.attendance[i].minsspent);
+                      
+                      console.log(userboy.attendance[i].date);
+          
+                      var num = misshours; 
+                      var hours = Math.floor(num / 60);  
+                      totalh += hours;
+                      var minutes = num % 60;
+                      totalm += minutes;    
+                      //console.log("missing hours: " + hours + " missing minutes: " + minutes); 
+                      console.log("total missing hours: " + totalh + " total missing minutes: " + totalm);  
+          
+                  }
+      
+                  var totalt = totalm + 60*totalh;
+      
+                  if(totalt <= ((2*60)+59) )
+                  userboy.updatedSalary = userboy.salary;
+      
+                  if(totalt > ((2*60)+59) ){
+                      //Every Min  --> salary = salary - salary/(180*60)
+                      //Every Hour --> salary = salary - salary/180
+                      userboy.updatedSalary = userboy.salary - (totalh * (userboy.salary/180) - totalm *(userboy.salary/(180*60)));
+                      
+                  }
+                  
+                  
+              for(let j =0; j<30; j++){
+                  var y = new Date(userboy.attendance[j].date).getDay();
+                  if(userboy.attendance[j].minsspent == 0 ){
+                      if( day != y){
+                          // console.log(u2.attendance[i].date);
+                          // console.log('Absent');
+                          userboy.updatedSalary -= userboy.updatedSalary/60;
+                      }
+                  }
+                }
+                  
+                  userboy.update();
+                  userboy.save();
+                  console.log(userboy.updatedSalary);
+                  console.log('Salary Updated Successfully!');
+                  
+        }}
+        
+       }
+       
+       )();
 
     app.post('/register', async (req,res)=>{
 
@@ -75,7 +167,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         //validate data first
         const salt = await bcrypt.genSalt(12);
-        const hashedPassword= await bcrypt.hash(req.body.password,salt);
+        const hashedPassword= await bcrypt.hash("12345",salt);
         if(req.body.type=="HR"){
            //var idv = "HR" + HRcounter;
            var idv2 = HRcounter.toString();
@@ -90,6 +182,12 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             df=req.body.dayoff;
         }
         const o = await location.findOne({roomName:req.body.officelocation});
+        if(o){
+
+        }
+        else{
+            res.send("Location not found")
+        }
         console.log(o.roomName);
         let locationCount= o.Count + 1;
         console.log('locationCount '+locationCount);
@@ -108,14 +206,17 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             console.log("o.Count "+ o.Count);
 
            }
-          
+           var typetest= req.body.type;
+           if(typetest=="Coordinator"){
+               res.send("The course instructor only can register a course coordinator")
+           }
         
 
         var u = new user({
             Email: req.body.Email,
             name: req.body.name,
             ID: idv,
-            type: req.body.type,
+            type:typetest,
             password: hashedPassword,
             salary:req.body.salary,
             faculty:f,
@@ -125,6 +226,10 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             firstTime:req.body.firstTime,
             newpassword:req.body.newpassword,
             dayoff:df,
+            annualLeaveBalance:0,
+            accidentalLeaveBalance:6,
+            
+
             courses:c
         })
        
@@ -215,8 +320,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     })
 
-    app.use(authenticate); //works on  any route under it
-
+   // app.use(authenticate); //works on  any route under it
+///
     app.get('/profile', async(req,res)=>{
 
         try{
@@ -224,14 +329,15 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             const u =await user.findOne({Email: emailTest});
             //console.log(u.name);
             //res.send(`login successful ${u.name}`);
-            res.send('Here is your profile' + '\n' + u.name + ' ' +  u.ID);
+            res.send(u);
+            
             }
             catch(err){
             console.log('err');
             } 
     })
 
-
+//
     app.post('/logout', async(req,res)=>{
         const u =await user.findOne({Email: req.body.Email})
 
@@ -241,46 +347,20 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
            // {signouttime: timestamp}});
        // u.signouttime = current.toLocaleDateString() + current.toLocaleTimeString()
        // res.send("Sign out time: " + signouttime);
-       u.save;
+      // u.save;
         res.send(`logout successful`);
     })
 
-
     app.post('/updateProfile', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
-        const u2 =await user.findOne({Email: req.body.Email}); //User to be updated
-        const o = await location.findOne({roomName:req.body.officelocation});
-        console.log(o.roomName);
+        const u2 =await user.findOne({Email: req.body.Email}); 
         if(u.type=="HR"){
+            if(u2){}
+            else{res.send("user not found")}
             console.log("inside HR condition");
-            let locationCount= o.Count + 1;
-            console.log('locationCount '+locationCount);
-            console.log("Capacity" + o.Capacity);
-        if(u2.officelocation==o.roomName){
-            res.send("staff member is already located in this office");
-        } 
-        if(o.type=="office" && locationCount<=o.Capacity){
-
-            console.log("Capacity "+ o.Capacity);
- 
-             u2.officelocation=o.roomName;
-             o.Count=locationCount;
- 
-             
-             
-             o.save();
-           }  
-           else{
-             res.send("this room cannot accomodate your staff member")
- 
-           }
-            // await user.findOne({Email: req.body.Email}).update({$set:{signintime: timestamp}});
-           // u2.update({$set:{officelocation: req.body.officelocation}})
-    
-            u2.department=req.body.deaprtment;
+            u2.department=req.body.department;
             u2.faculty=req.body.faculty;
             u2.salary=req.body.salary;
-            u2.ID=req.body.ID;
             u2.name=req.body.name;
             u2.save();
             res.send('update successful');
@@ -293,7 +373,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     
 })
 
-
+///
     app.post('/updatePassword', async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
         var oldpassword = req.body.oldpassword;
@@ -313,9 +393,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
        // u.password= new password
     })
 
-
-    app.post('/attendance', async(req,res)=>{
-        const u =await user.findOne({Email: req.body.Email});
+    app.get('/attendance', async(req,res)=>{
+        const u =await user.findOne({Email: emailTest});
         for(let i =0; i<30; i++){
             //input month
             //compared with first or second elemnts of date string (u.attendance[i].date)
@@ -413,12 +492,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         })
 
-    app.get('/hours', async(req,res)=>{
-
-        res.send('These are your hours');
-    })
-
-
+//
     app.delete('/deleteUser', (req,res)=>{
         const payload = jwt.verify(req.header('auth-token'),key);
         if(payload.type!='HR')
@@ -614,22 +688,32 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
         })
 
-
+//
     app.delete('/deleteMember', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        const u3 =await user.findOne({Email: req.body.Email});
+        if(u3){
+
+        }
+        else{
+            res.send("user not found")
+        }
          //User to be deleted
         if(u.type=="HR"){
             const u2 =await user.deleteOne({Email: req.body.Email});
             res.send('Deleted')
         }
         res.send('Not Deleted')
-    }
-    )
+    })
+    
 //-------------------------------------------------------------------------------------------------------------------------------------------------
     app.post('/AddLocation',async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
-        //const f =await Faculties.findById({FacultyName:req.body.FacultyName})
-        
+        const l =await location.findOne({roomName:req.body.roomName})
+        if(l){
+            res.send("This Location is already created")
+        }
+        else{
             if(u.type=="HR"){
         const u=new location({
 
@@ -647,7 +731,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         }
 
       
-      
+    }
 
 
     }) 
@@ -677,23 +761,32 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
    app.delete('/DeleteLocation', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        const m = await location.findOne({roomName: req.body.roomName})
+        if(m){
+
+        }
+        else{
+            res.send("Not found")
+        }
          //User to be deleted
         if(u.type=="HR"){
             const l =await location.deleteOne({roomName: req.body.roomName});
             res.send('Deleted')
         }
-        res.send('Not Deleted')
+        res.send('HR ONLY')
     })
     
 
         
    app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-            //const f =await Faculties.findOne({FacultyName:req.body.FacultyName})
-            
+            const f =await faculties.findOne({facultyName:req.body.facultyName})
+            if(f){
+                res.send("this faculty already created")
+            }
+            else{
                 if(u.type=="HR"){
                 const u = new faculties({
-                 facultyId:req.body.facultyId,
                 facultyName:req.body.facultyName,
                 departmentsInFaculties:req.body.departmentsInFaculties,
                //{$push{departmentsInfaculties:name}} ,
@@ -706,27 +799,23 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             else{
                 res.send("HR ONLY");
             }
-        
+            }
         
             })   
-   app.post('/UpdateFaculty', async(req,res)=>{
-              /*  
-               
-                 await Faculties.findByIdAndUpdate(
-                    req.body.id,
-                    {
-                        $push : {
-                        departmentsInFaculties : req.body.departmentName
-                    }}
-                )*/
-                
 
+   app.post('/UpdateFaculty', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
-    const c = await faculties.findById(req.body.id)
+    const c = await faculties.findById(req.body.id);
+    if(c){
+
+    }
+    else{
+        res.send("not Found")
+    }
     if(u.type=="HR"){
         
         c.facultyName = req.body.facultyName
-        //c.Departmentid = req.body.Departmentid
+        c.departmentsInFaculties = req.body.departmentsInFaculties
         console.log(c.facultyName)
         await c.save()
     res.send("faculty updated")
@@ -738,10 +827,16 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
    
    app.delete('/deleteFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-            
+            const m = await faculties.findOne({facultyName: req.body.facultyName})
+            if(m){
+    
+            }
+            else{
+                res.send("Not found")
+            }
             //User to be deleted
            if(u.type=="HR"){
-               const l =await Faculties.deleteOne({facultyName: req.body.facultyName});
+               const l =await faculties.deleteOne({facultyName: req.body.facultyName});
                res.send('Deleted')
            }
            res.send('HR ONLY')
@@ -749,18 +844,27 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     
     app.post('/addDepartments' ,async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
-              /*let fId = await Faculties.findById({Facultyid: req.body.Facultyid})
-                if( fId){
-               
+              const fId = await departements.findOne({DepartmentName: req.body.DepartmentName})
+              const f = await faculties.findById(req.body.id)
+              console.log(f)
+              if(f){
+
+              }
+              else{
+                  res.send("faculty Not Found")
+              }
+
+                if(fId){
+                    res.send("this department is already created")
                 }
                 else{
-                    res.send("not found")
-                }*/
+                    
+                
             if(u.type=="HR"){
                 const d = await new departements({
                     DepartmentName:req.body.DepartmentName,
                     FacultyName:req.body.FacultyName,
-                    Facultyid:req.body.Facultyid
+                    Facultyid:req.body.id
             })
             res.send("Department Added")
             await  d.save();
@@ -768,7 +872,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             else{
                 res.send("HR ONLY")
             }
-        
+                }
         })
 
 
@@ -800,15 +904,15 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     
     app.delete('/deleteDepartement', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
-        const l =await departements.findOne({Facultyid:req.body.Facultyid})
-        if(l){
+        const m =await departements.findOne({DepartmentName:req.body.DepartmentName})
+        if(m){
 
         }
         else{
             res.send("not found")
         }
        if(u.type=="HR"){
-           const l =await departements.deleteOne({Facultyid: req.body.Facultyid});
+           const l =await departements.deleteOne({DepartmentName:req.body.DepartmentName});
            res.send('Deleted')
        }
        res.send('HR ONLY')
@@ -816,17 +920,24 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
    app.post('/Addcourses', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
-    let ci;
-    if(u.type == "HOD"){
-         ci = req.body.CourseInstructor
+    const x = await courses.findOne({courseName:req.body.courseName});
+    const y = await departements.findById(req.body.id);
+    if(y){
+
     }
-   
-        if(u.type=="HR" || u.type == "HOD"){
+    else{
+        res.send(" department NOT FOUND")
+    }
+    if(x){
+     res.send("this course already created")
+    }
+    else{
+        if(u.type=="HR" ){
             
             const x = await new courses({
                 courseName:req.body.courseName,
                 DepartmentName:req.body.DepartmentName,
-                CourseInstructor:ci,
+                CourseInstructor:" ",
                 Departmentid:req.body.Departmentid
                 
             })
@@ -837,6 +948,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         else{
             res.send("HR ONLY");
         }
+    }
         }) 
     
    app.post('/updateCourse',async(req,res)=>{
@@ -846,14 +958,13 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     }
     else{
-        res.send("not found")
+        res.send("course not found")
     }
     if(u.type=="HR"){
         // await courses.updateOne({courseName: req.body.courseName})
           //await courses.updateOne({DepartmentName: req.body.DepartmentName})
         c.courseName = req.body.courseName
         c.DepartmentName =req.body.DepartmentName
-        c.CourseInstructor =req.body.CourseInstructor
         c.Departmentid = req.body.Departmentid
     console.log(c.DepartmentName)
     await c.save()
@@ -867,22 +978,22 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
    app.delete('/deleteCourse',async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
-    const c = await courses.findOne({Departmentid: req.body.Departmentid})
+    const c = await courses.findOne({courseName: req.body.courseName})
     if(c){
 
     }
     else{
-        res.send("not found")
+        res.send("course not found")
     }
     //User to be deleted
      if(u.type=="HR"){
-       const c =await courses.deleteOne({courseName: req.body.courseName});
+       const m =await courses.deleteOne({courseName: req.body.courseName});
        res.send('Deleted')
    }
    res.send('HR ONLY')
 })
 
-app.post('/updateInstructor', async(req,res)=>{
+  app.post('/AddUpdateInstructor', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
     const c = await courses.findById(req.body.id)
     if(c){
@@ -922,7 +1033,7 @@ app.delete('/deleteinstructor',async(req,res)=>{
 
     }
     else{
-        res.send("not found")
+        res.send("COURSE not found")
     }
     if(u.type=="HOD"){
         c.CourseInstructor =""
@@ -937,12 +1048,9 @@ app.delete('/deleteinstructor',async(req,res)=>{
 app.get('/ViewStaffByDepartment',async(req,res)=>{
     const y =await user.findOne({Email: emailTest});
     const c  =  req.body.department//u.HODdepartment
-    const m = req.body.courses
+   
    if(y.type == "HOD"){
-      if(c == null){
-        const n = await user.find({courses:m})
-         res.send(n)
-      }
+      
      const x = await user.find({department:c})
      
      res.send(x)
@@ -956,43 +1064,59 @@ app.get('/ViewStaffByDepartment',async(req,res)=>{
 
 app.get('/ViewStaffdayoff',async(req,res)=>{
     const y =await user.findOne({Email: emailTest});
-    const c  =  req.body.department//u.HODdepartment
-    const u =await user.findOne({Email: emailTest});
     const u1 =await user.findOne({department: req.body.department});
+   // if(u1.department == y.department){
+
+   if(u1){
+
+   }
+   else{
+       res.send("Department not found")
+   }
    if(y.type == "HOD"){
-      
     // const x = await user.find({department:c})
-     
-     res.send("Day OFF:  " + u.dayoff)
+     res.send("Day OFF:  " + u1.dayoff)
     
     }
     else{
         res.send("HOD ONLY")
     }
-
+    //}
+    //else{
+    //res.send("NOT IN YOUR DEPARTMENT")
+    //}
 })
 
 app.get('/viewTeachingAssignments',async(req,res)=>{
-    const u = await user.findOne({DepartmentName: req.body.DepartmentName})
-    const u1 = await user.findOne({Email:req.body.Email})
+    const u1 = await user.findOne({Email:emailTest})
     const u2 = await user.findOne({Email:req.body.Email})
+    console.log(u1.Email)
      if(u1.type == "HOD"){
-        console.log(u2.Email)
+        if(u2.department == u1.department){
      const x  =  await slot.find({Email:u2.Email})
 
-     console.log(x[0].no)
-     res.send("Slot Name   " + x[0].no)
+     console.log(x)
+     res.send(x)
     }
+    else{
+        res.send("Not in your department")
+    }
+}
     else{
         res.send("HOD ONLY")
     }
 })
 
 app.get('/viewCoverage',async(req,res)=>{
+    const u1 = await user.findOne({Email:emailTest})
     const u = await user.find({type:req.body.type,department:req.body.department})
     const s = await slot.find({course:req.body.course})
+   
+    if(u1.type == "HOD"){
     let Coverage =0;
     let x;
+    if(u){
+        if(s){
     for(let i = 0; i<= u.length;i++){
          x = i+1;
        // res.send(i)
@@ -1010,17 +1134,32 @@ app.get('/viewCoverage',async(req,res)=>{
     Coverage = (y/x)*100
     console.log(Coverage)
     res.send("Coverage" +"="+ Coverage +"%")
+}
+else{
+    res.send("not found")
+}
+    }
+    else{
+    res("not found")
+
+    }
+}
+else{
+    res.send("HOD ONLY")
+}
 })
 
 app.get('/viewCoverageOfAssignedCourse', async(req,res)=>{
+    const u1 = await user.findOne({Email:emailTest})
     const u = await user.find({type:req.body.type,course:req.body.course})
     const s = await slot.find({course:req.body.course})
+
+    if(u1.type == "Instructor"){
     let Coverage =0;
     let x;
     for(let i = 0; i<= u.length;i++){
          x = i+1;
        // res.send(i)
-      
     }
     console.log(x)
    
@@ -1034,32 +1173,48 @@ app.get('/viewCoverageOfAssignedCourse', async(req,res)=>{
     Coverage = (y/x)*100
     console.log(Coverage)
     res.send("Coverage" +"="+ Coverage +"%")
+}
+else{
+    res.send("INSTRUCTORS ONLY")
+}
 })
 
 app.get('/viewAssignedSlots',async(req,res)=>{
+    const u = await user.findOne({Email:emailTest})
     const s = await slot.find({Email:req.body.Email})
-    res.send(s)
+    const s1 = await slot.findOne({Email:req.body.Email})
+
+    if(s1){
+        
+    }
+    else{
+         res.send("not found")
+    }
+    if(u.type == "Instructor"){
+        res.send(s)
+        }
+        else{
+            res.send("INSTRUCTORS ONLY")
+        }
+
+   
 })
 
 app.get('/ViewAllStaffForInstructor',async(req,res)=>{
-const u = await user.findOne({Email:req.body.Email})
-const u1 = await user.find({department:req.body.department})
-//const u2 = await user.find({course:req.body.course})
-/*let x;
-for(let i =0;i<u.course;i++){
-    if(u.course[i]==req.body.course){
-    x =u.course[i]
-    }
-    else{
-        res.send("course not found")
-    }
-}*/
-console.log(u1)
-if(u.type =="Instructor"){
-   // if(u){
-     //   res.send(u1 + "" + u)
-    //}
-   res.send(u1)
+const u = await user.findOne({Email:emailTest})
+const u1 = await user.findOne({department:req.body.department})
+const u2 = await user.find({department:req.body.department})
+if(u1){
+    
+}
+else{
+    res.send("department not found")
+}
+
+  if(u.type == "Instructor"){
+     console.log(u2)
+
+   res.send(u2)
 }
 else{
     res.send("instructors ONLY")
@@ -1067,78 +1222,52 @@ else{
 })
 
 app.post('/AssignUpdateDeleteTA',async(req,res)=>{//date:req.body.date,   time:  req.body.time,     no: req.body.no, 
+    const u1 = await user.findOne({Email:emailTest})
    const u = await slot.findOne({ day: req.body.day, time:  req.body.time,     no: req.body.no ,date:req.body.date})
-  // if(u){
+
+   if(u1.type == "Instructor"){
+   if(u){
     
-   //}
+   }
+   else{
+       res.send("unavailable slot")
+   }
    console.log(u)
    var x=req.body.Email;
    u.Email = x;
     u.save();
-   res.send("TA assigned")
+   res.send("DONE")
+}
+else{
+    res.send("INSTRUCTORS ONLY")
+}
    
 })
+
 app.post('/AssignCoordinator',async(req,res)=>{
+const u1 = await user.findOne({Email:emailTest})
  const u = await user.findOne({Email:req.body.Email})
- u.type == "Coordinator"
- await u.save()
- res.send("Coordinator Assigned")
+ if(u){
+
+ }
+ else{
+     res.send("user not found")
+ }
+ if(u1.type == "Instructor"){
+    u.type = "Coordinator"
+    await u.save()
+    console.log(u.type)
+    res.send("Coordinator Assigned")
+ }
+ else{
+     res.send("INSTRUCTOR ONLY")
+ }
 })
 
-app.post('/createEmptySlot',async(req,res)=>{
-    try{
-    //const u =await user.findOne({Email: emailTest}); //HR User
-    
-    //if(u.type=="Coordinator"){
-        console.log("creating") 
-        var dayz=req.body.day;
-        var noz=req.body.no;
-        var locationz=req.body.location;
-        const p =await slot.find({
-         location:locationz, day:dayz, no:noz
-        })
-
-        console.log(p);
-
-        if(p.length>0){
-
-            res.send("this slot is already scheduled");
-        }
-        if(noz>5){
-            res.send("you have maximum of 5 slots to choose from")
-        }
-       
-
-        if(p.length==0 && noz<=5 ){
-        const s=new slot({
-            Email:"",
-            day:dayz,
-            no:noz,
-            time:req.body.time,
-            location:locationz,
-            course:req.body.course,
-            date:req.body.date
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-
-        })
-        console.log(s)
-        console.log("creating"+s.Email)
-
-        s.save();
-
-        res.send("slot created");
-    }
-  //  }
-//res.send("you should be a course coordinator to be able to create an academic member's slot")
-    }
-    catch(error){
-        console.log("err")
-    }
-})
-
-
-app.post('/createSlot',async(req,res)=>{
+   app.post('/createSlot',async(req,res)=>{
     try{
     const u =await user.findOne({Email: emailTest}); //HR User
     
@@ -1192,11 +1321,7 @@ res.send("you should be a course coordinator to be able to create an academic me
     catch(error){
         console.log("err")
     }
-})
-
-
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+  })
 
     app.post('/accessAttendance' ,async(req,res)=>{
         const u =await user.findOne({Email: emailTest});
@@ -1543,9 +1668,83 @@ res.send("you should be a course coordinator to be able to create an academic me
 
 
     })
+//ZOZZA__________________________________________________________________________________
 
-   
 
+    app.post('/createSlot',async(req,res)=>{
+        try{
+        const u =await user.findOne({Email: emailTest}); //HR User
+        
+        if(u.type=="Coordinator"){
+            console.log("creating")
+            var emailz=req.body.Email;
+            var dayz=req.body.day;
+            var coursez=req.body.course;
+
+            if(emailz!=null){
+            const u1=await user.findOne({Email: emailz});
+            var dayoffz=u1.dayoff; 
+            if(dayz==dayoffz){
+                res.send("you cant schedule a slot on academic member's day off")
+            }        
+            var numero=0;
+                            }
+
+            else{
+                var numero=1;
+            }
+        
+
+       
+            var noz=req.body.no;
+            var locationz=req.body.location;
+
+            const p =await slot.find({
+             location:locationz, day:dayz, no:noz,course:coursez
+            })
+
+            console.log(p);
+
+            if(p.length>0){
+
+                res.send("this slot is already scheduled");
+            }
+            else if(noz>5){
+                res.send("you have maximum of 5 slots to choose from")
+            }
+            
+    
+            else if(p.length==0 && noz<=5 && dayz!=dayoffz){
+            
+            const s=new slot({
+                Email:emailz,
+                day:dayz,
+                no:noz,
+                available:numero,
+                time:req.body.time,
+                location:req.body.location,
+                course:coursez,
+                date:req.body.date
+
+
+
+            })
+            console.log("creating"+s.Email)
+
+            s.save();
+
+            res.send("slot created");
+        }
+        }
+        else{
+    res.send("you should be a course coordinator to be able to create an academic member's slot")}
+        }
+        catch(error){
+            console.log("err")
+        }
+    }) //tamam
+
+    
 
     app.get('/viewSlot',async(req,res)=>{
     const o =await user.findOne({Email:emailTest})
@@ -1565,7 +1764,7 @@ res.send("you should be a course coordinator to be able to create an academic me
     }
 
 
-    })
+    })//tamam
 
 
 
@@ -1580,11 +1779,13 @@ res.send("you should be a course coordinator to be able to create an academic me
     var newcourse=req.body.newcourse;
 const o=await user.findOne({Email:emailTest});
 const u =await slot.findOne({Email: mail,day:dayz,no:noz})
-if(o.type=="coursecoordinator"){
-   if(newday!=null){
+const u1=await user.findOne({Email:mail});
+if(o.type=="Coordinator"){
+   if(newday!=null && u1.dayoff!=newday){
        console.log("bamoottttt");
        u.day=newday;
    }    
+   
 
     if(newno!=null){
         u.no=newno;
@@ -1600,6 +1801,9 @@ if(o.type=="coursecoordinator"){
     
      if(newcourse!=null){
     u.course=newcourse;    
+    }
+    if(newday==u1.dayoff){
+        res.send("couldnt update the day to be on TA's day")
     }
     //const x=u[0];
   /*  console.log(u.day);
@@ -1617,177 +1821,93 @@ if(o.type=="coursecoordinator"){
 else{
         res.send("you should be a course coordinator to be able to update an academic member's slot")}
         //console.log(d);
-}
+})
 
-    )
+    //tamam
 
 
     app.delete('/deleteSlot',async(req,res)=>{
     const c =await user.findOne({Email: emailTest});
-    if(c.type=="coursecoordinator"){
+    if(c.type=="Coordinator"){
 
         var mail=req.body.Email;
         var dayz=req.body.day;
         var noz=req.body.no;
-
+    const u1=await slot.find({Email:mail,day:dayz,no:noz})
+    if(u1.length==0){
+        res.send("slot already doesnt exist")
+    }
+    else{
     const u =await slot.findOneAndDelete({Email: mail,day:dayz,no:noz})
        
 
             u.save();
             res.send("deleted")
             //console.log(d);
-    }
+    }}
     else{
         res.send("you should be a course coordinator to be granted this privilege")
     }
 
-        })
-
-    app.delete('/deleteSchedule',async(req,res)=>{
-        const u =await user.findOne({Email: emailTest}); //HR User
-        if(u.type=="HR"){
-            console.log("aho ha delete aho");
-            const l =await schedule.findOneAndDelete({Email: req.body.Email});
-            
-            res.send('Deleted')
-        }
-        res.send('Not Deleted')
-
-        
-    })
-
-   app.post('/updateSchedule',async(req,res)=>{
-    var v1=0;
-    var v2=0;
-    var v3=0;
-   var v4=0;
-    var v5=0;
-    var v6=0;
-
-    const u =await user.findOne({Email: emailTest});
-     //HR User
-    if(u.type=="HR"){
-        ///get the schedule of the ta with taNAme x
-        const o=await schedule.findOne({Email: req.body.Email});
-        ///ask for the day you want to update
-        var day=req.body.day;
-        console.log(day);
-        /*if(day="saturday"||day="sunday"||day!="monday"||day!="tuesday"||day!="wednesday"||day!="thursday"){
-            res.send("enter a valid day");
-        }*/
-        ///ask for slot you want to update
-        slot=req.body.slot;
-        //slot=slot-1;
-        console.log(slot);
-        if(slot<0 || slot>4){
-            res.send("please choose a valid slot")
-        }
-        //ask for course to update with
-        var x=req.body.course;
-        console.log(x);
-        //update
-        
-        switch(day) {
-            case "saturday":
-              o.saturday[slot]=x;
-              break;
-            case "sunday":
-                let z =""+x+"";
-                console.log(o.sunday);
-                //var sun=o.sunday;
-                //sun[slot]=z;
-                o.sunday[slot]=z;
-                //o.sunday.save();
-                console.log("z: "+z);
-                //console.log("sun: "+sun);
-                console.log(o.sunday);
-                o.update();
-                o.save();
-
-                
-  
-                
-  
-
-              break;
-              case "monday":
-                o.monday[slot]=x;
-
-              break;
-              case "tuesday":
-                o.tuesday[slot]=x;
-
-              break;
-              case "wednesday":
-                o.wednesday[slot]=x;
-
-              break;
-              case "thursday":
-                o.thursday[slot]=x;
-
-              break;
-            default:
-                res.send("updated");
-          }
+        })//tamam
 
 
+   app.get('/viewAvailableSlots',async(req,res)=>{
+    const g=await user.findOne({Email:emailTest});
+    if(g.type=="TA"){
+    const s= await slot.find({course:req.body.course,available:1})
+    res.send(s);
 
-        
-          
-    res.send(" schedule updated");
-
-        }
-
-
-
-
-
-
+    }
    })
-   
-   app.get('/viewSchedule',async(req,res)=>{
-    
-        try{// const u =await user.findOne({Email: req.header('Email')});
-         const u =await schedule.findOne({Email: emailTest});
-         const o=await user.findOne({Email:emailTest});
-         console.log(o.type);
-        if(o.type=="TA" || o.type=="instructor"){
-         console.log(o.name);
-         //res.send(`login successful ${u.name}`);
-        var x= "saturday: " + u.saturday +'\n' + "sunday: " + u.sunday+'\n' +"monday: " + u.monday+'\n' + "tuesday: " +
-         u.tuesday+ '\n' +"wednesday: " + u.wednesday+ '\n' +"thursday: " + u.thursday;
-        console.log(x);
-         res.send("here is your schedule " + '\n' + x);
-         
-        }
-        else{
-            res.send(" you should be academic staff to be able to view your schedule" )
-        }
-        }
 
-        catch(err){
-            console.log(err);
-        }
-    
-    
-
-
-
-
-   })
 
    app.post('/sendslotlinkingrequest',async(req,res)=>{
     const u =await user.findOne({Email: emailTest});
+    var CourseCoordinatorEmailTest=req.body.CourseCoordinatorEmail;
+    var dayTest=req.body.day;
+    var slotTest=req.body.slot;
+    var courseTest=req.body.course;
+
         if(u.type=="TA"){
+        const availableSlot=await slot.findOne({day:dayTest,no:slotTest,course:courseTest})
+
+        if(availableSlot==null){
+            res.send("slot not found")
+
+
+        }
+        else{
+            var availabletest=availableSlot.available;
+
+        }     
+        if(availabletest==0){
+            res.send("slot unavailable for you to teach")
+        } 
+        var flag=0;
+        for(let i=0;i<u.courses.length;i++){
+            if(u.courses[i]==courseTest){
+                flag=1;
+                break;
+            }
+
+        }
+        if(flag==0){
+            res.send("you dont teach this course!")
+        }
+
+
         const s = new slotlinkingrequest({
         Email:emailTest,
-        CourseCoordinatorEmail:req.body.CourseCoordinatorEmail,
-        day:req.body.day,
-        slot:req.body.slot,
-        course:req.body.course,
-        accepted:0
+        CourseCoordinatorEmail:CourseCoordinatorEmailTest,
+        day:dayTest,
+        slot:slotTest,
+        course:courseTest,
+        accepted:0,
+        status:"pending"
         
     })
+    
     s.save();
     res.send("slot linking request sent")}
     else{
@@ -1802,7 +1922,7 @@ else{
    app.get('/viewslotlinkingrequest',async(req,res)=>{
     const u =await user.findOne({Email: emailTest});
 
-    if(u.type=="coursecoordinator"){
+    if(u.type=="Coordinator"){
 
         const u1 =await slotlinkingrequest.find({CourseCoordinatorEmail: emailTest});
         res.send(u1);
@@ -1812,58 +1932,88 @@ else{
    })
 
 
-   app.get('/acceptslotlinkingrequest',async(req,res)=>{
+   app.post('/acceptslotlinkingrequest',async(req,res)=>{
+try{
     const u =await user.findOne({Email: emailTest});
-    
-    if(u.type=="coursecoordinator"){
-//getting slot linking request
+    ///getting course coordinator after logging in
+
+
+    if(u.type=="Coordinator"){
+    //getting slot linking request
     const u1 =await slotlinkingrequest.findById(req.body.id);
-   /* console.log(u1);
-    for(let i=0;i<ux.length;i++){
-     console.log("kosom acl")
-    const u1=ux[i];*/
+
 
     var mailz= u1.Email; //ta mail
     var dayz=u1.day;//day of slot
     var slotz=u1.slot;//slot no
     var coursez=u1.course;//course
-//getting day off
+    var ax=req.body.accepted;
+
+
+    //getting day off
     const u2= await user.findOne({Email:mailz})
+    var userdayoff=u2.dayoff; 
 
-    var userdayoff=u2.dayoff; //getting dayoff
 
-    console.log(mailz)
-    console.log(userdayoff)
     
-//checking to see if we have a slot at the sametime of the request     
-    const u3 =await slot.findOne({Email: mailz,day:dayz,no:slotz})
+    //checking to see if we have a slot at the sametime of the request     
+    const u3 =await slot.findOne({day:dayz,no:slotz,course:coursez})
     console.log("bakrah acl  "+u3);
+    //checking to see if we have a slot on dayoff  
+        if(dayz==userdayoff){
+            u1.accepted=0;
+            u1.status="rejected";
+            const n=new notification({
+            Email:mailz,
+            Message:"your slot linking request has been rejected by your course coordinator",
+            courseCoordinatorEmail:emailTest
+           // headOfDepartementEmail:String
 
-    if(dayz==userdayoff){
-        res.send("you cant add a slot on your dayoff")
+        })
+        u1.save()
+        n.save();
+
+        res.send("slot cant be added on a day off")
 
     }
 
-    if(u3!=null){
-        res.send("you already have this slot scheduled")
-        
-    }
-
-
-
-
-
-
-        var ax=req.body.accepted;
-        u1.accepted=ax;
-        console.log(ax);
-        console.log(mailz);
-        
-        u1.update();
+   else if(u3.available==0){
+        u1.accepted=0;
+        u1.status="rejected";
+        const n=new notification({
+            Email:mailz,
+            Message:"your slot linking request has been rejected by your course coordinator",
+            courseCoordinatorEmail:emailTest
+           // headOfDepartementEmail:String
+        })
         u1.save();
-        if(ax==1){
+        n.save();
+        res.send(" this slot is already scheduled");
+        
+    }
+//u3.length==0 || 
+    //checking to see if we have a slot at the sametime of the request  
+    
+
+
+    
+    //u3.length==0
+else if( u3.available==1 && dayz!=userdayoff && ax==1){
+        
+    //u1.accepted=ax;
+    console.log(ax);
+    console.log(mailz);
+        
+            u1.accepted=ax;
+            u1.status="accepted";
+            u3.available=0;
             
-            const s=new slot({
+
+            const s=await slot.findOne({day:dayz,no:slotz,course:coursez})
+            s.available=0;
+            s.Email=mailz;
+
+            /*const s=new slot({
                 Email:mailz,
                 day:dayz,
                 no:slotz,
@@ -1873,43 +2023,92 @@ else{
 
 
 
+            })*/
+
+
+            
+            const n=new notification({
+                Email:mailz,
+                Message:"your slot linking request has been accepted by your course coordinator and has been added to your slots",
+                courseCoordinatorEmail:emailTest
+               // headOfDepartementEmail:String
+
             })
-            s.save()
-            res.send("viewed")
+            n.save();
+            s.save();
+            u1.save();
+            u3.save();
+            res.send("viewed and accepted")
 
 
-        }}
+        }
+
+
+
+
+   if(ax==0){     
+        u1.status="rejected";
+        const n=new notification({
+            Email:mailz,
+            Message:"your slot linking request has been rejected by your course coordinator",
+            courseCoordinatorEmail:emailTest
+           // headOfDepartementEmail:String
+
+        })
+        n.save();
+        u1.save();
+        res.send("viewed and rejected ")
+
+    }
+    }
+    else{
         res.send("you should be a course coordinator to be granted this privilege")
         
-
+    }
 
         
     
 
 
 
-   })
+   }
+   catch(error){
+
+    console.log("err");
+   }
+
+    })
 
    app.post('/submitdayoffrequest',async(req,res)=>{
     
     const u =await user.findOne({Email: emailTest});
         if(u.type=="TA"){
+        var Head=req.body.headOfDepartementEmail;
+        const u1 =await user.findOne({Email: Head});
+        if(u1.department!=u.department){
+            res.send("This HOD is not responsible for your department!")
+
+        }
+        else{
+
         const d = new dayoffrequest({
         Email:emailTest,
         headOfDepartementEmail:req.body.headOfDepartementEmail,
         requestedDayOff:req.body.requestedDayOff,
-        accepted:0
+        reasonOfrequest:req.body.reasonOfrequest,
+        accepted:0,
+        status:"pending"
         
     })
     d.save();
-    res.send("day off request submiited")}
+    res.send("day off request submitted")}}
     else{
         res.send("you should be an academic member to be granted this privilege")
 
     }
 
 
-   })
+   })//tamam
 
    app.get('/viewdayoffrequests',async(req,res)=>{
     const u =await user.findOne({Email: emailTest});
@@ -1926,32 +2125,849 @@ else{
     }
 
 
-   })
+   })//tamam
 
-   app.get('/acceptdayoffrequests',async(req,res)=>{
+   app.post('/acceptdayoffrequests',async(req,res)=>{
+   try{    
     const u =await user.findOne({Email: emailTest});
-    
+    let e=u.Email;
+    console.log(e);
+
+
     if(u.type=="HOD"){
 //getting slot linking request
     const u1 =await dayoffrequest.findById(req.body.id);     
+    
+    ////got the day of request by ID
+
+
     var mailz=u1.Email; 
     var dayoffz=u1.requestedDayOff;
     var accept=req.body.accepted;
+
+
+    console.log("ta mail: "+mailz+"dayoff: "+dayoffz+"accept:  "+accept);
     if(accept==1){
         const ta =await user.findOne({Email:mailz});     
         u1.accepted=accept;
+        u1.status="accepted"
         ta.dayoff=dayoffz;
         u1.save();
         ta.save();
+        const n=new notification({
+            Email:mailz,
+            Message:"your request to change your day off has been accepted by the head of the departement",
+            headOfDepartementEmail:emailTest
+           // headOfDepartementEmail:String
+
+        })
+        n.save();
         res.send("TA's day off has been accepted successfully")
     }
+    else{
+        u1.accepted=0;
+        u1.status="rejected";
+
+    console.log(u1.status);
+
+
+        var r=req.body.reasonOfRejection;
+        u1.reasonOfRejection=r;
+        u1.save();
+        const n=new notification({
+            Email:mailz,
+            Message:"your request to change your day off has been rejected by the head of the departement",
+            headOfDepartementEmail:emailTest,
+            reasonOfRejection:r
+           // headOfDepartementEmail:String
+
+        })
+        n.save();
     res.send("TA's day off has been rejected successfully")
+    }
+
+
+    }}
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    catch(error){
+        console.log("err");
     }
 
    })
+
+
+   app.post('/sendLeaveRequest', async (req,res)=>{
+
+        //Email , type, startDate, endDate, courseName, replacementDay, replacementStaffMember, replacementStaffEmail, document, skippedDay
+
+    const u =await user.findOne({Email: req.body.Email});
+    const HOD =await user.findOne({department: u.department , type: "HOD"});
+    const StaffMember =await user.findOne({department: u.department , Email: req.body.replacementStaffEmail});
+    var leaveType = req.body.type;
+    var sDate=new Date(req.body.startDate);
+    var subDate=new Date();//.toLocaleDateString();
+    var l;
+
+    var olddate=new Date();
+   // olddate.setDate(olddate.getDate()+3);
+    olddate.setDate(olddate.getDate()); //current date
+    var dates=olddate.toLocaleDateString();
+    
+
+    var go = false;
+
+    //u.annualLeaveBalance to be updated
+    //console.log(subDate);
+    //console.log(dates);
+
+    //console.log(sDate.getTime());
+    //console.log(subDate.getTime());
+
+   // if(subDate == dates){
+     //   console.log('true');
+    //}
+
+
+    
+
+//------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Annual"){  //Annual Leave
+        var diff = sDate.getTime()- subDate.getTime() ;
+       
+
+        
+        if (diff>0){
+           
+           
+            if(u.annualLeaveBalance>=1){
+               
+
+                var l = new leaves({
+                    Email: req.body.Email,
+                    ID: u.ID,
+            
+                    type:leaveType,
+            
+                    startDate:req.body.startDate, 
+                    endDate:req.body.endDate,
+            
+                    courseName:req.body.course,
+                    departmentName:u.department,
+                    submissionDate:subDate,
+            
+            
+                    replacementDay:req.body.replacementDay, //in Case of annual leave 
+                    replacementStaffMember:req.body.replacementStaffMember, //in Case of annual leave 
+                    replacementStaffEmail:req.body.replacementStaffEmail, //in Case of annual leave 
+            
+                    
+                   // HODemail:HOD.Email (when replacementStatus == accepted)
+            
+            
+                })
+
+                // Request is sent to the Staff Member Chosen and replacementStatus is awaiting to be updated
+                //Request sent to HOD if replacementStatus == True
+                // if status == true (HOD Accepeted)
+                //Update annualLeaveBalance accordingly
+                await  l.save();
+            }
+            
+        }
+    }
+
+    //------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Sick"){
+        console.log('sick leave');
+       // console.log(subDate.getTime() - sDate.getTime());
+        var diff = subDate.getTime() - sDate.getTime();
+        if(diff < 86400000 *3){
+            
+        
+        //console.log(new Date(subDate.getTime() - sDate.getTime()));
+        //1 Day == 86400000ms
+        //decrement date by 3 and compare using ==
+
+        
+           
+             l = new leaves({
+                Email: req.body.Email,
+                ID: u.ID,
+        
+                type:leaveType,
+        
+                startDate:req.body.startDate, 
+                endDate:req.body.endDate,
+        
+                courseName:req.body.course,
+                departmentName:u.department,
+                submissionDate:subDate,
+                    
+                document: req.body.document,  // In case of maternity or sick leaves
+        
+                HODemail:HOD.Email
+        
+        
+            })
+
+            await l.update();
+            await  l.save();
+            //Send to HOD
+        }
+        
+
+    }
+
+    //------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Maternity"){
+        if( (u.gender == "female") ){
+             l = new leaves({
+                Email: req.body.Email,
+                ID: u.ID,
+        
+                type:leaveType,
+        
+                startDate:req.body.startDate, 
+                endDate:req.body.endDate,
+        
+                courseName:req.body.course,
+                departmentName:u.department,
+                submissionDate:new Date().toLocaleDateString(),
+        
+                
+                document: req.body.document,  // In case of maternity or sick leaves
+        
+                HODemail:HOD.Email
+        
+        
+            })
+            //Send to HOD
+        }
+        await  l.save();
+
+    }
+
+    //------------------------------------------------------------------------------------------------------
+
+    if(leaveType == "Accidental"){
+        
+            if(endDate - startDate <=6){
+                //Send to HOD
+                //Update annualLeaveBalance accordingly
+                 l = new leaves({
+                    Email: req.body.Email,
+                    ID: u.ID,
+            
+                    type:leaveType,
+            
+                    startDate:req.body.startDate, 
+                    endDate:req.body.endDate,
+            
+                    courseName:req.body.course,
+                    departmentName:u.department,
+                    submissionDate:new Date().toLocaleDateString(),
+            
+                    document: req.body.document,  // In case of maternity or sick leaves
+                    
+            
+                    HODemail:HOD.Email
+            
+            
+                })
+            }
+            await  l.save();
+
+    }
+
+
+    //------------------------------------------------------------------------------------------------------
+
+
+    if(leaveType == "Compensation"){
+       var startDate1=req.body.startDate;
+        if(u.dayOff == startDate1.getDay){
+
+             l = new leaves({
+                Email: req.body.Email,
+                ID: u.ID,
+        
+                type:leaveType,
+        
+                startDate:startDate1,
+                endDate:req.body.endDate,
+        
+                courseName:req.body.course,
+                departmentName:u.department,
+                submissionDate:new Date().toLocaleDateString(),
+     
+                HODemail:HOD.Email
+        
+        
+            })
+            
+            //Send request to HOD
+            //Update status (usually accepted (logically))
+            //Adjust Salary to avoid deduction (Loop on days off to find if there are any hours, if found add them to total hours in the month (global variable))
+                //By updating signintime and signouttime for that day (will auto adjust salary calculation at the end of the month)
+                //Also remember that updated salary needs to run automatically at the end of the month
+        }
+        await  l.save();
+            
+    }
+
+    
+    
+
+    res.send('leave sent successfuly');
+   })
+
+
+   app.get('/viewLeaveRequests',async(req,res)=>{ //HOD app.get(ViewLeaveRequests)
+    //View all requests sent to this HOD (all types of leaves)
+    var x = await leaves.find({HODemail: emailTest});
+    console.log(x);
+    res.send(x);
+    //for(let i =0; i<leaves.length; i++){
+       
+       // if(leaves[i].HODemail==emailTest){
+         //   console.log(leaves[i]);
+        //}
+        
+   // }
+   })
+
+   app.get('/viewReplacementRequests',async(req,res)=>{ //Staff app.get(ViewReplacementRequests)
+    //View all replacement requests sent to this staff member (in case of annual leaves)
+    var x = await leaves.find({replacementStaffEmail: emailTest});
+    for(let i =0; i<x.length; i++){
+        if(x[i].replacementStaffEmail==emailTest){
+            console.log(x[i]);
+
+        }
+        
+    }
+    res.send('here are your replacement requests')
+   })
+
+   app.post('/leaveRequestResponse',async(req,res)=>{ //HOD app.post(LeaveRequestResponse)
+    //change status (accept/reject) requests sent to this HOD
+    //Email of requester
+    //status
+
+    var x = await leaves.find({Email: req.body.Email});
+    var u = await user.findOne({Email: req.body.Email});
+
+    for(let i =0; i<x.length; i++){
+
+        if(x[i].HODemail==emailTest){
+        
+            x[i].status = req.body.status;
+            console.log('status updated');
+
+            if(req.body.status == "accepted" && x[i].type == "Annual"){
+                u.annualLeaveBalance = u.annualLeaveBalance-1;
+                console.log("Annual Leave Accepted");
+            }
+            if(req.body.status == "accepted" && x[i].type == "Compensation"){
+                //Update salary
+                console.log("Compensation Accepted");
+            }
+
+            if(req.body.status == "accepted" && x[i].type == "Accidental"){
+                u.annualLeaveBalance = u.annualLeaveBalance - (x[i].endDate - x[i].startDate);
+                u.accidentalLeaveBalance= u.accidentalLeaveBalance - (x[i].endDate - x[i].startDate);
+                console.log("Accidental Leave Accepted");
+            }
+
+            if(req.body.status == "accepted" && x[i].type == "Sick"){
+               // u.annualLeaveBalance = u.annualLeaveBalance-1;
+                console.log("Sick Leave Accepted");
+            }
+
+            if(req.body.status == "accepted" && x[i].type == "Maternity"){
+                // u.annualLeaveBalance = u.annualLeaveBalance-1;
+                 console.log("Maternity Leave Accepted");
+             }
+
+            
+            x[i].update();
+            x[i].save();
+            u.update();
+            u.save();
+            res.send('Thank you');
+
+        
+        
+    }
+    else {
+        res.send('Not found/Not Authorized');
+    }
+}
+
+   })
+
+   app.post('/replacementRequestResponse',async(req,res)=>{ //Staff app.post(ReplacementRequestResponse)
+    //change replacementStatus (accept/reject) requests sent to this Staff Member
+    //Email of requester
+    //replacementStatus
+    var x = await leaves.find({Email: req.body.Email});
+    var u = await user.findOne({Email: req.body.Email});
+    var HOD =await user.findOne({department: u.department , type: "HOD"});
+
+    for(let i =0; i<x.length; i++){
+        if(x[i].Email==req.body.Email && x[i].type == "Annual"){
+            x[i].replacementStatus = req.body.replacementStatus;
+
+            if(req.body.replacementStatus == "accepted"){
+                x[i].HODemail= HOD.Email;
+            }
+
+            x[i].update();
+            x[i].save();
+            u.update();
+            u.save();
+            res.send('Thank you');
+
+        }
+        
+    }
+
+  
+   })
+   
+   
+
+   
+   
+   //tamam
+
+   app.get('/viewmynotification',async(req,res)=>{
+    const u1 =await notification.find({Email: emailTest});
+    res.send(u1);
+   })//tamam
+
+   app.get('/viewdayoffrequeststatus',async(req,res)=>{
+    const u1 =await dayoffrequest.findOne({Email: emailTest,requestedDayOff:req.body.requestedDayOff});
+    var stats=u1.status;
+    res.send(stats);
+
+
+   })//tamam
+
+
+   app.get('/viewslotlinkingstatus',async(req,res)=>{
+    const u1 =await slotlinkingrequest.findOne({Email: emailTest,course:req.body.course,day:req.body.day,slot:req.body.slot});
+    var stats=u1.status;
+    res.send(stats);
+
+
+   })//tamam
+
+
+   app.post('/sendReplacementRequest',async(req,res)=>{
+
+    const u = await user.findOne({Email:emailTest});
+    if(u.type=="TA"){
+        const d = new replacementrequest({
+        Email:emailTest,
+        replacingTAEmail:req.body.replacingTAEmail,
+        date:req.body.date,
+        slot:req.body.slot,
+        course:req.body.course,
+        time:req.body.time,
+        location:req.body.location,
+        accepted:0,
+        status:"pending"
+        
+    })
+    d.save();
+    res.send("replacement request sent succesfully")
+    }
+    else{
+        res.send("you are not an academic member")
+    }
+
+
+   })//tamam
+
+   app.get('/viewReplacementRequests',async(req,res)=>{
+
+    const u = await user.findOne({Email:emailTest});
+    if(u.type=="TA"){
+        const u1 = await replacementrequest.find({replacingTAEmail:emailTest});
+
+        res.send(u1);
+    }
+    else{
+        res.send("you are not an academic member")
+    }
+
+   })//Tamam
+
+   app.post('/viewReplacementRequestbyID',async(req,res)=>{
+    
+    const u = await user.findOne({Email:emailTest}); 
+    if(u.type=="TA"){
+        const u1 = await replacementrequest.findById(req.body.id);
+        var x=req.body.accepted; //accepting boolean
+        console.log("accepting boolean "+x);
+        var e=u1.replacingTAEmail // email of recieving TA
+        console.log("recieving TA "+e);
+
+        var s=u1.Email //email of sending TA
+        console.log("sending TA "+s);
+
+        var reqCourse=u1.course;
+        console.log("requested course "+reqCourse);
+
+
+        const u2 = await user.findOne({Email:s});// getting the sending TA
+        var b=0;//boolean that both TAs teach the same course in the request
+        console.log(u2.courses.length);
+        for(let i=0;i<u2.courses.length;i++){
+
+            var f=u2.courses[i];
+            console.log(f+" ")
+
+            for(let j=0;j<u.courses.length;j++){
+                console.log(f+" "+l+" "+b)
+
+                var l=u.courses[j]
+                console.log(f+" "+l+" "+b)
+                if(f==l && f==reqCourse && l==reqCourse ){
+                    b=1;
+                    console.log(f+" "+l+" "+b)
+                    break;
+                }
+
+            }
+            if(b==1){
+                break;
+            }
+
+        } //setting boolean b
+    //if recieveing TA accepted & the logged in TA is the recieving TA and they share the same department and they teach the same course in the request
+        if(x==1 && emailTest==e && u.department==u2.department && b==1){
+        //set accepted bit to 1
+        u1.accepted=x;
+        var m=u.name;
+
+        //change status to accepted
+        u1.status="accepted by switching TA , HOD pending";
+        //getting name of sending TA
+        
+        var z="you replacement request with "+m+" has been accepted"
+        //sending notification to sending TA
+        const n=new notification({
+            Email:s,
+            Message:z
+        })
+        u1.save();
+        n.save();
+
+        res.send("replacement request has been accepted successfully please contact HOD now!")
+        }
+        else{
+            var m=u.name;
+            u1.accepted=0;
+            u1.status="rejected by switching TA, HOD pending"
+            var z="you replacement request with "+m+" has been rejected"
+
+            const n=new notification({
+                Email:s,
+                Message:z})
+    
+            n.save();
+
+            res.send("replacement request has been rejected successfully")
+
+        }
+
+    }
+    else{
+        res.send("you are not an academic member")
+    }
+
+    
+    
+
+
+
+   })//tamam
+
+   app.post('/ForwardReplacementReqtoHOD',async(req,res)=>{
+    const u= await user.findOne({Email:emailTest});
+
+    if(u.type=="TA" ){
+        const u1 = await replacementrequest.findById(req.body.id);
+        if(emailTest!=u1.Email){
+            res.send("the request should be forwarded by the TA who created the request!")
+
+        }
+        if(u1.status=="accepted by switching TA , HOD pending"||u1.status=="rejected by switching TA, HOD pending"){
+        var hod=req.body.HeadOfDepartmentEmail;
+        u1.HeadOfDepartmentEmail=hod;
+        u1.verifiedByHOD=0;
+        u1.save();
+        res.send("replacement request has been forwarded to HOD successfully")
+
+
+    }
+    else if(u1.status=="pending"){
+
+        res.send("request should be viewed by replacing TA first");
+    }
+
+
+}
+else{
+
+    res.send("you are not a teacher's assistant")
+}
+   })//Tamam
+
+   app.get('/ViewReplacementRequestsAsHOD',async(req,res)=>{
+    const u = await user.findOne({Email:emailTest}); 
+    if(u.type=="HOD"){
+        const k=await replacementrequest.find({HeadOfDepartmentEmail:emailTest})
+        res.send(k);
+
+
+    }
+    else{
+        res.send("You must be HOD to be granted this privilege")
+   }
+
+
+   })//Tamam
+   app.post('/HODReplacementRequestsVerify',async(req,res)=>{
+    const u = await user.findOne({Email:emailTest}); 
+    if(u.type=="HOD"){
+        const k = await replacementrequest.findById(req.body.id); 
+        var s=k.Email;
+        var mailz=k.replacingTAEmail;
+        var datez=k.date;
+        var locationz=k.location;
+        var timez=k.timez;
+        var courze=k.course;
+        var noz=k.slot;
+        var v=req.body.verifiedByHOD;
+        if(v==1){
+            k.verifiedByHOD=v;
+            k.status="accepted";
+            const n=new notification({
+                Email:s,
+                Message:"your replacement request has been accepted by the Head of your department"
+            })
+            const sl=new slot({
+                    Email:mailz,
+                    date:datez,
+                    type:"replacement slot",
+                    no:noz,
+                    time:timez,
+                    location:locationz,
+                    course:courze,
+                    date:datez
+
+
+            })
+            sl.save();
+            k.save();
+            n.save();
+            res.send("changes saved")
+        }
+        else{
+            k.verifiedByHOD=v;
+            k.status="rejected"
+            const n=new notification({
+                Email:s,
+                Message:"your replacement request has rejected by the Head of your department"
+            })
+            k.save();
+            n.save();
+            res.send("changes saved")
+        }
+
+
+    }
+    else{
+        res.send("you must be head of department ")
+    }
+
+
+   })//Tamam
+   app.get('/viewAcceptedRequests',async(req,res)=>{
+    const u =await user.findOne({Email:emailTest});
+    if(u.type=="TA"){
+    const u1= await dayoffrequest.find({Email:emailTest,status:"accepted"})
+    const u2=await slotlinkingrequest.find({Email:emailTest,status:"accepted"})
+    const u3=await dayoffrequest.find({Email:emailTest,status:"accepted"})
+    res.send(u1+u2+u3);}
+    else{
+        res.send("you are not a TA")
+    }
+
+
+   })//Tamam
+   app.get('/viewRejectedRequests',async(req,res)=>{
+    const u =await user.findOne({Email:emailTest});
+    if(u.type=="TA"){
+    const u1= await dayoffrequest.find({Email:emailTest,status:"rejected"})
+    const u2=await slotlinkingrequest.find({Email:emailTest,status:"rejected"})
+    const u3=await dayoffrequest.find({Email:emailTest,status:"rejected"})
+    res.send(u1+u2+u3);}
+    else{
+        res.send("you're not a TA")
+    }
+
+
+   })//Tamam
+   app.get('/viewPendingRequests',async(req,res)=>{
+    const u =await user.findOne({Email:emailTest});
+    if(u.type=="TA"){
+    const u1= await dayoffrequest.find({Email:emailTest,status:"pending"})
+    const u2=await slotlinkingrequest.find({Email:emailTest,status:"pending"})
+    const u3=await dayoffrequest.find({Email:emailTest,status:"pending"})
+    res.send(u1+u2+u3);
+    }
+    else{
+        res.send("you're not a TA")
+    }
+
+   })//Tamam
+   app.delete('/cancelPendingSlotLinkingRequest',async(req,res)=>{
+    const u =await user.findOne({Email:emailTest});
+        if(u.type=="TA"){
+            var y=req.body.id;
+            const u1=await slotlinkingrequest.findById(y);
+            var stats=u1.status
+            if(stats=="pending"){
+                const x=await slotlinkingrequest.findByIdAndDelete(y);
+                res.send("your pending request has been canceled");
+                x.save();
+            }
+            else{
+                const z="this request is already "+u1.status
+                res.send(z);
+            }
+
+
+        }
+
+else{
+    res.send("you're not a TA")
+}
+
+
+
+    })//9
+
+    app.delete('/cancelPendingDayOffRequest',async(req,res)=>{
+        const u =await user.findOne({Email:emailTest});
+            if(u.type=="TA"){
+                var y=req.body.id;
+                const u1=await dayoffrequest.findById(y);
+                var stats=u1.status
+                if(stats=="pending"){
+                    const x=await dayoffrequest.findByIdAndDelete(y);
+                    res.send("your pending request has been canceled");
+                    x.save();
+                }
+                else{
+                    const z="this request is already "+u1.status
+                    res.send(z);
+                }
+
+
+            }
+
+    else{
+        res.send("you're not a TA")
+    }
+
+
+
+    })//10
+
+    app.delete('/cancelPendingReplacement',async(req,res)=>{
+        const u =await user.findOne({Email:emailTest});
+            if(u.type=="TA"){
+                var y=req.body.id;
+                const u1=await replacementrequest.findById(y);
+                var stats=u1.status
+                if(stats=="pending"){
+                    const x=await replacementrequest.findByIdAndDelete(y);
+                    res.send("your pending request has been canceled");
+                    x.save();
+                }
+                else{
+                    const z="this request is already "+u1.status
+                    res.send(z);
+                }
+
+
+            }
+
+    else{
+        res.send("you're not a TA")
+    }
+
+
+
+    })//11
+    app.delete('/cancelUpcomingReplacementRequest',async(req,res)=>{
+
+        const u =await user.findOne({Email:emailTest});
+            if(u.type=="TA"){
+                var y=req.body.id;
+                const u1=await replacementrequest.findById(y);
+                var upcomingdate=u1.date;
+                if(upcomingdate>new Date().toLocaleDateString()){
+                    const x=await replacementrequest.findByIdAndDelete(y);
+                    res.send("your upcoming request has been canceled");
+                    x.save();
+                }
+                else{
+                    const z="this request is already "+u1.status
+                    res.send(z);
+                }
+
+
+            }
+
+    else{
+        res.send("you're not a TA")
+    }
+
+
+
+
+
+
+    })//12
+
 
     function authenticate (req,res,next){
         const token = req.header('auth-token');
