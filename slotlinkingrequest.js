@@ -9,7 +9,8 @@ const slotlinkingSchema = new schema({
     day:String,
     slot:Number,
     course:String,
-    accepted:Number
+    accepted:Number,
+    status:String
     
     //departmentsCount:Number
  

@@ -3,16 +3,19 @@ const { time } = require('console');
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 const replacementrequestschema = new schema({
+    
     Email:String,
-    saturday:[String],
-    sunday:[String],
-    monday:[String],
-    tuesday:[String],
-    wednesday:[String],
-    thursday:[String],
-    day:String,
+    replacingTAEmail:String,
+    HeadOfDepartmentEmail:String,
+    date:String,
     slot:Number,
-    course:String
+    course:String,
+    location:String,
+    time:String,
+    accepted:Number,
+    verifiedByHOD:Number,
+    status:String,
+    reasonOfrejection:String
     
     //departmentsCount:Number
  
