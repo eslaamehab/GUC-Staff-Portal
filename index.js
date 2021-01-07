@@ -320,7 +320,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     })
 
-    app.use(authenticate); //works on  any route under it
+   // app.use(authenticate); //works on  any route under it
 ///
     app.get('/profile', async(req,res)=>{
 
@@ -330,6 +330,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             //console.log(u.name);
             //res.send(`login successful ${u.name}`);
             res.send(u);
+            
             }
             catch(err){
             console.log('err');
