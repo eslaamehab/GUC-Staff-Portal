@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 
 
 
-function Sidebar2() {
+function Sidebar3() {
   const history = useHistory();
 
   const routeAttendance = () =>{ 
@@ -124,4 +124,4 @@ function Sidebar2() {
   )
 }
 
-export default Sidebar2
+export default Sidebar3
