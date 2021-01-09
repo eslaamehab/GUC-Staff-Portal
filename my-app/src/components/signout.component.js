@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
-import { text } from 'express';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class signout extends Component {
     constructor(props){

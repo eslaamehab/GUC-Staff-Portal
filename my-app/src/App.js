@@ -14,6 +14,9 @@ import submitreplacementrequestID from './components/submitreplacementrequestID.
 import forwardrepreqtoHOD from './components/forwardrepreqtoHOD.component';
 import viewrepreqasHOD from './components/viewrepreqasHOD.component';
 import VerifyReplacementRequestsasHOD from './components/VerifyReplacementRequestsasHOD.component';
+import Signin from './components/signin.component';
+import Signout from './components/signout.component';
+import ManualSigninout from './components/manualsigninout.component';
 
 //import replacementRequestIDResponse from './components/replacementRequestIDResponse.component';
 //      <Route path = "/viewReplacementRequestbyID" exact component={replacementRequestIDResponse}/>
@@ -34,7 +37,10 @@ function App() {
       <Route path = "/ForwardReplacementReqtoHOD" exact component={forwardrepreqtoHOD}/>
       <Route path = "/ViewReplacementRequestsAsHOD" exact component={viewrepreqasHOD}/>
       <Route path = "/HODReplacementRequestsVerify" exact component={VerifyReplacementRequestsasHOD}/>
-
+      <Route path = "/signin" exact component={Signin}/>
+      <Route path = "/signout" exact component={Signout}/>
+      <Route path = "/manualsigninout" exact component={ManualSigninout}/>
+      
 
     </Router>
   );
