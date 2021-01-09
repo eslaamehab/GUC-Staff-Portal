@@ -17,6 +17,7 @@ import VerifyReplacementRequestsasHOD from './components/VerifyReplacementReques
 import Signin from './components/signin.component';
 import Signout from './components/signout.component';
 import ManualSigninout from './components/manualsigninout.component';
+import Attendance from './components/attendanceInfo.component';
 
 //import replacementRequestIDResponse from './components/replacementRequestIDResponse.component';
 //      <Route path = "/viewReplacementRequestbyID" exact component={replacementRequestIDResponse}/>
@@ -40,6 +41,7 @@ function App() {
       <Route path = "/signin" exact component={Signin}/>
       <Route path = "/signout" exact component={Signout}/>
       <Route path = "/manualsigninout" exact component={ManualSigninout}/>
+      <Route path = "/attendance" exact component={Attendance}/>
       
 
     </Router>
