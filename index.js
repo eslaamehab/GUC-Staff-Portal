@@ -430,7 +430,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     app.get('/missingdays', async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
         let day;
-        
+        let v=[Date];
         switch (u.dayoff) {
             case "sunday":
               day = 0;
@@ -453,19 +453,21 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             case "saturday":
               day = 6;
           }
-
+let counterDay=0;
         for(let i =0; i<30; i++){
             var x = new Date(u.attendance[i].date).getDay();
             if(u.attendance[i].minsspent == 0 )
                 if( day != x){
                     console.log(u.attendance[i].date);
                     console.log('Absent');
+                    v[counterDay]=u.attendance[i].date;
+                    counterDay++;
                 }
 
 
         }
 
-        res.send('These are your missing days');
+        res.send(v);
     })
 
     app.get('/missinghours', async(req,res)=>{
@@ -483,12 +485,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             var num = misshours; 
             var hours = Math.floor(num / 60);  
             var minutes = num % 60;
-            //return hours + ":" + minutes;     
+            //return hours + ":" + minutes;  
             console.log("missing hours: " + hours + " missing minutes: " + minutes);
 
 
-
         }
+        let s=   hours + " hours and " + minutes +" minutes";
+
+        res.send(s);
 
         })
 
@@ -690,20 +694,26 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
 //
     app.delete('/deleteMember', async(req,res)=>{
-        const u =await user.findOne({Email: emailTest}); //HR User
+      try{  const u =await user.findOne({Email: emailTest}); //HR User
         const u3 =await user.findOne({Email: req.body.Email});
-        if(u3){
-
+        if(u3!=null){
+            if(u.type=="HR"){
+                const u2 =await user.deleteOne({Email: req.body.Email});
+                res.send('Deleted')
+            }
+            else{
+                res.send("you are not an HR")
+            }
         }
         else{
             res.send("user not found")
-        }
+        }}
          //User to be deleted
-        if(u.type=="HR"){
-            const u2 =await user.deleteOne({Email: req.body.Email});
-            res.send('Deleted')
+        
+        //res.send('Not Deleted')}
+        catch(error){
+            console.log("err");
         }
-        res.send('Not Deleted')
     })
     
 //-------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2458,7 +2468,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
    // }
    })
 
-   app.get('/viewReplacementRequests',async(req,res)=>{ //Staff app.get(ViewReplacementRequests)
+  /* app.get('/viewReplacementRequests',async(req,res)=>{ //Staff app.get(ViewReplacementRequests)
     //View all replacement requests sent to this staff member (in case of annual leaves)
     var x = await leaves.find({replacementStaffEmail: emailTest});
     for(let i =0; i<x.length; i++){
@@ -2469,7 +2479,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
         
     }
     res.send('here are your replacement requests')
-   })
+   })*/
 
    app.post('/leaveRequestResponse',async(req,res)=>{ //HOD app.post(LeaveRequestResponse)
     //change status (accept/reject) requests sent to this HOD
@@ -2687,7 +2697,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
         u1.save();
         n.save();
 
-        res.send("replacement request has been accepted successfully please contact HOD now!")
+        res.send(u1.status)
         }
         else{
             var m=u.name;
@@ -2700,7 +2710,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
                 Message:z})
     
             n.save();
-
+                u1.save();
             res.send("replacement request has been rejected successfully")
 
         }

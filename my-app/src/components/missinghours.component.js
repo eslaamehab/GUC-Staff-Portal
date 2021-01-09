@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
-export default class profile extends Component {
+export default class missinghours extends Component {
     constructor(props){
         super(props);
 
         this.state= {
-            user:{Email: '',name:'',type: '',password: '',faculty:'',department:'',gender:'',officelocation:'',firstTime:0,courses:[], dayoff:''}  
+            v:String
         }
 
     /* axios.get('/profile', {
@@ -21,10 +21,10 @@ export default class profile extends Component {
     
     }*/
 
-    axios.get('http://localhost:3000/profile')
+    axios.get('http://localhost:3000/missinghours')
   .then(response => {
-      this.setState({user: response.data})
-      console.log(response)
+      this.setState({v: response.data})
+      //console.log(response)
     }
       )
   .catch(error => console.log(error));
@@ -36,8 +36,8 @@ export default class profile extends Component {
       render() {
         return (
             <div>
-            <h1>This is your profile</h1>
-            <p>Welcome {this.state.user.Email}  {this.state.user.type}</p>
+            <h1>You have missed</h1>
+            <p>{this.state.v} </p>
             </div>
         )
       }  
