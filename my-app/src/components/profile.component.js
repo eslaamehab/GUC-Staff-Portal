@@ -12,14 +12,8 @@ export default class profile extends Component {
         super(props);
 
         this.state= {
-            user:{Email: '',name:'',type: '',ID: '',salary:'',faculty:'',department:'',gender:'',officelocation:'',firstTime:0,courses:[], dayoff:'',annualLeaveBalance:0,accidentalLeaveBalance:0}  
+            user:{Email: '',name:'',type: '',password: '',faculty:'',department:'',gender:'',officelocation:'',firstTime:0,courses:[], dayoff:''}  
         }
-
-        
-          
- 
-          
-          
 
     /* axios.get('/profile', {
         params: {
@@ -40,6 +34,9 @@ export default class profile extends Component {
       )
   .catch(error => console.log(error));
     }
+    
+
+    
     
     
     
@@ -102,8 +99,3 @@ export default class profile extends Component {
     
 
 }
-
-
-
-
-    
