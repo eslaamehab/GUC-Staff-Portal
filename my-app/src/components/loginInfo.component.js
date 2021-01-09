@@ -7,6 +7,7 @@ export default class loginInfo extends Component {
 
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
+        this.onChangeNewPass = this.onChangeNewPass.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
@@ -14,6 +15,8 @@ export default class loginInfo extends Component {
             password: ''
         }
     }
+
+
 
     onChangeEmail(e){
         this.setState({
@@ -24,6 +27,12 @@ export default class loginInfo extends Component {
     onChangePassword(e){
         this.setState({
             password: e.target.value
+        });
+    }
+
+    onChangeNewPass(e){
+        this.setState({
+            newpassword: e.target.value
         });
     }
 
@@ -51,10 +60,24 @@ export default class loginInfo extends Component {
     }
 
 
-
+    /*function firstTime(props) {
+        const firsttime = this.state.firstTime;
+        if (firsttime==1) {
+          return <div className="form-group"> 
+          <label>New Password: </label>
+          <input  type="password"
+              required
+              className="form-control"
+              value={this.state.newpassword}
+              onChange={this.onChangeNewPass}
+              />
+              </div>*/
 
 
     render() {
+            
+            
+          
         return (
         <div>
           <h3>Login</h3>
