@@ -18,6 +18,8 @@ import Signin from './components/signin.component';
 import Signout from './components/signout.component';
 import ManualSigninout from './components/manualsigninout.component';
 import Attendance from './components/attendanceInfo.component';
+import Logout from './components/logout.component';
+import updatePass from './components/updatePassword.component';
 
 //import replacementRequestIDResponse from './components/replacementRequestIDResponse.component';
 //      <Route path = "/viewReplacementRequestbyID" exact component={replacementRequestIDResponse}/>
@@ -42,6 +44,8 @@ function App() {
       <Route path = "/signout" exact component={Signout}/>
       <Route path = "/manualsigninout" exact component={ManualSigninout}/>
       <Route path = "/attendance" exact component={Attendance}/>
+      <Route path = "/updatePassword" exact component={updatePass}/>
+      <Route path = "/logout" exact component={Logout}/>
       
 
     </Router>
