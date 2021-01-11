@@ -6,13 +6,12 @@ import { render } from 'react-dom';
 export default class viewReplacementRequest extends Component {
     constructor(props){
         super(props);
-
         this.state= {
          replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
         //replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
 
         }
-
+        
 
     /* axios.get('/profile', {
         params: {
@@ -35,8 +34,7 @@ export default class viewReplacementRequest extends Component {
     }
     
 
-    
-    
+   
     
       render() {
         return (
