@@ -36,56 +36,60 @@ export default class attendanceInfo extends Component {
     }
       )
   .catch(error => console.log(error));
+    }
+    
+
+    
+    render() {
+        
+      const x= this.state.attendance;
+      //console.log(x[0].date);
+      return (
+          
+          <div>
+          <h1>This is your Attendance Record</h1>
+          <form onSubmit={this.onSubmit}>
+          <div className="form-group"> 
+            <label>Month: </label>
+            <input  type="text"
+                required
+                className="form-control"
+                value={this.state.month}
+                onChange={this.onChangeMonth}
+                
+                />
+
+          <div className="form-group">
+            <input type="submit" value="Submit" className="btn btn-primary" />
+          </div>
+              
+          </div>
+          </form>
+          
+          
+         
+
+         
+
+          <div id="gallery-text">
+          <div class="gallery-text">
+          <p>Mins Spent: </p>
+          {x.map(item => <div>{item.minsspent}</div>)}
+          </div>
+          </div>
+          <p> Attendance : </p>
+          {x.map(item => <div>{item.date}</div>)}
+
+         
+      
+          </div>
+      )
+    }
 
     }
 
  
-      render() {
-        
-        const x= this.state.attendance;
-        //console.log(x[0].date);
-        return (
-            
-            <div>
-            <h1>This is your Attendance Record</h1>
-            <form onSubmit={this.onSubmit}>
-            <div className="form-group"> 
-              <label>Month: </label>
-              <input  type="text"
-                  required
-                  className="form-control"
-                  value={this.state.month}
-                  onChange={this.onChangeMonth}
-                  
-                  />
 
-            <div className="form-group">
-              <input type="submit" value="Submit" className="btn btn-primary" />
-            </div>
-                
-            </div>
-            </form>
-            
-            
-           
+    
 
-           
-
-            <div id="gallery-text">
-            <div class="gallery-text">
-            <p>Mins Spent: </p>
-            {x.map(item => <div>{item.minsspent}</div>)}
-            </div>
-            </div>
-            <p> Attendance : </p>
-            {x.map(item => <div>{item.date}</div>)}
-
-           
-        
-            </div>
-        )
-      }  
-
-
-
-}
+    

@@ -44,6 +44,7 @@ export default class profile extends Component {
     
     
     
+    
       render() {
         const x = this.state.user.courses;
         const items = [
