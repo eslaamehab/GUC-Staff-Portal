@@ -1,17 +1,23 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
-export default class loginInfo extends Component {
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+export default class sendLeaveRequest extends Component {
     constructor(props){
         super(props);
 
         this.onChangeEmail = this.onChangeEmail.bind(this);
-        this.onChangePassword = this.onChangePassword.bind(this);
-        this.onSubmit = this.onSubmit.bind(this)
+        this.onChangeStatus = this.onChangeStatus.bind(this);
+
+  
+
+        this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
             Email: '',
-            password: ''
+            status: '',
+            
         }
     }
 
@@ -21,43 +27,41 @@ export default class loginInfo extends Component {
         });
     }
 
-    onChangePassword(e){
+    onChangeStatus(e){
         this.setState({
-            password: e.target.value
+            status: e.target.value
         });
     }
 
+    
     onSubmit(e){
         e.preventDefault();
 
         const log = {
             Email:this.state.Email,
-            password:this.state.password
+            status:this.state.status,
+
         }
 
         
 
         console.log(log);
 
-            axios.post('http://localhost:3000/login',log)
+            axios.post('http://localhost:3000/leaveRequestResponse',log)
         .then(res=> {
             console.log(res.data)
-            window.location = '/profile'; 
+            //window.location = '/profile'; 
         })
         .catch((error)=>{
-            console.log('Wrong Email or password');
+            console.log('Not Successful');
             
         })
     }
 
-
-
-
-
     render() {
         return (
         <div>
-          <h3>Login</h3>
+          <h3>Leave Request Response</h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
               <label>Email: </label>
@@ -69,18 +73,24 @@ export default class loginInfo extends Component {
                   />
                 
             </div>
+
+            
+        
             <div className="form-group"> 
-              <label>password: </label>
-              <input  type="password"
+              <label>Status: </label>
+              <input  type="text"
                   required
                   className="form-control"
-                  value={this.state.password}
-                  onChange={this.onChangePassword}
+                  value={this.state.status}
+                  onChange={this.onChangeStatus}
                   />
             </div>
 
+
+           
+
             <div className="form-group">
-              <input type="submit" value="Login" className="btn btn-primary" />
+              <input type="submit" value="Send Leave Request Response" className="btn btn-primary" />
             </div>
           </form>
         </div>
