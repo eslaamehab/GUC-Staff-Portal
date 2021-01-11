@@ -2,12 +2,12 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
-export default class attendanceInfo extends Component {
+export default class accessAttendance extends Component {
     constructor(props){
         super(props);
 
+        this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangeMonth = this.onChangeMonth.bind(this);
-        
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
@@ -16,7 +16,13 @@ export default class attendanceInfo extends Component {
         }
       }
 
-      onChangeMonth(e){
+      onChangeEmail(e){
+        this.setState({
+            Email: e.target.value
+        });
+    }
+
+    onChangeMonth(e){
         this.setState({
             month: e.target.value
         });
@@ -26,10 +32,11 @@ export default class attendanceInfo extends Component {
           e.preventDefault();
   
           const log = {
+              Email:this.state.Email,
               month:this.state.month
           }
 
-          axios.post('http://localhost:3000/attendance',log)
+          axios.post('http://localhost:3000/accessAttendance',log)
   .then(response => {
       this.setState({attendance: response.data})
       console.log(response)
@@ -47,8 +54,18 @@ export default class attendanceInfo extends Component {
         return (
             
             <div>
-            <h1>This is your Attendance Record</h1>
+            <h1>This is {this.state.Email}'s Attendance Record</h1>
             <form onSubmit={this.onSubmit}>
+            <div className="form-group"> 
+              <label>Staff Email: </label>
+              <input  type="text"
+                  required
+                  className="form-control"
+                  value={this.state.Email}
+                  onChange={this.onChangeEmail}
+                  
+                  />
+
             <div className="form-group"> 
               <label>Month: </label>
               <input  type="text"
@@ -61,6 +78,7 @@ export default class attendanceInfo extends Component {
 
             <div className="form-group">
               <input type="submit" value="Submit" className="btn btn-primary" />
+            </div>
             </div>
                 
             </div>

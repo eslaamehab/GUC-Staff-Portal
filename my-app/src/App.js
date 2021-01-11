@@ -20,6 +20,15 @@ import ManualSigninout from './components/manualsigninout.component';
 import Attendance from './components/attendanceInfo.component';
 import Logout from './components/logout.component';
 import updatePass from './components/updatePassword.component';
+import updateProfile from './components/updateProfile.component';
+import NewTest from './components/newtest.component';
+import SendLeaveRequest from './components/sendLeaveRequest.component';
+import ViewLeaveRequests from './components/viewLeaveRequests.component';
+import ViewReplacementRequests from './components/viewReplacementRequests.component';
+
+import replacementRequestResponse from './components/replacementRequestResponse.component';
+import leaveRequestResponse from './components/leaveRequestResponse.component';
+import accessAttendance from './components/accessAttendance.component';
 
 //import replacementRequestIDResponse from './components/replacementRequestIDResponse.component';
 //      <Route path = "/viewReplacementRequestbyID" exact component={replacementRequestIDResponse}/>
@@ -46,6 +55,14 @@ function App() {
       <Route path = "/attendance" exact component={Attendance}/>
       <Route path = "/updatePassword" exact component={updatePass}/>
       <Route path = "/logout" exact component={Logout}/>
+      <Route path = "/updateProfile" exact component={updateProfile}/>
+      <Route path = "/newtest" exact component={NewTest}/>
+      <Route path = "/sendleaverequest" exact component={SendLeaveRequest}/>
+      <Route path = "/viewleaverequests" exact component={ViewLeaveRequests}/>
+      <Route path = "/viewreplacementrequest" exact component={ViewReplacementRequests}/> 
+      <Route path = "/replacementrequestresponse" exact component={replacementRequestResponse}/> 
+      <Route path = "/leaverequestresponse" exact component={leaveRequestResponse}/> 
+      <Route path = "/accessattendance" exact component={accessAttendance}/> 
       
 
     </Router>
