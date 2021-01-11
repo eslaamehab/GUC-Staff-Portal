@@ -37,6 +37,13 @@
   word-break: break-all;
 }
 
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
