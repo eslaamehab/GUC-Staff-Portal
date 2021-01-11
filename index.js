@@ -493,13 +493,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         })
 
 //
-    app.delete('/deleteUser', (req,res)=>{
-        const payload = jwt.verify(req.header('auth-token'),key);
-        if(payload.type!='HR')
-        return res.status(403).send("youre not HR Staff")
-
-        res.send('User Deleted');
-    })
+    
 
 
     app.post('/signin', async(req,res)=>{
@@ -759,21 +753,22 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     }
    })
 
-   app.delete('/DeleteLocation', async(req,res)=>{
+   app.post('/DeleteLocation', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        console.log(req.body)
         const m = await location.findOne({roomName: req.body.roomName})
         if(m){
 
         }
         else{
-            res.send("Not found")
+           return res.send("Not found")
         }
          //User to be deleted
         if(u.type=="HR"){
             const l =await location.deleteOne({roomName: req.body.roomName});
-            res.send('Deleted')
+          return  res.send('Deleted')
         }
-        res.send('HR ONLY')
+       return res.send('HR ONLY')
     })
     
 
@@ -825,25 +820,27 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     }
    })
    
-   app.delete('/deleteFaculty', async(req,res)=>{
+   app.post('/deleteFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
+            console.log(req.body)
             const m = await faculties.findOne({facultyName: req.body.facultyName})
             if(m){
     
             }
             else{
-                res.send("Not found")
+                return res.send("Not found")
             }
             //User to be deleted
            if(u.type=="HR"){
                const l =await faculties.deleteOne({facultyName: req.body.facultyName});
-               res.send('Deleted')
+               return res.send('Deleted')
            }
-           res.send('HR ONLY')
+           return res.send('HR ONLY')
        })
     
     app.post('/addDepartments' ,async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User
+            console.log(req.body)
               const fId = await departements.findOne({DepartmentName: req.body.DepartmentName})
               const f = await faculties.findById(req.body.id)
               console.log(f)
@@ -851,11 +848,11 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
               }
               else{
-                  res.send("faculty Not Found")
+                 return res.send("faculty Not Found")
               }
 
                 if(fId){
-                    res.send("this department is already created")
+                   return res.send("this department is already created")
                 }
                 else{
                     
@@ -864,13 +861,13 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
                 const d = await new departements({
                     DepartmentName:req.body.DepartmentName,
                     FacultyName:req.body.FacultyName,
-                    Facultyid:req.body.id
+                   // Facultyid:req.body.id
             })
             res.send("Department Added")
             await  d.save();
         }
             else{
-                res.send("HR ONLY")
+              return  res.send("HR ONLY")
             }
                 }
         })
@@ -878,58 +875,61 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     app.post('/UpdateDepartment',async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        console.log(req.body)
         const d = await departements.findById(req.body.id)
     if(d){
 
     }
     else{
-        res.send("not found")
+       return res.send("not found")
     }
     if(u.type=="HR"){
         // await courses.updateOne({courseName: req.body.courseName})
           //await courses.updateOne({DepartmentName: req.body.DepartmentName})
         d.DepartmentName = req.body.DepartmentName
         d.FacultyName =req.body.FacultyName
-        console.log(d.FacultyName)
+        //console.log(d.FacultyName)
         //c.Departmentid = req.body.Departmentid
-    console.log(d.DepartmentName)
+   // console.log(d.DepartmentName)
     await d.save()
     await d.save()
-    res.send("department updated")
+   return res.send("department updated")
     }
     else{
-        res.send("HR ONLY")
+       return res.send("HR ONLY")
     }
    })
     
-    app.delete('/deleteDepartement', async(req,res)=>{
+    app.post('/deleteDepartement', async(req,res)=>{
         const u =await user.findOne({Email: emailTest}); //HR User
+        console.log(req.body)
         const m =await departements.findOne({DepartmentName:req.body.DepartmentName})
         if(m){
 
         }
         else{
-            res.send("not found")
+          return  res.send("not found")
         }
        if(u.type=="HR"){
            const l =await departements.deleteOne({DepartmentName:req.body.DepartmentName});
-           res.send('Deleted')
+         return  res.send('Deleted')
        }
-       res.send('HR ONLY')
+      return res.send('HR ONLY')
    })
 
    app.post('/Addcourses', async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
+    console.log(req.body);
     const x = await courses.findOne({courseName:req.body.courseName});
     const y = await departements.findById(req.body.id);
     if(y){
 
     }
     else{
-        res.send(" department NOT FOUND")
+        return res.send(" department NOT FOUND")
     }
     if(x){
-     res.send("this course already created")
+      return res.send("this course already created")
     }
     else{
         if(u.type=="HR" ){
@@ -941,12 +941,13 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
                 Departmentid:req.body.Departmentid
                 
             })
-            res.send("course added");
+         
             await x.save();
+            return res.send("course added");
                 }
     
         else{
-            res.send("HR ONLY");
+           return res.send("HR ONLY");
         }
     }
         }) 
@@ -965,7 +966,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
           //await courses.updateOne({DepartmentName: req.body.DepartmentName})
         c.courseName = req.body.courseName
         c.DepartmentName =req.body.DepartmentName
-        c.Departmentid = req.body.Departmentid
+        
     console.log(c.DepartmentName)
     await c.save()
     await c.save()
@@ -976,19 +977,20 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     }
    })
 
-   app.delete('/deleteCourse',async(req,res)=>{
+   app.post('/deleteCourse',async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
+    console.log(req.body)
     const c = await courses.findOne({courseName: req.body.courseName})
     if(c){
 
     }
     else{
-        res.send("course not found")
+       return res.send("course not found")
     }
     //User to be deleted
      if(u.type=="HR"){
        const m =await courses.deleteOne({courseName: req.body.courseName});
-       res.send('Deleted')
+      return  res.send('Deleted')
    }
    res.send('HR ONLY')
 })
@@ -1026,52 +1028,60 @@ app.post('/ADDHOD', async(req,res)=>{
     }
 })
 
-app.delete('/deleteinstructor',async(req,res)=>{
+app.post('/deleteinstructor',async(req,res)=>{
     const u =await user.findOne({Email: emailTest}); //HR User
+    console.log(req.body)
     const c = await courses.findById(req.body.id)
     if(c){
 
     }
     else{
-        res.send("COURSE not found")
+        return res.send("COURSE not found")
     }
     if(u.type=="HOD"){
-        c.CourseInstructor =""
+        c.CourseInstructor ="  "
         await c.save()
-        res.send("Instructor deleted")
+        return res.send("Instructor deleted")
     }
     else{
-        res.send("HOD ONLY")
+       return res.send("HOD ONLY")
     }
 })
-  
-app.get('/ViewStaffByDepartment',async(req,res)=>{
+
+
+app.post('/ViewStaffByDepartment',async(req,res)=>{
     const y =await user.findOne({Email: emailTest});
+    console.log(req.body)
     const c  =  req.body.department//u.HODdepartment
    
    if(y.type == "HOD"){
       
      const x = await user.find({department:c})
-     
-     res.send(x)
+     if(x[0]){
+
+     }
+     else{
+        return res.send("department not found")
+     }
+    return res.send(x)
     
     }
     else{
-        res.send("HOD ONLY")
+      return  res.send("HOD ONLY")
     }
 
 })
 
-app.get('/ViewStaffdayoff',async(req,res)=>{
+app.post('/ViewStaffdayoff',async(req,res)=>{
     const y =await user.findOne({Email: emailTest});
-    const u1 =await user.findOne({department: req.body.department});
+    const u1 =await user.findOne({Email: req.body.Email});
    // if(u1.department == y.department){
 
    if(u1){
 
    }
    else{
-       res.send("Department not found")
+       res.send("User not found")
    }
    if(y.type == "HOD"){
     // const x = await user.find({department:c})
@@ -1087,28 +1097,30 @@ app.get('/ViewStaffdayoff',async(req,res)=>{
     //}
 })
 
-app.get('/viewTeachingAssignments',async(req,res)=>{
+app.post('/viewTeachingAssignments',async(req,res)=>{
     const u1 = await user.findOne({Email:emailTest})
-    const u2 = await user.findOne({Email:req.body.Email})
+    console.log(req.body)
+    const u2 = await slot.find({date:req.body.date})
     console.log(u1.Email)
      if(u1.type == "HOD"){
-        if(u2.department == u1.department){
-     const x  =  await slot.find({Email:u2.Email})
+        if(u2[0]){
 
-     console.log(x)
-     res.send(x)
-    }
-    else{
-        res.send("Not in your department")
-    }
+        }
+        else{
+            return res.send("Date not available")
+        }
+     //console.log(u2)
+    return res.send(u2)
+    
 }
     else{
-        res.send("HOD ONLY")
+       return res.send("HOD ONLY")
     }
 })
 
-app.get('/viewCoverage',async(req,res)=>{
+app.post('/viewCoverage',async(req,res)=>{
     const u1 = await user.findOne({Email:emailTest})
+    console.log(req.body)
     const u = await user.find({type:req.body.type,department:req.body.department})
     const s = await slot.find({course:req.body.course})
    
@@ -1133,23 +1145,23 @@ app.get('/viewCoverage',async(req,res)=>{
     console.log(y);
     Coverage = (y/x)*100
     console.log(Coverage)
-    res.send("Coverage" +"="+ Coverage +"%")
+   return res.send("Coverage" +"="+ Coverage +"%")
 }
 else{
-    res.send("not found")
+   return res.send("not found")
 }
     }
     else{
-    res("not found")
+    return res("not found")
 
     }
 }
 else{
-    res.send("HOD ONLY")
+   return res.send("HOD ONLY")
 }
 })
 
-app.get('/viewCoverageOfAssignedCourse', async(req,res)=>{
+app.post('/viewCoverageOfAssignedCourse', async(req,res)=>{
     const u1 = await user.findOne({Email:emailTest})
     const u = await user.find({type:req.body.type,course:req.body.course})
     const s = await slot.find({course:req.body.course})
@@ -1172,15 +1184,16 @@ app.get('/viewCoverageOfAssignedCourse', async(req,res)=>{
     console.log(y);
     Coverage = (y/x)*100
     console.log(Coverage)
-    res.send("Coverage" +"="+ Coverage +"%")
+   return res.send("Coverage" +"="+ Coverage +"%")
 }
 else{
-    res.send("INSTRUCTORS ONLY")
+    return res.send("INSTRUCTORS ONLY")
 }
 })
 
-app.get('/viewAssignedSlots',async(req,res)=>{
+app.post('/viewAssignedSlots',async(req,res)=>{
     const u = await user.findOne({Email:emailTest})
+    console.log(req.body)
     const s = await slot.find({Email:req.body.Email})
     const s1 = await slot.findOne({Email:req.body.Email})
 
@@ -1200,7 +1213,7 @@ app.get('/viewAssignedSlots',async(req,res)=>{
    
 })
 
-app.get('/ViewAllStaffForInstructor',async(req,res)=>{
+app.post('/ViewAllStaffForInstructor',async(req,res)=>{
 const u = await user.findOne({Email:emailTest})
 const u1 = await user.findOne({department:req.body.department})
 const u2 = await user.find({department:req.body.department})
@@ -1230,18 +1243,24 @@ app.post('/AssignUpdateDeleteTA',async(req,res)=>{//date:req.body.date,   time: 
     
    }
    else{
-       res.send("unavailable slot")
+     return  res.send("unavailable slot")
    }
    console.log(u)
-   var x=req.body.Email;
-   u.Email = x;
+   const x= await user.findOne({Email:req.body.Email});
+   if(x){
+   }
+   else{
+    return res.send("No TA with this Email")
+   }
+   u.Email = x.Email;
     u.save();
-   res.send("DONE")
+  return  res.send("DONE")
 }
 else{
-    res.send("INSTRUCTORS ONLY")
+    return res.send("INSTRUCTORS ONLY")
 }
-   
+
+    
 })
 
 app.post('/AssignCoordinator',async(req,res)=>{
@@ -1267,7 +1286,7 @@ const u1 = await user.findOne({Email:emailTest})
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-   app.post('/createSlot',async(req,res)=>{
+   app.post('/createSlots',async(req,res)=>{
     try{
     const u =await user.findOne({Email: emailTest}); //HR User
     

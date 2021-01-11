@@ -6,7 +6,11 @@ export default class profile extends Component {
     constructor(props){
         super(props);
 
-     axios.get('/profile', {
+        this.state= {
+            user:{Email: '',name:'',type: '',password: '',faculty:'',department:'',gender:'',officelocation:'',firstTime:0,courses:[], dayoff:''}  
+        }
+
+    /* axios.get('/profile', {
         params: {
           emailTest: 'Slim@gmail.com'
         }
@@ -15,14 +19,28 @@ export default class profile extends Component {
       })
     
     
-    }
+    }*/
 
+    axios.get('http://localhost:3000/profile')
+  .then(response => {
+      this.setState({user: response.data})
+      console.log(response)
+    }
+      )
+  .catch(error => console.log(error));
+    }
+    
+
+    
     
       render() {
         return (
-          <ul>
-            
-          </ul>
+            <div>
+            <h1>This is your profile</h1>
+            <p>Welcome {this.state.user.Email}  </p>
+            <p>            {this.state.user.type} </p>
+                      
+            </div>
         )
       }  
 

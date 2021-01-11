@@ -28,6 +28,15 @@
   color: #61dafb;
 }
 
+.gallery-text {
+  float: right;
+  width: 48%;
+  margin: 1%;
+}
+.gallery-text p {
+  word-break: break-all;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
