@@ -3,15 +3,15 @@ import axios from 'axios';
 import { render } from 'react-dom';
 import Navbar from './layouts/Navbar';
 
+import Menu from './layouts/Menu';
+
+import '../profileInfo.css'
 
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
-export default class viewAssignedSlotsInfo extends Component {
+export default class viewAllSlotsInDB extends Component {
     constructor(props){
         super(props);
-
-        this.onChangeEmail = this.onChangeEmail.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
          slot:[{_id:'',Email:'',day:'',type:'',no:'',time:'',location:'',course:'',date:''}]
@@ -33,19 +33,14 @@ export default class viewAssignedSlotsInfo extends Component {
     
     
 
-
-        axios.get('http://localhost:3000/viewAllSlots')
-        .then(response => {
-            this.setState({slot: response.data})
-            console.log(response)
-          }
-            )
-        .catch(error => console.log(error));
-          
-    
-
-  
-    }
+    axios.get('http://localhost:3000/viewAllSlots')
+    .then(response => {
+        this.setState({slot: response.data})
+        console.log(response)
+      }
+        )
+    .catch(error => console.log(error));
+      }
     
     
       render() {
@@ -79,10 +74,14 @@ export default class viewAssignedSlotsInfo extends Component {
 
         return (
             <div>
+              
             <Navbar />
+
+            <h1 className="x"><Menu/></h1>
             {zeft}
-                    </div>
-            
+
+                                     </div>
+
         )
 
 

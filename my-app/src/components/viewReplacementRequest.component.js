@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class viewReplacementRequest extends Component {
@@ -33,27 +35,34 @@ export default class viewReplacementRequest extends Component {
   .catch(error => console.log(error));
     }
     
-
+    
    
     
       render() {
+        const zeft = this.state.replacementrequest.map((invoice, index) => {
+          return (
+              <tr key={invoice.replacingTAEmail}>
+                  
+    
+                  <h4>Sending TA: {invoice.Email}</h4>
+                  <h4>Date of slot: {invoice.date}</h4>
+                  <h4>Slot number: {invoice.slot}</h4>
+                  <h4>Course for slot: {invoice.course}</h4>
+                  <h4>Request status: {invoice.status}</h4>
+                  <h4>Time of slot:{invoice.time}</h4>
+                  <h4>Reason of rejection:{invoice.reasonOfrejection}</h4>
+                  
+              </tr>
+          )
+      }
+      )
         return (
-            this.state.replacementrequest.map((invoice, index) => {
-                return (
-                    <tr key={invoice.replacingTAEmail}>
-                        <h1> YOUR REPLACEMENT REQUESTS:</h1>
 
-                        <h4>Sending TA: {invoice.Email}</h4>
-                        <h4>Date of slot: {invoice.date}</h4>
-                        <h4>Slot number: {invoice.slot}</h4>
-                        <h4>Course for slot: {invoice.course}</h4>
-                        <h4>Request status: {invoice.status}</h4>
-                        <h4>Time of slot:{invoice.time}</h4>
-                        <h4>Reason of rejection:{invoice.reasonOfrejection}</h4>
-                        
-                    </tr>
-                )
-            })
+          <div>
+<h1> YOUR REPLACEMENT REQUESTS:</h1>
+{zeft}
+          </div>
+           
         )
       }  
     

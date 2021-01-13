@@ -8,12 +8,36 @@ import './Navbar.css'
  function Navbar() {
    const history = useHistory();
 
-   const goToCourses = () => {
-     history.push('/Addcourses')
-   }
 
-   const goToProfile = () => {
+   
+   const goToCourses = () => {
+    history.push('/Addcourses')
+  }
+
+   const goToAllSlots= () => {
+    history.push('/viewAssignedSlots')
+  }
+  
+
+  const goToMySlots = () => {
+    history.push('/viewMySlots')
+  }
+
+  const goToDatabaseSlots = () => {
+    history.push('/viewAllSlots')
+  }
+
+
+  const goToProfile = () => {
     history.push('/profile')
+  }
+
+  const goToMyRequests = () => {
+    history.push('/viewAllReqs')
+  }
+  
+  const goToMyAvailableslots = () => {
+    history.push('/viewAvailableSlots')
   }
     return (
        
@@ -48,14 +72,20 @@ import './Navbar.css'
         </li>
         
         <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" href="#">Slots</a>
-        </li>
-        
-        <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" href="#">Requests</a>
+          <a class="nav-link text-white text-uppercase ml-2" href="#" onClick = {goToMyRequests}>Requests</a>
         </li>
        
-       
+        <DropdownButton id="dropdown-basic-button   m-auto ml-5" title="slots">
+  <Dropdown.Item onClick = {goToMySlots} href="#/action-1">View My Schedule</Dropdown.Item>
+  <Dropdown.Item onClick = {goToMyAvailableslots} href="#/action-1">View Available Slots </Dropdown.Item>
+
+  <Dropdown.Item  onClick = {goToAllSlots} href="#/action-2">View An academic member's slots</Dropdown.Item>
+  <Dropdown.Item  onClick = {goToDatabaseSlots} href="#/action-2">View All slots in Database</Dropdown.Item>
+
+</DropdownButton>
+
+
+
           <DropdownButton id="dropdown-basic-button m-auto ml-2" title=" Faculties ">
   <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
   <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
@@ -85,6 +115,8 @@ import './Navbar.css'
   <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
   <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
 </DropdownButton>
+
+
 
 
    

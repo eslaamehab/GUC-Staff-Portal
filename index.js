@@ -429,6 +429,62 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
        // res.send('This is your attendance');
     })
 
+//-------------------------------------------------------------------------------------------------
+
+app.get('/viewusers', async(req,res)=>{
+    const l = await location.find()
+  
+    return res.send(l);
+  
+    })
+  
+app.post('/viewLocations', async(req,res)=>{
+const l = await location.find()
+
+return res.send(l);
+
+})
+
+app.get('/viewCourses', async(req,res)=>{
+const l = await Courses.find()
+
+return res.send(l);
+
+})
+
+app.get('/viewfaculty', async(req,res)=>{
+    const l = await faculties.find()
+  
+    return res.send(l);
+  
+    })
+    
+app.get('/viewdepartments', async(req,res)=>{
+        const l = await departements.find()
+      
+        return res.send(l);
+      
+        })
+
+app.get('/viewAllSlots', async(req,res)=>{
+            const l = await slot.find()
+          
+            return res.send(l);
+          
+            })//front end done
+
+app.get('/viewAllReqs', async(req,res)=>{
+          
+            })//front end done
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
 
     app.get('/missingdays', async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
@@ -913,6 +969,15 @@ app.post('/viewdepartments', async(req,res)=>{
             }
                 }
         })
+    app.get('/viewAllS', async(req,res)=>{
+          
+        })
+        app.get('/viewAllD', async(req,res)=>{
+          
+        })
+        app.get('/viewAllR', async(req,res)=>{
+          
+        })
 
 
     app.post('/UpdateDepartment',async(req,res)=>{
@@ -1245,7 +1310,7 @@ app.post('/viewAssignedSlots',async(req,res)=>{
     else{
          res.send("not found")
     }
-    if(u.type == "Instructor"){
+    if(u.type == "Instructor"||u.type == "HOD"||u.type == "HR"||u.type == "Coordinator"){
         res.send(s)
         }
         else{
@@ -1804,25 +1869,12 @@ res.send("you should be a course coordinator to be able to create an academic me
         catch(error){
             console.log("err")
         }
-    }) //front end done
+    }) //front end styling done
     }) 
 
     
 
-    app.get('/viewSlot',async(req,res)=>{
-    const o =await user.findOne({Email:emailTest})
-    if(o.type=="HR" || o.type=="Coordinator"){
-    const u =await slot.find({Email: req.body.Email}); //HR User
-    let x=u.Email;
-    res.send(u)
-    console.log(u);
-    }
-    
-
-
-    })//front end done
-    
-
+  
     app.get('/viewMySlots',async(req,res)=>{
         const o =await user.findOne({Email:emailTest})
         if(o.type=="TA"){
@@ -1834,7 +1886,7 @@ res.send("you should be a course coordinator to be able to create an academic me
         }
       
         
-    })//front end done
+    })//front end styling done
 
     app.post('/updateSlot',async(req,res)=>{
     var mail=req.body.Email;
@@ -1889,12 +1941,12 @@ if(o.type=="Coordinator"){
 else{
         res.send("you should be a course coordinator to be able to update an academic member's slot")}
         //console.log(d);
-})//front end done
+})//front end styling done
 
 
 
 //--NOT DONE
-    app.delete('/deleteSlot',async(req,res)=>{
+    app.post('/deleteSlot',async(req,res)=>{
     const c =await user.findOne({Email: emailTest});
     if(c.type=="Coordinator"){
 
@@ -1917,7 +1969,7 @@ else{
         res.send("you should be a course coordinator to be granted this privilege")
     }
 
-        })
+        })//front end styling done
 
 
    app.post('/viewAvailableSlots',async(req,res)=>{
@@ -1935,7 +1987,7 @@ else{
         console.log("err");
 
     }
-   })//front end done
+   })//front end styling done
 
 
    app.post('/sendslotlinkingrequest',async(req,res)=>{
@@ -1994,7 +2046,7 @@ else{
 
 
 
-   })//front end done 
+   })//front end done styling
    
 
    //--NOT DONE
@@ -2008,7 +2060,7 @@ else{
     }
 
     res.send("you should be a course coordinator to be able to view slot linking requests")
-   })//front end done
+   })//front end done styling
 
 //--NOT DONE
    app.post('/acceptslotlinkingrequest',async(req,res)=>{
@@ -2156,7 +2208,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     console.log("err");
    }
 
-    })//front end done bas bethaneg sa3at double check 3aleiha 
+    })//front end done styling ps:doubleCheck
 
 //--NOT DONE
    app.post('/submitdayoffrequest',async(req,res)=>{
@@ -2191,7 +2243,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     }
 
 
-   })//front end done
+   })//front end done styling
    
 
 //--NOT DONE
@@ -2206,7 +2258,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     }
    
 
-   })
+   })//front end done styling
 
    //--NOT DONE
    app.post('/acceptdayoffrequests',async(req,res)=>{
@@ -2541,19 +2593,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
    })//amr
 
    //Clash with zeina
-   app.get('/viewReplacementRequests',async(req,res)=>{ //Staff app.get(ViewReplacementRequests)
-    //View all replacement requests sent to this staff member (in case of annual leaves)
-    var x = await leaves.find({replacementStaffEmail: emailTest});
-    for(let i =0; i<x.length; i++){
-        if(x[i].replacementStaffEmail==emailTest){
-            console.log(x[i]);
-
-        }
-        
-    }
-    res.send('here are your replacement requests')
-   })
-
+  
    //--ALMOST DONE
    app.post('/leaveRequestResponse',async(req,res)=>{ //HOD app.post(LeaveRequestResponse)
     //change status (accept/reject) requests sent to this HOD

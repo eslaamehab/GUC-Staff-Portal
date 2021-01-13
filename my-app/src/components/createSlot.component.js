@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class createSlot extends Component {
     constructor(props){
@@ -115,7 +117,7 @@ export default class createSlot extends Component {
     render() {
         return (
         <div>
-          <h3>Create a new slot</h3>
+            <Navbar/>
           <form onSubmit={this.onSubmit}>
 
            

@@ -40,7 +40,6 @@ import forwardrepreqtoHOD from './components/forwardrepreqtoHOD.component';
 import viewrepreqasHOD from './components/viewrepreqasHOD.component';
 import VerifyReplacementRequestsasHOD from './components/VerifyReplacementRequestsasHOD.component';
 import createSlot from './components/createSlot.component';
-import viewSlotInfo from './components/viewSlotInfo.component';
 import viewMySlots from './components/viewMySlots.component';
 import UpdateSlotInfo from './components/UpdateSlotInfo.component';
 import viewAvailableSlotsInfo from './components/viewAvailableSlotsInfo.component';
@@ -77,6 +76,14 @@ import ViewReplacementRequests from './components/viewReplacementRequests.compon
 import replacementRequestResponse from './components/replacementRequestResponse.component';
 import leaveRequestResponse from './components/leaveRequestResponse.component';
 import accessAttendance from './components/accessAttendance.component';
+import viewAllSlotsInDB from './components/viewAllSlotsInDB.component';
+import deleteSlot from './components/deleteSlot.component';
+import AllRequests from './components/AllRequests.component';
+import SlotLinkingOptions from './components/SlotLinkingOptions.component';
+import DayOffOptions from './components/DayOffOptions.component';
+import RepOptions from './components/RepOptions.component';
+
+
 function App() {
   return (
 
@@ -121,7 +128,6 @@ function App() {
       <Route path = "/ViewReplacementRequestsAsHOD" exact component={viewrepreqasHOD}/>
       <Route path = "/HODReplacementRequestsVerify" exact component={VerifyReplacementRequestsasHOD}/>
       <Route path = "/createSlot" exact component={createSlot}/>
-      <Route path = "/viewSlot" exact component={viewSlotInfo}/>
       <Route path = "/viewMySlots" exact component={viewMySlots}/>
       <Route path = "/UpdateSlot" exact component={UpdateSlotInfo}/>
       <Route path = "/viewAvailableSlots" exact component={viewAvailableSlotsInfo}/>
@@ -156,6 +162,12 @@ function App() {
       <Route path = "/replacementrequestresponse" exact component={replacementRequestResponse}/> 
       <Route path = "/leaverequestresponse" exact component={leaveRequestResponse}/> 
       <Route path = "/accessattendance" exact component={accessAttendance}/> 
+      <Route path="/viewAllSlots" exact component={viewAllSlotsInDB}/>
+      <Route path="/deleteSlot" exact component={deleteSlot}/>
+      <Route path="/viewAllReqs" exact component={AllRequests}/>
+      <Route path="/viewAllS" exact component={SlotLinkingOptions}/>
+      <Route path="/viewAllD" exact component={DayOffOptions}/>
+      <Route path="/viewAllR" exact component={RepOptions}/>
 
     </Router>
    
