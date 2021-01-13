@@ -1,0 +1,38 @@
+.App-header {
+    background-color: #010102;
+    
+   
+  }
+
+
+  
+ .welcome{
+    font :bolder;
+    text-align: left;
+    color:rgb(55, 176, 212);
+    float: left;
+    font-weight: 110000	;
+    font-stretch: ultra-expanded;
+   
+ }
+
+
+ .welcome2{
+    font :bolder;
+    text-align: left;
+    color:rgb(6, 7, 7);
+    float: left;
+    font-weight: 900	;
+    font-stretch: ultra-expanded;
+   
+ }
+
+ input:placeholder-shown { border: 5px solid red; }
+
+ .alignleft {
+	float: left;
+}
+
+#small-box::placeholder {
+    transform: translateY(-40px);
+  }

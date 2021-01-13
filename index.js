@@ -784,8 +784,36 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
         }
        return res.send('HR ONLY')
     })
-    
 
+  app.post('/viewLocations', async(req,res)=>{
+  const l = await location.find()
+
+  return res.send(l);
+
+  })
+
+  app.post('/viewCourses', async(req,res)=>{
+    const l = await Courses.find()
+  
+    return res.send(l);
+  
+    })
+    
+app.post('/viewfaculty', async(req,res)=>{
+        const l = await faculties.find()
+      
+        return res.send(l);
+      
+        })
+        
+app.post('/viewdepartments', async(req,res)=>{
+            const l = await departements.find()
+          
+            return res.send(l);
+          
+            })
+
+ 
         
    app.post('/AddFaculty', async(req,res)=>{
             const u =await user.findOne({Email: emailTest}); //HR User

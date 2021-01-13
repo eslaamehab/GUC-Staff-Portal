@@ -3,7 +3,7 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import loginInfo from "./components/loginInfo.component";
-import regInfo from "./components/regInfo.component";
+import regInfo from "./components/pages/regInfo.component";
 import profile from "./components/profile.component";
 
 import attendanceInfo from "./components/attendanceInfo.component";

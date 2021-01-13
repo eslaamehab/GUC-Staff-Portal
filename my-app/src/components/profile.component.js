@@ -3,7 +3,10 @@ import axios from 'axios';
 import { render } from 'react-dom';
 import Sidebar from './sidebar'
 import Sidebar2 from './sidebar2';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from './layouts/Navbar';
+import '../profileInfo.css'
+//import style from './styles/style.css';
 
 export default class profile extends Component {
 
@@ -45,60 +48,48 @@ export default class profile extends Component {
     
     
     
-      render() {
-        const x = this.state.user.courses;
-        const items = [
-            { name: 'home', label: 'Home' },
-            { name: 'attendance', label: 'View Attendance',
-            items: [
-                { name: 'missingDays', label: 'View Missing Days' },
-                { name: 'missingHours', label: 'View Missing Hours' },
-              ],
-             },
-
-            { name: 'missingDays', label: 'View Missing Days' },
-            { name: 'missingHours', label: 'View Missing Hours' },
-            { name: 'viewLeaveRequests', label: 'View Leave Requests' },
-            { name: 'sendLeaveRequest', label: 'Send Leave Request' },
-            { name: 'viewReplacementRequests', label: 'View Replacement Requests' },
-            { name: 'sendReplacementRequest', label: 'Send Replacement Request' },
-            { name: 'resetPassword', label: 'Reset Password' },
-          ]
+     render(){
+      const x = this.state.user.courses;
       
+       const zeft = <div className = "welcome"  >
+
             
-        return (
-            
-            <div>
-            <h1>This is your profile</h1>
+       <h1   >
+         WELCOME {this.state.user.name} 
+         
+         </h1>
+       
+      
+       <p className = "welcome2" >
+       <h10>
+       <li classNalignleftame ="">ID: {this.state.user.ID}</li>
+       <li>Type: {this.state.user.type}</li>
+       <li>Faculty: {this.state.user.faculty}</li>  
+       <li>Department: {this.state.user.department}</li>
+       <li>Gender: {this.state.user.gender}</li>
+       <li>Office Location: {this.state.user.officelocation}</li>
+       <li>Day off: {this.state.user.dayoff}</li>
+       <li>Annual Leave Balance: {this.state.user.annualLeaveBalance}</li>
+       <li>Accidental Leave Balance: {this.state.user.accidentalLeaveBalance}</li>
 
-            <div id="gallery-text">
-            <div class="gallery-text">
-            <Sidebar items={items} />
-            </div>
-            </div>
+       <li>Courses:{this.state.user.courses} </li>
+       </h10>
+      
+       
+       </p>
 
-            <p>Welcome {this.state.user.name}</p>
-            <p>ID: {this.state.user.ID}</p>
-            <p>Type: {this.state.user.type}</p>
-            <p>Faculty: {this.state.user.faculty}</p>  
-            <p>Department: {this.state.user.department}</p>
-            <p>Gender: {this.state.user.gender}</p>
-            <p>Office Location: {this.state.user.officelocation}</p>
-            <p>Day off: {this.state.user.dayoff}</p>
-            <p>Annual Leave Balance: {this.state.user.annualLeaveBalance}</p>
-            <p>Accidental Leave Balance: {this.state.user.accidentalLeaveBalance}</p>
+      
+       </div>
+       return(
 
-            <p>Courses: </p>
-            <ul>
-            {x.map(item => {
-            return <li>{item}</li>;
-            })}
-            </ul>
+         
+         <div>
+           <Navbar />
 
-           
-            </div>
-        )
-      }  
+           {zeft}
+         </div>
+       )
+     }
 
     
 

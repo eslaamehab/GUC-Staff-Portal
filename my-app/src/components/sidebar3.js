@@ -61,7 +61,7 @@ function Sidebar3() {
         <ListItemText>Access Staff Missing Hours</ListItemText>
       </ListItem>
 
-      <ListItem button onClick={routeAttendance}>
+      <ListItem button onClick={}>
         <ListItemText>View Attendance</ListItemText>
       </ListItem>
       <ListItem button onClick={routeMissDays}>

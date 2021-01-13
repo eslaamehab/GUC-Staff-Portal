@@ -1,7 +1,12 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Nav, NavDropdown, DropdownButton,MenuItem, Form , LabelDropdown, Tabs, ButtonToolbar, Button, Table, ButtonGroup, Row, Col, Grid, Panel, FormGroup, FormControl} from 'react-bootstrap';
+import '../loginInfo.css'
+
 export default class loginInfo extends Component {
+    
     constructor(props){
         super(props);
 
@@ -56,34 +61,43 @@ export default class loginInfo extends Component {
 
     render() {
         return (
-        <div>
-          <h3>Login</h3>
-          <form onSubmit={this.onSubmit}>
-            <div className="form-group"> 
-              <label>Email: </label>
-              <input  type="text"
-                  required
-                  className="form-control"
-                  value={this.state.Email}
-                  onChange={this.onChangeEmail}
-                  />
-                
-            </div>
-            <div className="form-group"> 
-              <label>password: </label>
-              <input  type="password"
-                  required
-                  className="form-control"
-                  value={this.state.password}
-                  onChange={this.onChangePassword}
-                  />
-            </div>
 
-            <div className="form-group">
-              <input type="submit" value="Login" className="btn btn-primary" />
+
+    <div  className = "App-header">
+    
+            <form  onSubmit={this.onSubmit}>
+              <div className="font-weight-bold"> 
+                <label>Email: </label>
+                <input  type="text"
+                    required
+                    className="form-control"
+                    value={this.state.Email}
+                    onChange={this.onChangeEmail}
+                    />
+                  
+              </div>
+              <div className="font-weight-bold"> 
+                <label>password: </label>
+                <input  type="password"
+                    required
+                    className="form-control"
+                    value={this.state.password}
+                    onChange={this.onChangePassword}
+                    />
+              </div>
+  
+              <div className="App-link">
+              <button className ="btn-lg btn-dark btn-block" input type="submit "> 
+              LOGIN
+               </button>
+              </div>
+            </form>
+         
+          
             </div>
-          </form>
-        </div>
+            
+           
+
         )
       }
     }
