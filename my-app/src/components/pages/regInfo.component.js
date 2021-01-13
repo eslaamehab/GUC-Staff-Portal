@@ -271,4 +271,6 @@ export default class regInfo extends Component {
         </div>
         )
       }
+    
     }
+   
