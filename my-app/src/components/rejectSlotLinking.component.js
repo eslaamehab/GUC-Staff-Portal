@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import Navbar from './layouts/Navbar';
 
 //import replacementrequest from '../../../replacementrequest';
-export default class acceptSlotLinking extends Component {
+export default class rejectSlotLinking extends Component {
     constructor(props){
         super(props);
 
@@ -16,7 +16,7 @@ export default class acceptSlotLinking extends Component {
             id: ''
         }*/
         this.state= {
-            id:'',
+            id:''
         }
         }
     
@@ -41,7 +41,7 @@ export default class acceptSlotLinking extends Component {
 
         //console.log(log);
 
-         axios.post('http://localhost:3000/acceptslotlinkingrequest',log)
+         axios.post('http://localhost:3000/rejectSlotLinkingRequest',log)
         .then(res=> {
             //this.setState({: res.data})
             
@@ -64,7 +64,7 @@ export default class acceptSlotLinking extends Component {
         return (
             <div>
                 <Navbar/>
-            <h3>Accept a slot linking request by ID </h3>
+            <h3>Reject a slot linking request by ID </h3>
             <form onSubmit={this.onSubmit}>
               <div className="form-group"> 
                 <label>Request ID </label>
@@ -82,7 +82,7 @@ export default class acceptSlotLinking extends Component {
                   
             <form onSubmit={this.onSubmit}>
               <div className="form-group">
-                <input type="submit" value="Accept" className="btn btn-primary" />
+                <input type="submit" value="Reject" className="btn btn-primary" />
               </div>
             </form>
   

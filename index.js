@@ -2066,19 +2066,20 @@ else{
    app.post('/acceptslotlinkingrequest',async(req,res)=>{
 try{
     const u =await user.findOne({Email: emailTest});
+    const u1 =await slotlinkingrequest.findById(req.body.id);
+    var ax=1;
+
     ///getting course coordinator after logging in
 
 
     if(u.type=="Coordinator"){
     //getting slot linking request
-    const u1 =await slotlinkingrequest.findById(req.body.id);
 
 
     var mailz= u1.Email; //ta mail
     var dayz=u1.day;//day of slot
     var slotz=u1.slot;//slot no
     var coursez=u1.course;//course
-    var ax=req.body.accepted;
 
 
     //getting day off
@@ -2177,21 +2178,14 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
 
 
 
-   if(ax==0){     
-        u1.status="rejected";
-        const n=new notification({
-            Email:mailz,
-            Message:"your slot linking request has been rejected by your course coordinator",
-            courseCoordinatorEmail:emailTest
-           // headOfDepartementEmail:String
-
-        })
-        n.save();
-        u1.save();
-        res.send("viewed and rejected ")
-
+ 
     }
-    }
+
+
+
+
+
+    
     else{
         res.send("you should be a course coordinator to be granted this privilege")
         
@@ -2209,6 +2203,50 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
    }
 
     })//front end done styling ps:doubleCheck
+
+
+
+
+    app.post('/rejectSlotLinkingRequest',async(req,res)=>{
+        try{
+            const u =await user.findOne({Email: emailTest});
+            const u1 =await slotlinkingrequest.findById(req.body.id);
+
+            var ax=0;
+        
+            ///getting course coordinator after logging in
+        
+        
+    if(u.type=="Coordinator"){
+        if(ax==0){     
+            u1.status="rejected";
+            const n=new notification({
+                Email:mailz,
+                Message:"your slot linking request has been rejected by your course coordinator",
+                courseCoordinatorEmail:emailTest
+               // headOfDepartementEmail:String
+    
+            })
+            n.save();
+            u1.save();
+            res.send("viewed and rejected ")
+    
+        }
+        
+    
+    }
+    else{
+        res.send("You should be a coordinator")
+    
+    }
+
+}
+        catch(error){
+            console.log("err");
+        }
+
+    })
+
 
 //--NOT DONE
    app.post('/submitdayoffrequest',async(req,res)=>{
@@ -2264,20 +2302,21 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
    app.post('/acceptdayoffrequests',async(req,res)=>{
    try{    
     const u =await user.findOne({Email: emailTest});
+    const u1 =await dayoffrequest.findById(req.body.id);     
+
     let e=u.Email;
     console.log(e);
 
 
     if(u.type=="HOD"){
 //getting slot linking request
-    const u1 =await dayoffrequest.findById(req.body.id);     
     
     ////got the day of request by ID
 
 
     var mailz=u1.Email; 
     var dayoffz=u1.requestedDayOff;
-    var accept=req.body.accepted;
+    var accept=1;
 
 
     console.log("ta mail: "+mailz+"dayoff: "+dayoffz+"accept:  "+accept);
@@ -2298,55 +2337,70 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
         n.save();
         res.send("TA's day off has been accepted successfully")
     }
-    else{
-        u1.accepted=0;
-        u1.status="rejected";
+    }}
+    catch(error){
 
-    console.log(u1.status);
-
-
-        var r=req.body.reasonOfRejection;
-        u1.reasonOfRejection=r;
-        u1.save();
-        const n=new notification({
-            Email:mailz,
-            Message:"your request to change your day off has been rejected by the head of the departement",
-            headOfDepartementEmail:emailTest,
-            reasonOfRejection:r
-           // headOfDepartementEmail:String
-
-        })
-        n.save();
-    res.send("TA's day off has been rejected successfully")
+        console.log("err")
     }
 
 
-    }}
+    })
 
 
 
 
+ app.post('/rejectdayoffrequests',async(req,res)=>{
+    try{    
+        const u =await user.findOne({Email: emailTest});
+        const u1 =await dayoffrequest.findById(req.body.id);     
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        let e=u.Email;
+        console.log(e);
+    
+    
+        if(u.type=="HOD"){
+    //getting slot linking request
+        
+        ////got the day of request by ID
+    
+    
+        var mailz=u1.Email; 
+        var dayoffz=u1.requestedDayOff;
+        var accept=0;
+    
+    
+        console.log("ta mail: "+mailz+"dayoff: "+dayoffz+"accept:  "+accept);
+        if(accept==0){
+            const ta =await user.findOne({Email:mailz});     
+            u1.accepted=accept;
+            u1.status="rejected"
+            ta.dayoff=dayoffz;
+            u1.save();
+            ta.save();
+    
+            var r=req.body.reasonOfRejection;
+            u1.reasonOfRejection=r;
+            u1.save();
+            const n=new notification({
+                Email:mailz,
+                Message:"your request to change your day off has been rejected by the head of the departement",
+                headOfDepartementEmail:emailTest,
+                reasonOfRejection:r
+               // headOfDepartementEmail:String
+    
+            })
+            n.save();
+        res.send("TA's day off has been rejected successfully")
+        }
+        } }
     catch(error){
         console.log("err");
     }
 
-   })//front end done
+   })//done front end styling
+
+
+
 
 
    app.post('/sendLeaveRequest', async (req,res)=>{
@@ -2695,7 +2749,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     res.send(stats);
 
 
-   })//done front end
+   })//done front end styling
 
 
    app.post('/viewslotlinkingstatus',async(req,res)=>{
@@ -2704,7 +2758,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     res.send(stats);
 
 
-   })//done front end
+   })//done front end styling
 
 
    app.post('/sendReplacementRequest',async(req,res)=>{
@@ -2731,7 +2785,7 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     }
 
 
-   })//done front end
+   })//done front end styling
 
    app.get('/viewReplacementRequests',async(req,res)=>{
 
@@ -2745,14 +2799,15 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
         res.send("you are not an academic member")
     }
 
-   })//done front end
+   })//done front end styling
 
-   app.post('/viewReplacementRequestbyID',async(req,res)=>{
+   app.post('/AcceptReplacementRequestbyID',async(req,res)=>{
     
     const u = await user.findOne({Email:emailTest}); 
+    const u1 = await replacementrequest.findById(req.body.id);
+    var x=1;
     if(u.type=="TA"){
-        const u1 = await replacementrequest.findById(req.body.id);
-        var x=req.body.accepted; //accepting boolean
+         //accepting boolean
         console.log("accepting boolean "+x);
         var e=u1.replacingTAEmail // email of recieving TA
         console.log("recieving TA "+e);
@@ -2810,10 +2865,11 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
 
         res.send("replacement request has been accepted successfully please contact HOD now!")
         }
+
+
         else{
-            var m=u.name;
-            u1.accepted=0;
-            u1.status="rejected by switching TA, HOD pending"
+           
+            u1.status="rejected"
             var z="you replacement request with "+m+" has been rejected"
 
             const n=new notification({
@@ -2836,7 +2892,44 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
 
 
 
-   })//done front end
+   })//done front end styling
+
+
+   app.post('/RejectReplacementRequestTA',async(req,res)=>{
+
+    const u = await user.findOne({Email:emailTest}); 
+    const u1 = await replacementrequest.findById(req.body.id);
+    if(u1){
+
+
+    }
+    else{
+        res.send("Replacement Request Not Found")
+    }
+    if(u.type=="TA"){
+         //accepting boolean
+       // email of recieving TA
+            u1.accepted=0;
+            u1.status="rejected by switching TA, HOD pending"
+            var z="you replacement request with "+m+" has been rejected"
+
+            const n=new notification({
+                Email:s,
+                Message:z})
+    
+            n.save();
+
+            res.send("replacement request has been rejected successfully")
+
+        
+
+    }
+    else{
+        res.send("You are not a TA");
+
+    }
+
+   })
 
    app.post('/ForwardReplacementReqtoHOD',async(req,res)=>{
     const u= await user.findOne({Email:emailTest});
@@ -2867,7 +2960,7 @@ else{
 
     res.send("you are not a teacher's assistant")
 }
-   })//done front end
+   })//done front end styling
 
    app.get('/ViewReplacementRequestsAsHOD',async(req,res)=>{
     const u = await user.findOne({Email:emailTest}); 
@@ -2882,11 +2975,15 @@ else{
    }
 
 
-   })//done front end
+   })//done front end styling
    app.post('/HODReplacementRequestsVerify',async(req,res)=>{
     const u = await user.findOne({Email:emailTest}); 
+    const k = await replacementrequest.findById(req.body.id); 
+    if(k){}
+    else{
+        res.send("replacement request not found")
+    }
     if(u.type=="HOD"){
-        const k = await replacementrequest.findById(req.body.id); 
         var s=k.Email;
         var mailz=k.replacingTAEmail;
         var datez=k.date;
@@ -2894,7 +2991,7 @@ else{
         var timez=k.timez;
         var courze=k.course;
         var noz=k.slot;
-        var v=req.body.verifiedByHOD;
+        var v=1;
         if(v==1){
             k.verifiedByHOD=v;
             k.status="accepted";
@@ -2938,9 +3035,46 @@ else{
     }
 
 
-   })//done front end
+   })//done front end styling
+
+
+
+
+
+   app.post('/HODRepReqRej',async(req,res)=>{
+    const u = await user.findOne({Email:emailTest}); 
+    const k = await replacementrequest.findById(req.body.id); 
+    if(k){}
+    else{
+        res.send("replacement request not found")
+    }
+    if(u.type=="HOD"){
+        var s=k.Email;
+        var mailz=k.replacingTAEmail;
+        var datez=k.date;
+        var locationz=k.location;
+        var timez=k.timez;
+        var courze=k.course;
+        var noz=k.slot;
+        k.verifiedByHOD=0;
+        k.status="rejected"
+        const n=new notification({
+            Email:s,
+            Message:"your replacement request has rejected by the Head of your department"
+        })
+        k.save();
+        n.save();
+        res.send("changes saved")
+
+    }
+    else{
+        res.send("you must be head of department ")
+    }
+
+   })
    app.get('/viewAcceptedDayOffRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
+
     if(u.type=="TA"){
     const u1= await dayoffrequest.find({Email:emailTest,status:"accepted"})
     const u2=await slotlinkingrequest.find({Email:emailTest,status:"accepted"})
@@ -2963,7 +3097,7 @@ else{
     console.log(u4);
     res.send(u1);}
 
-   })//done front end
+   })//done front end styling
 
    app.get('/viewAcceptedSlotLinkingRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
@@ -2989,7 +3123,7 @@ else{
     console.log(u4);
     res.send(u2);}
 
-   })//done front end
+   })//done front end styling 
 
    app.get('/viewAcceptedReplacementRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
@@ -3015,7 +3149,7 @@ else{
     console.log(u4);
     res.send(u3);}
 
-   })//done front end
+   })//done front end styling
 
    app.get('/viewRejectedDayOffRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
@@ -3024,7 +3158,7 @@ else{
     res.send(u1);}
 
 
-   })//front end done
+   })//front end done styling 
 
    app.get('/viewRejectedSlotLinkingRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
@@ -3033,7 +3167,7 @@ else{
     res.send(u2);}
 
 
-   })//front end done
+   })//front end done styling
 
    app.get('/viewRejectedReplacementRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
@@ -3043,7 +3177,7 @@ else{
    
 
 
-   })//front end done
+   })//front end done styling
    app.get('/viewPendingDayoffRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
     if(u.type=="TA"){
@@ -3053,7 +3187,7 @@ else{
     res.send(u1);
     }
 
-   })//front end done
+   })//front end done styling
    app.get('/viewPendingSlotLinkingRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
     if(u.type=="TA"){
@@ -3063,7 +3197,7 @@ else{
     res.send(u2);
     }
 
-   })//front end done
+   })//front end done styling
    app.get('/viewPendingReplacementRequests',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
     if(u.type=="TA"){
@@ -3073,7 +3207,7 @@ else{
     res.send(u3);
     }
 
-   })//front end done
+   })//front end done styling 
    app.post('/cancelPendingSlotLinkingRequest',async(req,res)=>{
     const u =await user.findOne({Email:emailTest});
         if(u.type=="TA"){
@@ -3097,7 +3231,7 @@ else{
 
 
 
-    })//front end done
+    })//front end done styling
 
     app.post('/cancelPendingDayOffRequest',async(req,res)=>{
         const u =await user.findOne({Email:emailTest});
@@ -3121,7 +3255,7 @@ else{
     
 
 
-    })//front end done
+    })//front end done styling
 
     app.post('/cancelPendingReplacement',async(req,res)=>{
         const u =await user.findOne({Email:emailTest});
@@ -3148,7 +3282,7 @@ else{
 
 
 
-    })//front end done
+    })//front end done styling 
     app.post('/cancelUpcomingReplacementRequest',async(req,res)=>{
 
         const u =await user.findOne({Email:emailTest});
@@ -3178,8 +3312,7 @@ else{
 
 
 
-    })
-
+    })//front end styling
 
     function authenticate (req,res,next){
         const token = req.header('auth-token');

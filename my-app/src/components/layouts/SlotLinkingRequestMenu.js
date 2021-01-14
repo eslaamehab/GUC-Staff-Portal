@@ -23,7 +23,9 @@ function SlotLinkingRequestMenu() {
   const goToSLStatus = () => {
     history.push('/viewslotlinkingstatus')
   }
-
+  const goToRSL = () => {
+    history.push('/rejectSlotLinkingRequest')
+  }
   return (
     <List disablePadding dense>
       <ListItem button  onClick = {goToSendSlotLinking}  >
@@ -39,9 +41,15 @@ function SlotLinkingRequestMenu() {
         <ListItemText> Accept Slot Linking Requests</ListItemText>
       </ListItem>
 
+      
+      <ListItem button onClick = {goToRSL} >
+        <ListItemText>Reject Slot Linking Request </ListItemText>
+      </ListItem>
+
       <ListItem button onClick = {goToSLStatus} >
         <ListItemText>View Slot Linking Request Status</ListItemText>
       </ListItem>
+
 
      
 

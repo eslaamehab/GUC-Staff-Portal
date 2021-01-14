@@ -5,11 +5,11 @@ import Navbar from './layouts/Navbar';
 
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
-export default class viewReplacementRequest extends Component {
+export default class viewAllReplacementRequest extends Component {
     constructor(props){
         super(props);
         this.state= {
-         replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
+         replacementrequest:[{_id:'',Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
         //replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
 
         }
@@ -43,7 +43,8 @@ export default class viewReplacementRequest extends Component {
           return (
               <tr key={invoice.replacingTAEmail}>
                   
-    
+                  <h4>ID: {invoice._id}</h4>
+
                   <h4>Sending TA: {invoice.Email}</h4>
                   <h4>Date of slot: {invoice.date}</h4>
                   <h4>Slot number: {invoice.slot}</h4>
@@ -59,6 +60,7 @@ export default class viewReplacementRequest extends Component {
         return (
 
           <div>
+        <Navbar/>
 <h1> YOUR REPLACEMENT REQUESTS:</h1>
 {zeft}
           </div>

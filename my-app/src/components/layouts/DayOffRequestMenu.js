@@ -24,6 +24,11 @@ function DayOffRequestMenu() {
     history.push('/viewdayoffrequeststatus')
   }
 
+  const goToRejectDayOff = () => {
+    history.push('/rejectdayoffrequests')
+  }
+  
+
   return (
     <List disablePadding dense>
       <ListItem button  onClick = {goToSubmitDayOff}  >
@@ -37,6 +42,10 @@ function DayOffRequestMenu() {
 
       <ListItem button onClick = {goToAcceptDayOff} >
         <ListItemText> Accept Day Off Requests</ListItemText>
+      </ListItem>
+
+      <ListItem button onClick = {goToRejectDayOff} >
+        <ListItemText> Reject Day Off Requests</ListItemText>
       </ListItem>
 
       <ListItem button onClick = {goToDayOffStatus} >

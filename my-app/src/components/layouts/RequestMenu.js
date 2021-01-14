@@ -20,7 +20,17 @@ function RequestMenu() {
   const goToRepOptions= () => {
     history.push('/viewAllR')
   }
-   
+  const viewP= () => {
+    history.push('/viewPendingDayoffRequests')
+  }
+  const viewR= () => {
+    history.push('/viewRejectedDayOffRequests')
+  }
+  const viewA= () => {
+    history.push('/viewAcceptedDayOffRequests')
+  }
+  
+  
 
   return (
     <List disablePadding dense>
@@ -34,6 +44,16 @@ function RequestMenu() {
 
       <ListItem button onClick = {goToRepOptions}>
         <ListItemText>Replacement Requests</ListItemText>
+      </ListItem>
+
+      <ListItem button onClick = {viewA}>
+        <ListItemText>View Accepted Requests</ListItemText>
+      </ListItem>
+      <ListItem button onClick = {viewR}>
+        <ListItemText>View Rejected Requests</ListItemText>
+      </ListItem>
+      <ListItem button onClick = {viewP}>
+        <ListItemText>View Pending Requests</ListItemText>
       </ListItem>
 
      

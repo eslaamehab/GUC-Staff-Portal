@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 // slotlinkingrequest from '../../../slotlinkingrequest';
 //import replacementrequest from '../../../replacementrequest';
 //import dayoffrequest from '../../../dayoffrequest';
@@ -315,6 +317,8 @@ export default class rejectedRequestsInfo extends Component {
 
         return (
             <div> 
+            <Navbar/>
+
 <h3>Your rejected Day Off Requests</h3>            
             {dayoffreq}
 

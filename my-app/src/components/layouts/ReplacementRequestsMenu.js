@@ -17,8 +17,14 @@ function ReplacementRequestsMenu() {
     history.push('/viewReplacementRequests')
   }
   const goToViewReplacementbyID = () => {
-    history.push('/viewReplacementRequestbyID')
+    history.push('/AcceptReplacementRequestbyID')
   }
+  const goToRRRTA = () => {
+    history.push('/RejectReplacementRequestTA')
+  }
+
+
+  
 
   const ForwardHOD = () => {
     history.push('/ForwardReplacementReqtoHOD')
@@ -30,24 +36,16 @@ function ReplacementRequestsMenu() {
   const verifyHOD = () => {
     history.push('/HODReplacementRequestsVerify')
   }
-
-  const AcceptedReqs = () => {
-    history.push('/viewAcceptedDayOffRequests')
-  }
-  const RejectedReqs = () => {
-    history.push('/viewRejectedDayOffRequests')
-  }
-  const PendingReqs = () => {
-    history.push('/viewPendingDayOffRequests')
-  }
   const CancelPending = () => {
-    history.push('/cancelPendingDayOffRequest')
+    history.push('/cancelPendingReplacement')
   }
   const CancelUpcoming = () => {
     history.push('/cancelUpcomingReplacementRequest')
   }
   
-
+  const goToRRRHOD= () => {
+    history.push('/HODRepReqRej')
+  }
   return (
     <List disablePadding dense>
       <ListItem button  onClick = {goToSubmitReplacement}  >
@@ -60,7 +58,11 @@ function ReplacementRequestsMenu() {
       </ListItem>
 
       <ListItem button onClick = {goToViewReplacementbyID} >
-        <ListItemText> View Replacement Requests by ID</ListItemText>
+        <ListItemText> Accept Replacement Requests by ID(TA)</ListItemText>
+      </ListItem>
+
+      <ListItem button onClick = {goToRRRTA} >
+        <ListItemText> Reject Replacement Requests by ID(TA)</ListItemText>
       </ListItem>
       
       <ListItem button onClick = {ForwardHOD} >
@@ -72,16 +74,10 @@ function ReplacementRequestsMenu() {
       <ListItem button onClick = {verifyHOD} >
         <ListItemText> Verify Replacement Requests(Head Of Departement)</ListItemText>
       </ListItem>
-      <ListItem button onClick = {AcceptedReqs} >
-        <ListItemText> View Accepted Replacement Requests(Head Of Departement)</ListItemText>
+      <ListItem button onClick = {goToRRRTA} >
+        <ListItemText> Reject Replacement Requests(Head Of Departement)</ListItemText>
       </ListItem>
-      <ListItem button onClick = {RejectedReqs} >
-        <ListItemText> View Rejected Replacement Requests(Head Of Departement)</ListItemText>
-      </ListItem>
-      <ListItem button onClick = {PendingReqs} >
-        <ListItemText> View Pending Replacement Requests(Head Of Departement)</ListItemText>
-      </ListItem>
-
+     
       <ListItem button onClick = {CancelPending} >
         <ListItemText> Cancel Pending Replacement Requests</ListItemText>
       </ListItem>
