@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class regInfo extends Component {
     constructor(props){
@@ -117,7 +119,7 @@ export default class regInfo extends Component {
     render() {
         return (
         <div>
-          <h3>Update Slot</h3>
+            <Navbar/>
           <form onSubmit={this.onSubmit}>
 
             <div className="form-group"> 

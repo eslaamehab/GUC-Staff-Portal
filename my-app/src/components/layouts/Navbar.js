@@ -43,7 +43,12 @@ import './Navbar.css'
     history.push('/empty')
   }
 
-   const goToProfile = () => {
+  const goToDatabaseSlots = () => {
+    history.push('/viewAllSlots')
+  }
+
+
+  const goToProfile = () => {
     history.push('/profile')
   }
 
@@ -52,6 +57,13 @@ import './Navbar.css'
     history.push('/viewAllLeaves')
   }
 
+  const goToMyRequests = () => {
+    history.push('/viewAllReqs')
+  }
+  
+  const goToMyAvailableslots = () => {
+    history.push('/viewAvailableSlots')
+  }
     return (
        
          
@@ -116,6 +128,8 @@ import './Navbar.css'
        
        
          
+
+
 
 
 

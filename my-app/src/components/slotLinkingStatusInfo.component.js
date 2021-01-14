@@ -15,7 +15,7 @@ export default class slotLinkingStatusInfo extends Component {
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
-            status:''
+            v:String
         //replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
 
         }
@@ -62,7 +62,7 @@ export default class slotLinkingStatusInfo extends Component {
     slot:this.state.slot};
         axios.post('http://localhost:3000/viewslotlinkingstatus',reg)
         .then(response => {
-            this.setState({status: response.data})
+            this.setState({v: response.data})
             console.log(response)
           }
             )
@@ -110,9 +110,10 @@ export default class slotLinkingStatusInfo extends Component {
             <div className="form-group">
                         <input type="submit" value="Submit" className="btn btn-primary" />
                       </div>
-                    </form>,
-            {this.state.status}
-                    </div>
+                    </form>
+                    <h1>{this.state.status}</h1>
+            
+     </div>
             
         )
 

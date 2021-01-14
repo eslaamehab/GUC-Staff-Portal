@@ -1,10 +1,11 @@
+
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
 import Navbar from './layouts/Navbar';
 
 //import replacementrequest from '../../../replacementrequest';
-export default class submitreplacementrequestID extends Component {
+export default class RejectRepReqTA extends Component {
     constructor(props){
         super(props);
 
@@ -37,7 +38,7 @@ export default class submitreplacementrequestID extends Component {
 
         //console.log(log);
 
-         axios.post('http://localhost:3000/AcceptReplacementRequestbyID',log)
+         axios.post('http://localhost:3000/RejectReplacementRequestTA',log)
         .then(res=> {
             //this.setState({: res.data})
             
@@ -60,7 +61,7 @@ export default class submitreplacementrequestID extends Component {
         return (
         <div>
             <Navbar/>
-          <h3>Enter ID of replacement request that you want to Accept</h3>
+          <h3>Enter ID of replacement request that you want to Reject</h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
               <label>ID </label>
@@ -77,7 +78,7 @@ export default class submitreplacementrequestID extends Component {
           <form onSubmit={this.onSubmit}>
            
             <div className="form-group">
-              <input type="submit" value="accept" className="btn btn-primary" />
+              <input type="submit" value="reject" className="btn btn-primary" />
             </div>
           </form>
 

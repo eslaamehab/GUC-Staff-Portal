@@ -4,11 +4,12 @@ import { render } from 'react-dom';
 import Navbar from './layouts/Navbar';
 
 //import replacementrequest from '../../../replacementrequest';
-export default class submitreplacementrequestID extends Component {
+export default class RejectRepReqHOD extends Component {
     constructor(props){
         super(props);
 
         this.onChangeid = this.onChangeid.bind(this);
+       
         this.onSubmit = this.onSubmit.bind(this);
 
        /* this.state= {
@@ -22,12 +23,12 @@ export default class submitreplacementrequestID extends Component {
     onChangeid(e){
         this.setState({
             v:String,
-            id: e.target.value
+            id: e.target.value,
         });
     }
 
     
-    
+
     onSubmit(e){
         e.preventDefault();
 
@@ -37,7 +38,7 @@ export default class submitreplacementrequestID extends Component {
 
         //console.log(log);
 
-         axios.post('http://localhost:3000/AcceptReplacementRequestbyID',log)
+         axios.post('http://localhost:3000/HODRepReqRej',log)
         .then(res=> {
             //this.setState({: res.data})
             
@@ -60,10 +61,10 @@ export default class submitreplacementrequestID extends Component {
         return (
         <div>
             <Navbar/>
-          <h3>Enter ID of replacement request that you want to Accept</h3>
+          <h3>Reject a replacement request by ID </h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
-              <label>ID </label>
+              <label>Request ID </label>
               <input  type="text"
                   required
                   className="form-control"
@@ -75,9 +76,9 @@ export default class submitreplacementrequestID extends Component {
 
           </form>
           <form onSubmit={this.onSubmit}>
-           
+            
             <div className="form-group">
-              <input type="submit" value="accept" className="btn btn-primary" />
+              <input type="submit" value="Reject" className="btn btn-primary" />
             </div>
           </form>
 

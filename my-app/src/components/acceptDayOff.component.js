@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import replacementrequest from '../../../replacementrequest';
 export default class acceptDayOff extends Component {
     constructor(props){
@@ -8,17 +10,13 @@ export default class acceptDayOff extends Component {
 
         this.onChangeid = this.onChangeid.bind(this);
        
-        this.onChangeVerifiedBit = this.onChangeVerifiedBit.bind(this);
-        this.onChangeReasonOfRej=this.onChangeReasonOfRej.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
        /* this.state= {
             id: ''
         }*/
         this.state= {
-            id:'',
-            accepted:'',
-            reasonOfRejection:''
+            id:''
         }
         }
     
@@ -30,32 +28,17 @@ export default class acceptDayOff extends Component {
         });
     }
 
-    
-    onChangeVerifiedBit(e){
-        this.setState({
-            accepted: e.target.value
-        });
-    }
-    onChangeReasonOfRej(e){
-        this.setState({
-            reasonOfRejection:e.target.value
-
-        })
-    }
-
     onSubmit(e){
         e.preventDefault();
 
         const log = {
-            id:this.state.id,
-            accepted:this.state.accepted,
-            reasonOfRejection:this.state.reasonOfRejection
+            id:this.state.id
         }
         
 
         //console.log(log);
 
-         axios.post('http://localhost:3000/acceptdayoffrequests',log)
+         axios.post('http://localhost:3000/rejectdayoffrequests',log)
         .then(res=> {
             //this.setState({: res.data})
             
@@ -77,7 +60,8 @@ export default class acceptDayOff extends Component {
     render() {
         return (
         <div>
-          <h3>Verify a Dayoff request by ID </h3>
+            <Navbar/>
+          <h3>Accept a Dayoff request by ID </h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
               <label>Request ID </label>
@@ -91,31 +75,10 @@ export default class acceptDayOff extends Component {
             </div>
 
           </form>
-          <form onSubmit={this.onSubmit}>
-            <div className="form-group"> 
-              <label>Accept Bit</label>
-              <input  type="text"
-                  required
-                  className="form-control"
-                  value={this.state.accepted}
-                  onChange={this.onChangeVerifiedBit}
-                  />
-                
-            </div>
-            </form>
             <form onSubmit={this.onSubmit}>
-            <div className="form-group"> 
-              <label>Please state a reason in case you reject:</label>
-              <input  type="text"
-                  
-                  className="form-control"
-                  value={this.state.reasonOfRejection}
-                  onChange={this.onChangeReasonOfRej}
-                  />
-                
-            </div>
+
             <div className="form-group">
-              <input type="submit" value="Verify" className="btn btn-primary" />
+              <input type="submit" value="Accept" className="btn btn-primary" />
             </div>
           </form>
 

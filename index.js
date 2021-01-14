@@ -827,12 +827,7 @@ app.get('/viewAllSlots', async(req,res)=>{
               
                 })
 
- app.get('/viewAllLeaves', async(req,res)=>{
-     const l = await leaves.find()
-                  
-                    return res.send(l);
-                  
-                    })
+
 
  
         

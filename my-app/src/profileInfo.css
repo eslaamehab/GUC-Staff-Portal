@@ -4,7 +4,34 @@
    
   }
 
+.x{
+   font :bolder;
+   font-weight: 8000	;
 
+   text-align: center;
+   font-stretch: ultra-expanded;
+
+   color:white;
+   background-color:rgb(43, 42, 42);
+   float: right;
+   font-weight: 110000	;
+   font-stretch: ultra-expanded;
+  
+}
+.y{
+   font :bolder;
+   font-weight: 8000	;
+
+   text-align: center;
+   font-stretch: ultra-expanded;
+
+   color:white;
+   background-color:rgb(148, 148, 148);
+   float: center;
+   font-weight: 110000	;
+   font-stretch: ultra-expanded;
+  
+}
   
  .welcome{
   

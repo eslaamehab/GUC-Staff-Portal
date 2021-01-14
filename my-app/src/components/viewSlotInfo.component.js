@@ -37,7 +37,7 @@ export default class viewSlotInfo extends Component {
     onSubmit(e){
         e.preventDefault();
         const reg = {Email:this.state.Email};
-        axios.get('http://localhost:3000/viewSlot')
+        axios.post('http://localhost:3000/viewSlot',reg)
         .then(response => {
             this.setState({slot: response.data})
             console.log(response)
@@ -111,7 +111,7 @@ export default class viewSlotInfo extends Component {
                   /> 
             </div>
             <div className="form-group">
-                        <input type="submit" value="Register" className="btn btn-primary" />
+                        <input type="submit" value="show" className="btn btn-primary" />
                       </div>
                     </form>,
             {zeft}
