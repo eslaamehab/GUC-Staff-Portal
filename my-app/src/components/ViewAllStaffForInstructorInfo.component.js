@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class ViewAllStaffForInstructorInfo extends Component {
@@ -59,11 +60,11 @@ export default class ViewAllStaffForInstructorInfo extends Component {
       render() {
       const  zeft=            this.state.User.map((invoice, index) => {
                 
-            return (<div>
+            return (<div> 
+              
                 
                 
-                
-                
+                  
                 
                 <table>
 
@@ -136,6 +137,7 @@ export default class ViewAllStaffForInstructorInfo extends Component {
         })
         return (
             <div>
+              <Navbar/>
             <form onSubmit={this.onSubmit}>
 
             <div className="form-group"> 

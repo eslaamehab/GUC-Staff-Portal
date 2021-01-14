@@ -3,8 +3,12 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import loginInfo from "./components/loginInfo.component";
-import regInfo from "./components/pages/regInfo.component";
+import regInfo from "./components/regInfo.component";
 import profile from "./components/profile.component";
+import emptyInfo from "./components/emptyInfo.component";
+
+import empty2Info from "./components/empty2Info.component";
+import viewAllLeavesInfo from "./components/viewAllLeavesInfo.component";
 
 import attendanceInfo from "./components/attendanceInfo.component";
 import AddLocationInfo from "./components/AddLocationInfo.component";
@@ -77,6 +81,14 @@ import ViewReplacementRequests from './components/viewReplacementRequests.compon
 import replacementRequestResponse from './components/replacementRequestResponse.component';
 import leaveRequestResponse from './components/leaveRequestResponse.component';
 import accessAttendance from './components/accessAttendance.component';
+
+import viewLocationsInfo from './components/viewLocationsInfo.component';
+import viewCoursesInfo from './components/viewCoursesInfo.component';
+import viewfacultyInfo from './components/viewfacultyInfo.component';
+import viewdepartmentsInfo from './components/viewdepartmentsInfo.component';
+import viewusersInfo from './components/viewusersInfo.component';
+
+
 function App() {
   return (
 
@@ -85,6 +97,11 @@ function App() {
     <Router>
       <br/>
       <Route path = "/login" exact component = {loginInfo}/>
+
+      <Route path = "/viewAllLeaves" exact component = {viewAllLeavesInfo}/>
+      <Route path = "/empty" exact component = {emptyInfo}/>
+
+      <Route path = "/empty2" exact component = {empty2Info}/>
       <Route path = "/register" exact component = {regInfo}/>
       <Route path = "/profile" exact component = {profile}/>
       <Route path = "/attendance" exact component = {attendanceInfo}/>
@@ -141,6 +158,14 @@ function App() {
       <Route path={["/viewRejectedDayOffRequests", "/viewRejectedSlotLinkingRequests", "/viewRejectedReplacementRequests"]} component={rejectedRequestsInfo} />
       <Route path={["/viewPendingDayOffRequests", "/viewPendingSlotLinkingRequests", "/viewPendingReplacementRequests"]} component={pendingRequestInfo} />
       <Route path="/cancelPendingDayOffRequest" exact component={cancelPendingDayOff}/>
+
+      <Route path="/viewLocations" exact component={viewLocationsInfo}/>
+      <Route path="/viewCourses" exact component={viewCoursesInfo}/>
+      <Route path="/viewfaculty" exact component={viewfacultyInfo}/>
+      <Route path="/viewdepartments" exact component={viewdepartmentsInfo}/>
+      <Route path="/viewusers" exact component={viewusersInfo}/>
+    
+    
     
       <Route path = "/signin" exact component={Signin}/>
       <Route path = "/signout" exact component={Signout}/>

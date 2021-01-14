@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class UpdateFacultyInfo extends Component {
 
@@ -82,6 +83,8 @@ export default class UpdateFacultyInfo extends Component {
     render() {
         return (
         <div>
+             <Navbar />
+             
           <h3>Update Faculty</h3>
           <form onSubmit={this.onSubmit}>
 

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class updatePassword extends Component {
     constructor(props){
@@ -56,6 +57,7 @@ export default class updatePassword extends Component {
       render() {
         return (
             <div>
+                <Navbar/>
               <h3>Update Password</h3>
               <form onSubmit={this.onSubmit}>
 

@@ -1,5 +1,5 @@
 .App-header {
-    background-color: #010102;
+    background-color: #3e3e57;
     
    
   }
@@ -7,6 +7,7 @@
 
   
  .welcome{
+  
     font :bolder;
     text-align: left;
     color:rgb(55, 176, 212);
@@ -16,7 +17,36 @@
    
  }
 
+ .sidebar{
+   background-color:rgb(39, 37, 37);
+   font :bolder;
+   text-align: right;
+   color:rgb(242, 240, 252);
+   float: right;
+   font-weight: 110000	;
+   font-stretch: ultra-expanded;
+  
+}
 
+.y{
+   font :bolder;
+   font-weight: 8000	;
+
+   text-align: center;
+   font-stretch: ultra-expanded;
+
+   color:white;
+   background-color:rgb(148, 148, 148);
+   float: center;
+   font-weight: 110000	;
+   font-stretch: ultra-expanded;
+  
+}
+
+
+.search{
+   color:rgb(6, 7, 7);
+}
  .welcome2{
     font :bolder;
     text-align: left;

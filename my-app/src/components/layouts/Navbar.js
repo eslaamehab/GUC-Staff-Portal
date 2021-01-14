@@ -8,13 +8,50 @@ import './Navbar.css'
  function Navbar() {
    const history = useHistory();
 
-   const goToCourses = () => {
-     history.push('/Addcourses')
+   const goToDepartment = () => {
+     history.push('/viewdepartments')
    }
+  
+
+   const goToCourses = () => {
+    history.push('/viewCourses')
+  }
+  
+
+
+  const goToFaculty = () => {
+    history.push('/viewfaculty')
+  }
+
+ 
+
+
+  const goToLocations = () => {
+    history.push('/viewLocations')
+  }
+  
+
+
+  const goToSlots = () => {
+    history.push('/attendance')
+  }
+  const goToattendance = () => {
+    history.push('/empty2')
+  }
+
+  const goToRegister = () => {
+    history.push('/empty')
+  }
 
    const goToProfile = () => {
     history.push('/profile')
   }
+
+
+  const goToleaves = () => {
+    history.push('/viewAllLeaves')
+  }
+
     return (
        
          
@@ -22,7 +59,7 @@ import './Navbar.css'
 
               <nav className="navbar navbar-expand-lg navbar-light bg-dark">
  
-    <a className="  navbar-brand text-white text-uppercase m-auto " href="#">Profile&nbsp;  <i class="fas fa-university"></i> </a>
+    <a className="  navbar-brand text-white text-uppercase m-auto " href="#">GUC System&nbsp;  <i class="fas fa-university"></i> </a>
 
     <button className="navbar-toggler ml-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span className ="navbar-toggler-icon"></span>
@@ -40,51 +77,46 @@ import './Navbar.css'
         </li>
 
         <li className="nav-item m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" href="#">Register</a>
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToRegister}>UserInfo</a>
         </li>
           
         <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" href="#">Attendance</a>
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToattendance}>AttendanceInfo</a>
+        </li>
+
+        <li className="nav-item  m-auto">
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToFaculty}>Faculties</a>
+        </li>
+
+        <li className="nav-item  m-auto">
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToDepartment}>Departments</a>
         </li>
         
         <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" href="#">Slots</a>
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToCourses}>Courses</a>
+        </li>
+
+        <li className="nav-item  m-auto">
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToLocations}>Locations</a>
+        </li>
+         
+        <li className="nav-item  m-auto">
+          <a class="nav-link text-white text-uppercase ml-2">Slots</a>
+        </li>
+
+        <li className="nav-item  m-auto">
+          <a class="nav-link text-white text-uppercase ml-2" >Requests</a>
+        </li>
+
+        <li className="nav-item  m-auto">
+          <a class="nav-link text-white text-uppercase ml-2" onClick ={goToleaves}>Leaves</a>
         </li>
         
-        <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" href="#">Requests</a>
-        </li>
+      
        
        
-          <DropdownButton id="dropdown-basic-button m-auto ml-2" title=" Faculties ">
-  <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-</DropdownButton>
+         
 
-
-
-
-
-
-
-<DropdownButton  id="dropdown-basic-button bg-dark  m-auto ml-5" title=" Departments ">
-  <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-</DropdownButton>
-
-<DropdownButton id="dropdown-basic-button   m-auto ml-5" title=" Courses ">
-  <Dropdown.Item onClick = {goToCourses}  >Add Course</Dropdown.Item>
-  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-</DropdownButton>
-
-<DropdownButton id="dropdown-basic-button   m-auto ml-5" title=" Locations ">
-  <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-  <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-  <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-</DropdownButton>
 
 
    
@@ -92,7 +124,7 @@ import './Navbar.css'
 
         
           <li className="nav-item ">
-          <a className="nav-link disabled" href="#" tabindex="-1" aria-disabled="true"> </a>
+          <a className="nav-link disabled" href="#" tabindex="1" aria-disabled="true"> </a>
         </li>
       </ul>
       <form className="d-flex">

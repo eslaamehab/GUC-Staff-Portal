@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 export default class deletemember extends Component {
     constructor(props){
         super(props);
@@ -49,6 +50,7 @@ export default class deletemember extends Component {
     render() {
         return (
         <div>
+          <Navbar/>
           <h3>Delete member</h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 

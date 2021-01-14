@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Sidebar3 from './sidebar3';
+import Navbar from './layouts/Navbar';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class regInfo extends Component {
     constructor(props){
@@ -149,7 +151,9 @@ export default class regInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div >
+             <Navbar /> 
+            
           <h3>Registration</h3>
           <form onSubmit={this.onSubmit}>
 
