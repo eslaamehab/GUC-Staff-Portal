@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
@@ -40,9 +41,13 @@ export default class viewrepreqasHOD extends Component {
     
       render() {
         return (
+        
             this.state.replacementrequest.map((invoice, index) => {
                 return (
+                  <div>
+                    <Navbar/>
                     <tr key={invoice.HeadOfDepartmentEmail}>
+                      
                         <h1> YOUR REPLACEMENT REQUESTS:</h1>
 
                         <h4>Sending TA: {invoice.Email}</h4>
@@ -54,6 +59,7 @@ export default class viewrepreqasHOD extends Component {
                         <h4>Reason of rejection:{invoice.reasonOfrejection}</h4>
                         
                     </tr>
+                    </div>
                 )
             })
         )

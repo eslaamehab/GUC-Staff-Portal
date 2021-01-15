@@ -11,114 +11,85 @@ import { useHistory } from "react-router-dom";
 function Sidebar3() {
   const history = useHistory();
 
-  const routeAttendance = () =>{ 
-    let path = '/attendance'; 
+  const AddUInstructor = () =>{ 
+    let path = '/AddUpdateInstructor'; 
     history.push(path);
   }
 
-  const routeMissHours = () =>{ 
-    let path = '/missinghours'; 
-    history.push(path);
-  }
-
-  const routeMissDays = () =>{ 
-    let path = '/missingdays'; 
-    history.push(path);
-  }
-
-  const routeUpdatePassword = () =>{ 
-    let path = '/updatePassword'; 
+  const UpdateInstructor = () =>{ 
+    let path = '/AddUpdateInstructor'; 
     history.push(path);
   }
 
 
-  const routeLogout = () =>{ 
-    let path = '/logout'; 
+  const deleteinstructor = () =>{ 
+    let path = '/deleteinstructor'; 
     history.push(path);
   }
 
   
+  const goToCourses1 = () => {
+    history.push('/Addcourses')
+  }
+  const goToCourses2 = () => {
+    history.push('/updateCourse')
+  }
+  const goToCourses3 = () => {
+    history.push('/deleteCourse')
+  }
+
+
+  const coverage = () => {
+    history.push('/viewCoverage')
+  }
+
+  const coverage1 = () => {
+    history.push('/viewCoverageOfAssignedCourse')
+  }
  
+ 
+ 
+ 
+
 
 
   return (
     <List disablePadding dense>
-      <ListItem button>
-        <ListItemText>Home</ListItemText>
-      </ListItem>
-
+    
       
+   
 
-      <ListItem button>
-        <ListItemText>Access Staff Attendance</ListItemText>
+    <ListItem button onClick={goToCourses1}>
+        <ListItemText>Add Course </ListItemText>
+      </ListItem>
+      <ListItem button onClick={goToCourses2}>
+        <ListItemText>Update Course</ListItemText>
+      </ListItem>
+      <ListItem button onClick={goToCourses3}>
+        <ListItemText>Delete Delete</ListItemText>
       </ListItem>
 
-      <ListItem button>
-        <ListItemText>Access Staff Missing Days</ListItemText>
+      <ListItem button onClick={AddUInstructor}>
+        <ListItemText>Add Instructor</ListItemText>
       </ListItem>
-
-      <ListItem button>
-        <ListItemText>Access Staff Missing Hours</ListItemText>
+      <ListItem button onClick={UpdateInstructor}>
+        <ListItemText>Update Instructor</ListItemText>
       </ListItem>
-
-      <ListItem button onClick={routeAttendance}>
-        <ListItemText>View Attendance</ListItemText>
-      </ListItem>
-      <ListItem button onClick={routeMissDays}>
-        <ListItemText>View Missing Days</ListItemText>
-      </ListItem>
-      <ListItem button onClick={routeMissHours}>
-        <ListItemText>View Missing Hours</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>View Leave Reqeuests</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>Send Leave Reqeuest</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>View Replacement Reqeuests</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>Send Replacement Reqeuest</ListItemText>
-      </ListItem>
-      <ListItem button onClick={routeUpdatePassword}>
-        <ListItemText>Reset Password</ListItemText>
-      </ListItem>
-      <ListItem button onClick={routeLogout}>
-        <ListItemText>Logout</ListItemText>
+      <ListItem button onClick={deleteinstructor}>
+        <ListItemText>Delete Instructor</ListItemText>
       </ListItem>
 
 
-      <ListItem button>
-        <ListItemText>Add course instructors</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>Update course instructors</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>Delete course instructors</ListItemText>
+      <ListItem button onClick={coverage}>
+        <ListItemText>View Coverage </ListItemText>
       </ListItem>
 
+      <ListItem button onClick={coverage1}>
+        <ListItemText>view Coverage Of Assigned Course </ListItemText>
+      </ListItem>
 
+     
       
-      <ListItem button>
-        <ListItemText>View Teaching Assignments</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>View Coverage</ListItemText>
-      </ListItem>
-      <ListItem button>
-        <ListItemText>View Requests</ListItemText>
-      </ListItem>
-
-      <ListItem button>
-        <ListItemText>View Staff</ListItemText>
-      </ListItem>
-
-      <ListItem button>
-        <ListItemText>View Staff Day off</ListItemText>
-      </ListItem>
 
     </List>
   )

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import replacementrequest from '../../../replacementrequest';
 export default class VerifyReplacementRequestsasHOD extends Component {
     constructor(props){
@@ -8,15 +10,13 @@ export default class VerifyReplacementRequestsasHOD extends Component {
 
         this.onChangeid = this.onChangeid.bind(this);
        
-        this.onChangeVerifiedBit = this.onChangeVerifiedBit.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
        /* this.state= {
             id: ''
         }*/
         this.state= {
-            id:'',
-            verifiedByHOD:''}
+            id:''}
         }
     
 
@@ -28,19 +28,12 @@ export default class VerifyReplacementRequestsasHOD extends Component {
     }
 
     
-    onChangeVerifiedBit(e){
-        this.setState({
-            verifiedByHOD: e.target.value
-        });
-    }
 
     onSubmit(e){
         e.preventDefault();
 
         const log = {
-            id:this.state.id,
-            verifiedByHOD:this.state.verifiedByHOD
-        }
+            id:this.state.id        }
         
 
         //console.log(log);
@@ -67,6 +60,7 @@ export default class VerifyReplacementRequestsasHOD extends Component {
     render() {
         return (
         <div>
+            <Navbar/>
           <h3>Verify a replacement request by ID </h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
@@ -82,17 +76,7 @@ export default class VerifyReplacementRequestsasHOD extends Component {
 
           </form>
           <form onSubmit={this.onSubmit}>
-            <div className="form-group"> 
-              <label>Verified Bit</label>
-              <input  type="text"
-                  required
-                  className="form-control"
-                  value={this.state.verifiedByHOD}
-                  onChange={this.onChangeVerifiedBit}
-                  />
-                
-            </div>
-
+            
             <div className="form-group">
               <input type="submit" value="Verify" className="btn btn-primary" />
             </div>

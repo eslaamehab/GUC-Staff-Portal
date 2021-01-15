@@ -4,82 +4,56 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { useHistory } from "react-router-dom";
 
-//General User
+//HOD
 
-function SidebarItem({ label, items, depthStep = 10, depth = 0, ...rest }) {
-  return (
-    <>
-      <ListItem button dense {...rest}>
-        <ListItemText style={{ paddingLeft: depth * depthStep }}>
-          <span>{label}</span>
-        </ListItemText>
-      </ListItem>
-      {Array.isArray(items) ? (
-        <List disablePadding dense>
-          {items.map((subItem) => (
-            <SidebarItem
-              key={subItem.name}
-              depth={depth + 1}
-              depthStep={depthStep}
-              {...subItem}
-            />
-          ))}
-        </List>
-      ) : null}
-    </>
-  )
-}
 
-function Sidebar({ items, depthStep, depth }) {
 
+function Sidebar3() {
   const history = useHistory();
 
-  const routeAttendance = () =>{ 
-    let path = '/attendance'; 
-    history.push(path);
+  const goToDepartment1 = () => {
+    history.push('/addDepartments')
+  }
+   const goToDepartment2 = () => {
+    history.push('/UpdateDepartment')
+  }
+  const goToDepartment3 = () => {
+    history.push('/deleteDepartement')
   }
 
-  const routeMissHours = () =>{ 
-    let path = '/missinghours'; 
-    history.push(path);
-  }
-
-  const routeMissDays = () =>{ 
-    let path = '/missingdays'; 
-    history.push(path);
-  }
-
-  const routeUpdatePassword = () =>{ 
-    let path = '/updatePassword'; 
-    history.push(path);
-  }
+  
+  
+ 
+ 
 
 
-  const routeLogout = () =>{ 
-    let path = '/logout'; 
-    history.push(path);
-  }
+
   return (
-    <div className="sidebar">
-      <List disablePadding dense>
-        {items.map((sidebarItem, index) => (
-          <SidebarItem
-            key={`${sidebarItem.name}${index}`}
-            depth={depth}
-            depthStep={depthStep}
-            
-            {...sidebarItem}
-          />
-        ))}
-      </List>
-    </div>
-
+    <List disablePadding dense>
     
+      
+   
+
+    <ListItem button onClick={goToDepartment1}>
+        <ListItemText>Add Department </ListItemText>
+      </ListItem>
+      <ListItem button onClick={goToDepartment2}>
+        <ListItemText>Update Department</ListItemText>
+      </ListItem>
+      <ListItem button onClick={goToDepartment3}>
+        <ListItemText>Delete Department</ListItemText>
+      </ListItem>
+
+     
 
 
+      
+
+     
+      
+
+    </List>
   )
 }
 
-
-
-export default Sidebar
+export default Sidebar3

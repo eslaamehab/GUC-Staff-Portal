@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
+import { responsiveFontSizes } from '@material-ui/core';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class manualsigninout extends Component {
     constructor(props){
         super(props);
 
         this.onChangeEmail = this.onChangeEmail.bind(this);
+        this.onChangeIn = this.onChangeIn.bind(this);
+        this.onChangeOut = this.onChangeOut.bind(this);
+        this.onChangeDate = this.onChangeDate.bind(this);
       
         
         this.onSubmit = this.onSubmit.bind(this);
@@ -15,7 +20,8 @@ export default class manualsigninout extends Component {
             Email: '',
             date:'',
             signin:'',
-            signout:''
+            signout:'',
+            v:''
         }
     }
 
@@ -62,6 +68,7 @@ export default class manualsigninout extends Component {
 
             axios.post('http://localhost:3000/manualsigninout',reg)
         .then(res=> {
+            this.setState({v: res.data})
             console.log(res.data)
             //window.location = '/profile'; 
         })
@@ -77,9 +84,10 @@ export default class manualsigninout extends Component {
 
     render() {
         return (
-            <div>
+            <div  className ="alla">
+                <Navbar/>
             <h1>Manual Sign in/out</h1>
-            <form onSubmit={this.onSubmit}>
+            <form  className = "textbox" onSubmit={this.onSubmit}>
               <div className="form-group"> 
                 <label>Email: </label>
                 <input  type="text"
@@ -92,7 +100,7 @@ export default class manualsigninout extends Component {
               </div>
 
               <div className="form-group"> 
-                <label>Signin Time: </label>
+                <label>Sign in Time: </label>
                 <input  type="text"
                     required
                     className="form-control"
@@ -125,9 +133,10 @@ export default class manualsigninout extends Component {
               </div>
   
               <div className="form-group">
-                <input type="submit" value="Submit" className="btn btn-primary" />
+                <input type="submit" value="Submit" className="btn btn-info" />
               </div>
             </form>
+            <div  className ="alert">{this.state.v}</div>
           </div>
        
         )

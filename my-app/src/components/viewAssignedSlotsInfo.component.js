@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
+
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class viewAssignedSlotsInfo extends Component {
@@ -11,10 +14,15 @@ export default class viewAssignedSlotsInfo extends Component {
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
-         slot:[{Email:'',day:'',type:'',no:'',time:'',location:'',course:'',date:''}]
+         slot:[{_id:'',Email:'',day:'',type:'',no:'',time:'',location:'',course:'',date:''}]
         //replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
 
-        }
+        }}
+       onChangeEmail(e){
+        this.setState({
+            Email: e.target.value
+        });
+    }
 
 
     /* axios.get('/profile', {
@@ -28,112 +36,80 @@ export default class viewAssignedSlotsInfo extends Component {
     
     }*/
     
-    }
-
-    onChangeEmail(e){
-        this.setState({
-            Email: e.target.value
-        });
-    }
+    
     onSubmit(e){
-        e.preventDefault();
+      e.preventDefault();
+      const s = {
+        // Email:this.state.Email,
+         Email:this.state.Email
 
+     }
 
-        const reg = {Email:this.state.Email};
-        axios.post('http://localhost:3000/viewAssignedSlots',reg)
+        axios.post('http://localhost:3000/viewAssignedSlots',s)
         .then(response => {
             this.setState({slot: response.data})
             console.log(response)
           }
             )
         .catch(error => console.log(error));
-          }
-   
+          
     
 
   
-        
+    }
     
     
       render() {
-      const  zeft=            this.state.slot.map((invoice, index) => {
+      const zeft =this.state.slot.map((invoice, index) => {
+        return (
+            
+            <tr key={invoice._id}>
                 
-            return (<div>
-                
-                
-                
-                
-                
-                <table>
+  
+              <h4>ID: {invoice._id}</h4>
+              <h4>Email: {invoice.Email}</h4>
+              <h4>Day: {invoice.day}</h4>
+              <h4>type: {invoice.type}</h4>
+              <h4>Date of slot:{invoice.date}</h4>
 
-                <tr key={invoice.Email}>
-                    <tr>
-<th scope="col">DAY</th>
-<th scope="col">|</th>
+              <h4>Slot number: {invoice.no}</h4>
+              <h4>Course for slot: {invoice.course}</h4>
+              <h4>Time of slot:{invoice.time}</h4>
+              <h4>Location of slot:{invoice.location}</h4>
+              <h4>----------------------------------------------------------</h4>
 
-<th scope="col">Number</th>
-<th scope="col">|</th>
-<th scope="col">Timing</th>
-<th scope="col">|</th>
-<th scope="col">Location</th>
-<th scope="col">|</th>
-<th scope="col">Course</th>
-<th scope="col">|</th>
-<th scope="col">Date</th>
-<th scope="col">|</th>
-<th scope="col" >Type</th>
-<th scope="col">|</th>
-</tr>
-<tr><th scope="row">{invoice.day}</th> 
-                   <td> {"| "}</td>
-                    <td> {invoice.no}</td>
-                    <td> {"| "}</td>
-                    <td> {invoice.time}</td>
-                    <td> {"| "}</td>
-                    <td> {invoice.location}</td>
-                    <td> {"| "}</td>
-                    <td> {invoice.course}</td>
-                    <td> {"| "}</td>
-                    <td>{invoice.date}</td>
-                    <td> {"| "}</td>
-                    <td> {invoice.type}</td>
-                    <td> {"| "}</td>
-
-    </tr>
-
-                    
-
-                </tr> </table>
-
-
-      </div>
-
-
+          </tr>
 
 
 
             )
         })
+
+
         return (
-            <div>
+            <div className ="alla">
+            <Navbar />
             <form onSubmit={this.onSubmit}>
 
-            <div className="form-group"> 
-              <label>Email: </label>
-              <input  type="text"
-                  required
-                  className="form-control"
-                  value={this.state.Email}
-                  onChange={this.onChangeEmail}
-                  /> 
+           
+
+<div className="form-group"> 
+  <label>Email: </label>
+  <input  type="text"
+      required
+      className="form-control"
+      value={this.state.Email}
+      onChange={this.onChangeEmail}
+      /> 
+</div>
+<div className="form-group">
+              <input type="submit" value="Create Slot" className="btn btn-info" />
             </div>
-            <div className="form-group">
-                        <input type="submit" value="Register" className="btn btn-primary" />
-                      </div>
-                    </form>,
+
             {zeft}
+            </form>
                     </div>
-            
+                    
         )
 
 

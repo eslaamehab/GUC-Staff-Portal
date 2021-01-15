@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import replacementrequest from '../../../replacementrequest';
 export default class forwardrepreqtoHOD extends Component {
@@ -66,6 +67,7 @@ export default class forwardrepreqtoHOD extends Component {
     render() {
         return (
         <div>
+             <Navbar/>
           <h3>Forward your replacement request to your Head of Department</h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
@@ -99,7 +101,8 @@ export default class forwardrepreqtoHOD extends Component {
 
 
           <div>
-            <h1>Here is your response</h1>
+             
+            <h1></h1>
             <p>{this.state.v} </p>
             </div>
         </div>

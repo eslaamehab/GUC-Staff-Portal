@@ -1,22 +1,21 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import replacementrequest from '../../../replacementrequest';
 export default class submitreplacementrequestID extends Component {
     constructor(props){
         super(props);
 
         this.onChangeid = this.onChangeid.bind(this);
-       
-        this.onChangeaccepted = this.onChangeaccepted.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
 
        /* this.state= {
             id: ''
         }*/
         this.state= {
-            id:'',
-            accepted:''}
+            id:''}
         }
     
 
@@ -28,23 +27,17 @@ export default class submitreplacementrequestID extends Component {
     }
 
     
-    onChangeaccepted(e){
-        this.setState({
-            accepted: e.target.value
-        });
-    }
+    
     onSubmit(e){
         e.preventDefault();
 
         const log = {
-            id:this.state.id,
-            accepted:this.state.accepted
-        }
+            id:this.state.id        }
         
 
         //console.log(log);
 
-         axios.post('http://localhost:3000/viewReplacementRequestbyID',log)
+         axios.post('http://localhost:3000/AcceptReplacementRequestbyID',log)
         .then(res=> {
             //this.setState({: res.data})
             
@@ -66,7 +59,8 @@ export default class submitreplacementrequestID extends Component {
     render() {
         return (
         <div>
-          <h3>Enter ID of replacement request that you want to view</h3>
+            <Navbar/>
+          <h3>Enter ID of replacement request that you want to Accept</h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 
               <label>ID </label>
@@ -81,19 +75,9 @@ export default class submitreplacementrequestID extends Component {
 
           </form>
           <form onSubmit={this.onSubmit}>
-            <div className="form-group"> 
-              <label>Accepting bit </label>
-              <input  type="text"
-                  required
-                  className="form-control"
-                  value={this.state.accepted}
-                  onChange={this.onChangeaccepted}
-                  />
-                
-            </div>
-
+           
             <div className="form-group">
-              <input type="submit" value="accept or reject" className="btn btn-primary" />
+              <input type="submit" value="accept" className="btn btn-primary" />
             </div>
           </form>
 

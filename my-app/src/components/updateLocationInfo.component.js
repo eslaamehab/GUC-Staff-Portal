@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class UpdateLocationInfo extends Component {
@@ -69,6 +70,7 @@ export default class UpdateLocationInfo extends Component {
 
             axios.post('http://localhost:3000/updateLocation',Loc)
         .then(res=> {
+            
             this.setState({v: res.data})
             console.log(res.data)
            // window.roomName = '/profile'; 
@@ -85,9 +87,11 @@ export default class UpdateLocationInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
+             <Navbar />
+             
           <h3>Update Location</h3>
-          <form onSubmit={this.onSubmit}>
+          <form className = "textbox" onSubmit={this.onSubmit}>
 
           <div className="form-group"> 
               <label>  ID (from db): </label>
@@ -141,12 +145,12 @@ export default class UpdateLocationInfo extends Component {
             </div>
 
             <div className="form-group">
-              <input type="submit" value="updateLocation" className="btn btn-primary" />
+              <input type="submit" value="updateLocation" className="btn btn-info" />
             </div>
 
             <div> 
               
-              <p>{this.state.v}</p>
+            <p className ="alert">{this.state.v}</p>
              </div>
 
           </form>

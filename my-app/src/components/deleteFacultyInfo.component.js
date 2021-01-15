@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class deleteFacultyInfo extends Component {
@@ -56,9 +57,10 @@ export default class deleteFacultyInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div   className ="alla">
+             <Navbar />
           <h3>Delete Faculty</h3>
-          <form onSubmit={this.onSubmit}>
+          <form    className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
               <label>  FacultyName: </label>
@@ -73,12 +75,12 @@ export default class deleteFacultyInfo extends Component {
           
 
             <div className="form-group">
-              <input type="submit" value="DeleteFaculty" className="btn btn-primary" />
+              <input type="submit" value="DeleteFaculty" className="btn btn-info" />
             </div>
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p className ="alert">{this.state.v}</p>
              </div>
           </form>
         </div>

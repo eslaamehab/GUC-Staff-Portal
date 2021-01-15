@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class AssignCoordinatorInfo extends Component {
@@ -60,11 +61,14 @@ export default class AssignCoordinatorInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div className ="alla">
+          <Navbar/>
           <h3> Assign Coordinator</h3>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox"  onSubmit={this.onSubmit}>
 
 
+           
+           
             <div className="form-group"> 
               <label>  Email </label>
               <input  type="text"
@@ -86,7 +90,7 @@ export default class AssignCoordinatorInfo extends Component {
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p className ="alert">{this.state.v}</p>
              </div>
           </form>
         </div>

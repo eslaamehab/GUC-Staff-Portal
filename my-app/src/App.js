@@ -1,10 +1,14 @@
 //import logo from './logo.svg';
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {BrowserRouter as Router, Route ,redirect} from "react-router-dom";
 import loginInfo from "./components/loginInfo.component";
 import regInfo from "./components/regInfo.component";
 import profile from "./components/profile.component";
+import emptyInfo from "./components/emptyInfo.component";
+
+import empty2Info from "./components/empty2Info.component";
+import viewAllLeavesInfo from "./components/viewAllLeavesInfo.component";
 
 import attendanceInfo from "./components/attendanceInfo.component";
 import AddLocationInfo from "./components/AddLocationInfo.component";
@@ -34,11 +38,34 @@ import missingdays from "./components/missingdays.component";
 import missinghours from "./components/missinghours.component";
 import deletemember from './components/deletemember.component';
 import sendReplacementRequest from './components/sendReplacementRequest.component';
-import viewReplacementRequest from './components/viewReplacementRequest.component';
+import viewAllReplacementRequest from './components/viewAllReplacementRequest.component';
 import submitreplacementrequestID from './components/submitreplacementrequestID.component';
 import forwardrepreqtoHOD from './components/forwardrepreqtoHOD.component';
 import viewrepreqasHOD from './components/viewrepreqasHOD.component';
 import VerifyReplacementRequestsasHOD from './components/VerifyReplacementRequestsasHOD.component';
+import createSlot from './components/createSlot.component';
+import viewMySlots from './components/viewMySlots.component';
+import UpdateSlotInfo from './components/UpdateSlotInfo.component';
+import viewAvailableSlotsInfo from './components/viewAvailableSlotsInfo.component';
+import sendSlotLinkingInfo from './components/sendSlotLinkingInfo.component';
+import viewSlotLinkingInfo from './components/viewSlotLinkingInfo.component';
+import acceptSlotLinking from './components/acceptSlotLinking.component';
+import submitdayoffInfo from './components/submitdayoffInfo.component';
+import viewDayOffInfo from './components/viewDayOffInfo.component';
+import acceptDayOff from './components/acceptDayOff.component';
+import notificationInfo from './components/notificationInfo.component';
+import dayOffStatusInfo from './components/dayOffStatusInfo.component';
+import slotLinkingStatusInfo from './components/slotLinkingStatusInfo.component';
+import acceptedRequestsInfo from './components/acceptedRequestsInfo.component';
+import rejectedRequestsInfo from './components/rejectedRequestsInfo.component';
+import pendingRequestInfo from './components/pendingRequestsInfo.component';
+import cancelPendingSlotLinkingRequest from './components/cancelPendingSlotLinkingInfo.component';
+import cancelPendingReplacementReq from './components/cancelPendingReplacementReq.component';
+//import replacementRequestIDResponse from './components/replacementRequestIDResponse.component';
+//      <Route path = "/viewReplacementRequestbyID" exact component={replacementRequestIDResponse}/>
+import cancelPendingDayOff from './components/cancelPendingDayOff.component';
+import login2 from './components/login2.component';
+
 import Signin from './components/signin.component';
 import Signout from './components/signout.component';
 import ManualSigninout from './components/manualsigninout.component';
@@ -54,11 +81,48 @@ import ViewReplacementRequests from './components/viewReplacementRequests.compon
 import replacementRequestResponse from './components/replacementRequestResponse.component';
 import leaveRequestResponse from './components/leaveRequestResponse.component';
 import accessAttendance from './components/accessAttendance.component';
+
+import viewLocationsInfo from './components/viewLocationsInfo.component';
+import viewCoursesInfo from './components/viewCoursesInfo.component';
+import viewfacultyInfo from './components/viewfacultyInfo.component';
+import viewdepartmentsInfo from './components/viewdepartmentsInfo.component';
+import viewusersInfo from './components/viewusersInfo.component';
+
+import viewAllSlotsInDB from './components/viewAllSlotsInDB.component';
+import deleteSlot from './components/deleteSlot.component';
+import AllRequests from './components/AllRequests.component';
+import SlotLinkingOptions from './components/SlotLinkingOptions.component';
+import DayOffOptions from './components/DayOffOptions.component';
+import RepOptions from './components/RepOptions.component';
+import cancelUpcomingRep from './components/cancelUpcomingRep.component'
+import rejectDayOff from './components/rejectDayOff.component';
+import rejectSlotLinking from './components/rejectSlotLinking.component';
+import RejectRepReqTA from './components/RejectRepReqTA.component';
+import RejectRepReqHOD from './components/RejectRepReqHOD.component';
+
+
+import accessMissingHours from'./components/accessMissingHours.component';
+import accessMissingDays from './components/accessMissingDays.component';
+
+
+
+
+
+
 function App() {
   return (
+
+
+
     <Router>
       <br/>
+      <Route path = "/" exact component = {loginInfo}/>
       <Route path = "/login" exact component = {loginInfo}/>
+      <Route path = "/login2" exact component = {login2}/>
+      <Route path = "/viewAllLeaves" exact component = {viewAllLeavesInfo}/>
+      <Route path = "/empty" exact component = {emptyInfo}/>
+
+      <Route path = "/empty2" exact component = {empty2Info}/>
       <Route path = "/register" exact component = {regInfo}/>
       <Route path = "/profile" exact component = {profile}/>
       <Route path = "/attendance" exact component = {attendanceInfo}/>
@@ -89,11 +153,41 @@ function App() {
       <Route path = "/missinghours" exact component = {missinghours}/>
       <Route path = "/deleteMember" exact component = {deletemember}/>
       <Route path = "/sendReplacementRequest" exact component = {sendReplacementRequest}/>
-      <Route path = "/viewReplacementRequests" exact component = {viewReplacementRequest}/>
-      <Route path = "/viewReplacementRequestbyID" exact component={submitreplacementrequestID}/>
+      <Route path = "/viewReplacementRequests" exact component = {viewAllReplacementRequest}/>
+      <Route path = "/AcceptReplacementRequestbyID" exact component={submitreplacementrequestID}/>
       <Route path = "/ForwardReplacementReqtoHOD" exact component={forwardrepreqtoHOD}/>
       <Route path = "/ViewReplacementRequestsAsHOD" exact component={viewrepreqasHOD}/>
       <Route path = "/HODReplacementRequestsVerify" exact component={VerifyReplacementRequestsasHOD}/>
+      <Route path = "/createSlot" exact component={createSlot}/>
+      <Route path = "/viewMySlots" exact component={viewMySlots}/>
+      <Route path = "/UpdateSlot" exact component={UpdateSlotInfo}/>
+      <Route path = "/viewAvailableSlots" exact component={viewAvailableSlotsInfo}/>
+      <Route path="/sendslotlinkingrequest" exact component={sendSlotLinkingInfo}/>
+      <Route path="/viewslotlinkingrequest" exact component={viewSlotLinkingInfo}/>
+      <Route path="/acceptslotlinkingrequest" exact component={acceptSlotLinking}/>
+      <Route path="/submitdayoffrequest" exact component={submitdayoffInfo}/>
+      <Route path="/viewdayoffrequests" exact component={viewDayOffInfo}/>
+      <Route path="/acceptdayoffrequests" exact component={acceptDayOff}/>
+      <Route path="/viewmynotification" exact component={notificationInfo}/>
+      <Route path="/viewdayoffrequeststatus" exact component={dayOffStatusInfo}/>
+      <Route path="/viewslotlinkingstatus" exact component={slotLinkingStatusInfo}/>
+      <Route path="/viewslotlinkingstatus" exact component={slotLinkingStatusInfo}/>
+      <Route path="/cancelPendingReplacement" exact component={cancelPendingReplacementReq}/>
+      <Route path="/cancelPendingSlotLinkingRequest" exact component={cancelPendingSlotLinkingRequest}/>
+      <Route path={["/viewAcceptedDayOffRequests", "/viewAcceptedSlotLinkingRequests", "/viewAcceptedReplacementRequests"]} component={acceptedRequestsInfo} />
+      <Route path={["/viewRejectedDayOffRequests", "/viewRejectedSlotLinkingRequests", "/viewRejectedReplacementRequests"]} component={rejectedRequestsInfo} />
+      <Route path={["/viewPendingDayOffRequests", "/viewPendingSlotLinkingRequests", "/viewPendingReplacementRequests"]} component={pendingRequestInfo} />
+      <Route path="/cancelPendingDayOffRequest" exact component={cancelPendingDayOff}/>
+
+      <Route path="/viewLocations" exact component={viewLocationsInfo}/>
+      <Route path="/viewCourses" exact component={viewCoursesInfo}/>
+      <Route path="/viewfaculty" exact component={viewfacultyInfo}/>
+      <Route path="/viewdepartments" exact component={viewdepartmentsInfo}/>
+      <Route path="/viewusers" exact component={viewusersInfo}/>
+    
+      <Route path="/accessMissingHours" exact component={accessMissingHours}/>
+      <Route path="/accessMissingDays" exact component={accessMissingDays}/>
+    
       <Route path = "/signin" exact component={Signin}/>
       <Route path = "/signout" exact component={Signout}/>
       <Route path = "/manualsigninout" exact component={ManualSigninout}/>
@@ -108,9 +202,22 @@ function App() {
       <Route path = "/replacementrequestresponse" exact component={replacementRequestResponse}/> 
       <Route path = "/leaverequestresponse" exact component={leaveRequestResponse}/> 
       <Route path = "/accessattendance" exact component={accessAttendance}/> 
-
+      <Route path="/viewAllSlots" exact component={viewAllSlotsInDB}/>
+      <Route path="/deleteSlot" exact component={deleteSlot}/>
+      <Route path="/viewAllReqs" exact component={AllRequests}/>
+      <Route path="/viewAllS" exact component={SlotLinkingOptions}/>
+      <Route path="/viewAllD" exact component={DayOffOptions}/>
+      <Route path="/viewAllR" exact component={RepOptions}/>
+      <Route path="/cancelUpcomingReplacementRequest" exact component={cancelUpcomingRep}/>
+      <Route path="/rejectdayoffrequests" exact component={rejectDayOff}/>
+      <Route path="/rejectSlotLinkingRequest" exact component={rejectSlotLinking}/>
+      <Route path="/RejectReplacementRequestTA" exact component={RejectRepReqTA}/>
+      <Route path="/HODRepReqRej" exact component={RejectRepReqHOD}/>
     </Router>
+   
   );
 }
-
+/*<Route path="/viewAcceptedDayOffRequests" exact component={acceptedRequestsInfo}/>
+      <Route path="/viewAcceptedSlotLinkingRequests" exact component={acceptedRequestsInfo}/>
+      <Route path="/viewAcceptedReplacementRequests" exact component={acceptedRequestsInfo}/>*/
 export default App;

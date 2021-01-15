@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Sidebar3 from './sidebar3';
+import Navbar from './layouts/Navbar';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class regInfo extends Component {
     constructor(props){
@@ -17,6 +19,7 @@ export default class regInfo extends Component {
         this.onChangeOfficeLocation = this.onChangeOfficeLocation.bind(this);
         this.onChangeCourses = this.onChangeCourses.bind(this);
         this.onChangeDayoff = this.onChangeDayoff.bind(this);
+        this.onChangeft = this.onChangeft.bind(this);
         
         this.onSubmit = this.onSubmit.bind(this);
 
@@ -38,6 +41,11 @@ export default class regInfo extends Component {
     onChangeEmail(e){
         this.setState({
             Email: e.target.value
+        });
+    }
+    onChangeft(e){
+        this.setState({
+            firstTime: e.target.value
         });
     }
 
@@ -124,7 +132,8 @@ export default class regInfo extends Component {
             gender:this.state.gender,
             officelocation:this.state.officelocation,
             dayoff:this.state.dayoff,
-            courses:this.state.courses
+            courses:this.state.courses,
+            firstTime:this.state.firstTime
 
         }
 
@@ -134,8 +143,9 @@ export default class regInfo extends Component {
 
             axios.post('http://localhost:3000/register',reg)
         .then(res=> {
+            this.setState({v: res.data})
             console.log(res.data)
-            window.location = '/profile'; 
+          
         })
         .catch((error)=>{
             console.log('Error');
@@ -146,12 +156,13 @@ export default class regInfo extends Component {
 
 
 
-
     render() {
         return (
-        <div>
+        <div className ="alla"  >
+             <Navbar /> 
+            
           <h3>Registration</h3>
-          <form onSubmit={this.onSubmit}>
+          <form className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
               <label>Email: </label>
@@ -263,12 +274,26 @@ export default class regInfo extends Component {
                   /> 
             </div>
 
+            <div className="form-group"> 
+              <label>First time ( set it by 0): </label>
+              <input  type="text"
+                  required
+                  className="form-control"
+                  value={this.state.firsttime}
+                  onChange={this.onChangeft}
+                  /> 
+            </div>
+
 
             <div className="form-group">
-              <input type="submit" value="Register" className="btn btn-primary" />
+              <input type="submit" value="Register" className="btn btn-info" />
+
+              <p className ="alert">{this.state.v}</p>
             </div>
           </form>
         </div>
         )
       }
+    
     }
+   

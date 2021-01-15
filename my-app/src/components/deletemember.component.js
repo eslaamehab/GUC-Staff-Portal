@@ -1,16 +1,22 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
+//import Dropdown from './dropdownmenu/Dropdown';
 export default class deletemember extends Component {
+
     constructor(props){
         super(props);
 
         this.onChangeEmail = this.onChangeEmail.bind(this);
-       
+        
+        this.onSubmit = this.onSubmit.bind(this);
 
         this.state= {
-            Email: ""
+            roomName: '',
+           
         }
+
     }
 
     onChangeEmail(e){
@@ -19,25 +25,30 @@ export default class deletemember extends Component {
         });
     }
 
+   
+
+  
 
     onSubmit(e){
         e.preventDefault();
 
-      /* const x= {
+        const Loc = {
             Email:this.state.Email
-        }*/
+           
+        }
 
-      
+        
 
-        //console.log(log);
+        console.log(Loc);
 
-            axios.delete('http://localhost:3000/deleteMember')
+            axios.post('http://localhost:3000/deleteMember',Loc)
         .then(res=> {
+            this.setState({v: res.data})
             console.log(res.data)
-           // window.location = '/profile'; 
+           // window.roomName = '/profile'; 
         })
         .catch((error)=>{
-            console.log('x');
+            console.log('Error');
             
         })
     }
@@ -49,23 +60,32 @@ export default class deletemember extends Component {
     render() {
         return (
         <div>
-          <h3>Delete member</h3>
+             <Navbar />
+             
+          <h3>Delete Member</h3>
           <form onSubmit={this.onSubmit}>
+
             <div className="form-group"> 
-              <label>Email: </label>
+              <label>  Email: </label>
               <input  type="text"
                   required
                   className="form-control"
                   value={this.state.Email}
                   onChange={this.onChangeEmail}
-                  />
-                
+                  /> 
             </div>
-            
+
+          
 
             <div className="form-group">
-              <input type="submit" value="Confirm Delete" className="btn btn-primary" />
+              <input type="submit" value="Delete" className="btn btn-primary" />
             </div>
+
+            <div> 
+              
+              <p>{this.state.v}</p>
+             </div>
+
           </form>
         </div>
         )

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class updatePassword extends Component {
     constructor(props){
@@ -41,8 +42,9 @@ export default class updatePassword extends Component {
     
             axios.post('http://localhost:3000/updatePassword',upd)
             .then(res=> {
+                this.setState({v: res.data})
                 console.log(res.data)
-                window.location = '/profile'; 
+               
             })
             .catch((error)=>{
                 console.log('Error');
@@ -55,9 +57,10 @@ export default class updatePassword extends Component {
     
       render() {
         return (
-            <div>
+            <div className ="alla">
+                <Navbar/>
               <h3>Update Password</h3>
-              <form onSubmit={this.onSubmit}>
+              <form className = "textbox" onSubmit={this.onSubmit}>
 
 
     
@@ -89,9 +92,11 @@ export default class updatePassword extends Component {
     
     
                 <div className="form-group">
-                  <input type="submit" value="Update" className="btn btn-primary" />
+                  <input type="submit" value="Update" className="btn btn-info" />
                 </div>
               </form>
+
+              <p className ="alert">{this.state.v}</p>
             </div>
             )
         }

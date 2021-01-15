@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class missingdays extends Component {
     constructor(props){
@@ -41,11 +43,12 @@ export default class missingdays extends Component {
     
       render() {
         return (
-            <div>
-            <h1 style={{backgroundColor: "lightblue"}}>Your missing days</h1>
-            <table style={{'backgroundColor': "lightblue"},{'border':" 1px solid black"}}>
+            <div  className ="alla">
+              <Navbar/>
+            <h1>Your missing days</h1>
+            <table >
 
-               <tbody style={{'border':" 1px solid black"}} >
+               <tbody >
                   {this.renderTableData()}
                </tbody>
             </table>

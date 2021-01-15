@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class UpdateDepartmentInfo extends Component {
@@ -72,9 +73,11 @@ export default class UpdateDepartmentInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
+             <Navbar />
+             
           <h3>Update Department</h3>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox" onSubmit={this.onSubmit}>
 
 
           <div className="form-group"> 
@@ -118,12 +121,12 @@ export default class UpdateDepartmentInfo extends Component {
            
 
             <div className="form-group">
-              <input type="submit" value="Updatedepartment" className="btn btn-primary" />
+              <input type="submit" value="Updatedepartment" className="btn btn-info" />
             </div>
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p className ="alert">{this.state.v}</p>
              </div>
           </form>
         </div>

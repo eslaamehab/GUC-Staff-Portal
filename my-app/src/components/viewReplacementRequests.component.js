@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 export default class viewReplacementRequests extends Component {
@@ -31,6 +32,7 @@ export default class viewReplacementRequests extends Component {
     render() {
         return (
         <div>
+            <Navbar/>
           <h3>View Replacement Requests</h3>
           
             

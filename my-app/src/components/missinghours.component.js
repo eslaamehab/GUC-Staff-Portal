@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
+
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class missinghours extends Component {
     constructor(props){
@@ -35,13 +37,12 @@ export default class missinghours extends Component {
     
       render() {
         return (
-            <div>
-            <h1>You have missed</h1>
-            <p>{this.state.v} </p>
+            <div  className ="alla">
+              <Navbar/>
+            <h1 className ="alert">You have missed {this.state.v}</h1>
             </div>
         )
       }  
 
     
-
-}
+    }
