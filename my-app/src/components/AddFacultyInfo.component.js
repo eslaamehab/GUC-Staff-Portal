@@ -74,11 +74,11 @@ export default class AddFacultyInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
              <Navbar />
              
           <h3>ADD Faculty</h3>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
               <label>  facultyName: </label>
@@ -103,12 +103,12 @@ export default class AddFacultyInfo extends Component {
            
 
             <div className="form-group">
-              <input type="submit" value="Addfaculty" className="btn btn-primary" />
+              <input type="submit" value="Addfaculty" className="btn btn- info" />
             </div>
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p  className ="alert">{this.state.v}</p>
              </div>
           </form>
         </div>

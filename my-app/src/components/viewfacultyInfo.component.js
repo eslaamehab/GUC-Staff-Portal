@@ -68,7 +68,8 @@ export default class viewfacultyInfo extends Component {
 
            
            return(
-               <div>
+             <div className = "all">
+               <div >
                     <Navbar />
                     <h1 className ="sidebar">
                       <Sidebar2 />
@@ -78,6 +79,7 @@ export default class viewfacultyInfo extends Component {
                    </h1>
 
 
+               </div>
                </div>
            )
 }

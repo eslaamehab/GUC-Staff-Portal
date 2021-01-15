@@ -59,37 +59,24 @@ function SidebarAttendance() {
         <ListItemText>View Attendance </ListItemText>
       </ListItem>
       <ListItem button onClick={missingdays}>
-        <ListItemText>view missing days</ListItemText>
+        <ListItemText>View My Missing days</ListItemText>
       </ListItem>
       <ListItem button onClick={missinghours}>
-        <ListItemText>Delete missing hours</ListItemText>
-      </ListItem>
-
-      <ListItem button onClick={signin}>
-        <ListItemText>sign in</ListItemText>
+        <ListItemText>view My Missing hours</ListItemText>
       </ListItem>
 
       
-      <ListItem button onClick={signout}>
-        <ListItemText>sign out</ListItemText>
-      </ListItem>
-
-       
-      <ListItem button onClick={manualsigninout}>
-        <ListItemText>Manual Sign in and sign out</ListItemText>
-      </ListItem>
-
         
       <ListItem button onClick={accessAttendance}>
         <ListItemText> Access Attendance</ListItemText>
       </ListItem>
         
       <ListItem button onClick={accessMissingHours}>
-        <ListItemText>Access Missing Hours</ListItemText>
+        <ListItemText>Access Missing Hours By Email</ListItemText>
       </ListItem>
         
       <ListItem button onClick={accessMissingDays}>
-        <ListItemText>Access Missing Days</ListItemText>
+        <ListItemText>Access Missing Days By Email</ListItemText>
       </ListItem>
 
         

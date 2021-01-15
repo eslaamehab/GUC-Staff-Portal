@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 export default class cancelPendingSlotLinkingRequest extends Component {
     constructor(props){
@@ -55,6 +56,7 @@ export default class cancelPendingSlotLinkingRequest extends Component {
     render() {
         return (
         <div>
+            <Navbar/>
           <h3>Cancel pending slot linking request by </h3>
           <form onSubmit={this.onSubmit}>
             <div className="form-group"> 

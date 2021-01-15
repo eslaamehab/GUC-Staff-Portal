@@ -73,7 +73,7 @@ export default class viewAllSlotsInDB extends Component {
 
 
         return (
-            <div>
+            <div  className ="alla">
               
             <Navbar />
 

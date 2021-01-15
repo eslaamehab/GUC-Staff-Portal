@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class signout extends Component {
@@ -38,6 +39,7 @@ export default class signout extends Component {
 
             axios.post('http://localhost:3000/signout',reg)
         .then(res=> {
+            this.setState({v: res.data})
             console.log(res.data)
             //window.location = '/profile'; 
         })
@@ -53,9 +55,10 @@ export default class signout extends Component {
 
     render() {
         return (
-            <div>
+            <div  className ="alla">
+                <Navbar/>
             <h1>Sign out</h1>
-            <form onSubmit={this.onSubmit}>
+            <form  className = "textbox" onSubmit={this.onSubmit}>
               <div className="form-group"> 
                 <label>Email: </label>
                 <input  type="text"
@@ -68,9 +71,10 @@ export default class signout extends Component {
               </div>
   
               <div className="form-group">
-                <input type="submit" value="Sign out" className="btn btn-primary" />
+                <input type="submit" value="Sign out" className="btn btn-info" />
               </div>
             </form>
+            <p className ="alert">{this.state.v}</p>
           </div>
        
         )

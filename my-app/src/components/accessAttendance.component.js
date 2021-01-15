@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class accessAttendance extends Component {
@@ -45,17 +46,27 @@ export default class accessAttendance extends Component {
   .catch(error => console.log(error));
 
     }
-
- 
+    
       render() {
-        
-        const x= this.state.attendance;
-        //console.log(x[0].date);
+       const zeft=  this.state.attendance.map((invoice, index) => {
+          return (
+              <tr >
+                  <h1> ATTENDANCE </h1>
+
+                  <h4>Email: {invoice.Email}</h4>
+                  <h4>Date: {invoice.date}</h4>
+                  <h4>Minutes Spent: {invoice.minsspent}</h4>
+                  
+              </tr>
+          )
+      })
+             //console.log(x[0].date);
         return (
             
-            <div>
+            <div  className ="alla">
+                  <Navbar/>
             <h1>This is {this.state.Email}'s Attendance Record</h1>
-            <form onSubmit={this.onSubmit}>
+            <form className = "textbox" onSubmit={this.onSubmit}>
             <div className="form-group"> 
               <label>Staff Email: </label>
               <input  type="text"
@@ -77,26 +88,22 @@ export default class accessAttendance extends Component {
                   />
 
             <div className="form-group">
-              <input type="submit" value="Submit" className="btn btn-primary" />
+              <input type="submit" value="Submit" className="btn btn-info" />
             </div>
             </div>
                 
             </div>
             </form>
-            
+            <div>
+              
+{zeft}
+
+
+            </div>
             
            
 
            
-
-            <div id="gallery-text">
-            <div class="gallery-text">
-            <p>Mins Spent: </p>
-            {x.map(item => <div>{item.minsspent}</div>)}
-            </div>
-            </div>
-            <p> Attendance : </p>
-            {x.map(item => <div>{item.date}</div>)}
 
            
         

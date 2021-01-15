@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
@@ -84,6 +85,7 @@ export default class viewSlotLinkingInfo extends Component {
     })
         return (
             <div>
+              <Navbar/>
             <h1>Slot Linking requests</h1>
             {zeft}
                     </div>

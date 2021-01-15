@@ -7,6 +7,8 @@ export default class updatePassword extends Component {
     constructor(props){
         super(props);
 
+        this.onChangeEmail = this.onChangeEmail.bind(this);
+
         this.onChangeName = this.onChangeName.bind(this);
         this.onChangeSalary = this.onChangeSalary.bind(this);
         this.onChangeFaculty = this.onChangeFaculty.bind(this);
@@ -15,7 +17,7 @@ export default class updatePassword extends Component {
 
 
         this.state= {
-           
+           Email:'',
             name:'',
             faculty:'',
             department:'',
@@ -23,6 +25,12 @@ export default class updatePassword extends Component {
             
         }
     }
+    onChangeEmail(e){
+        this.setState({
+            Email: e.target.value
+        });
+    }
+
 
         onChangeName(e){
             this.setState({
@@ -52,6 +60,7 @@ export default class updatePassword extends Component {
             e.preventDefault();
     
             const upd = {
+                Email:this.state.Email,
                 name:this.state.name,
                 salary:this.state.salary,
                 faculty:this.state.faculty,
@@ -61,8 +70,9 @@ export default class updatePassword extends Component {
     
             axios.post('http://localhost:3000/updateProfile',upd)
             .then(res=> {
+                this.setState({v: res.data})
                 console.log(res.data)
-                window.location = '/profile'; 
+               
             })
             .catch((error)=>{
                 console.log('Error');
@@ -75,12 +85,23 @@ export default class updatePassword extends Component {
     
       render() {
         return (
-            <div>
+            <div   className ="alla" >
                 <Navbar/>
               <h3>Update Profile</h3>
-              <form onSubmit={this.onSubmit}>
+              <form  className = "textbox" onSubmit={this.onSubmit}>
 
 
+
+              <div className="form-group"> 
+              <label> Enter Staff Member Email </label>
+              <input  type="text"
+                  required
+                  className="form-control"
+                  value={this.state.Email}
+                  onChange={this.onChangeEmail}
+                
+                  /> 
+            </div>
     
               <div className="form-group"> 
                   <label>New Name: </label>
@@ -126,10 +147,33 @@ export default class updatePassword extends Component {
     
     
                 <div className="form-group">
-                  <input type="submit" value="Update" className="btn btn-primary" />
+                  <input type="submit" value="Update" className="btn btn-info" />
                 </div>
+                <p className ="alert">{this.state.v}</p>
               </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+              
             </div>
+
+
+
+
+
+
             )
         }
 

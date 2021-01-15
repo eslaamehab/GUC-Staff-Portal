@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+
+
+import Navbar from './layouts/Navbar';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class signin extends Component {
     constructor(props){
@@ -38,6 +41,7 @@ export default class signin extends Component {
 
             axios.post('http://localhost:3000/signin',reg)
         .then(res=> {
+            this.setState({v: res.data})
             console.log(res.data)
             //window.location = '/profile'; 
         })
@@ -53,9 +57,10 @@ export default class signin extends Component {
 
     render() {
         return (
-            <div>
+            <div  className ="alla">
+                <Navbar/>
             <h1>Sign in</h1>
-            <form onSubmit={this.onSubmit}>
+            <form className = "textbox" onSubmit={this.onSubmit}>
               <div className="form-group"> 
                 <label>Email: </label>
                 <input  type="text"
@@ -71,6 +76,7 @@ export default class signin extends Component {
                 <input type="submit" value="Sign in" className="btn btn-primary" />
               </div>
             </form>
+            <p className ="alert">{this.state.v}</p>
           </div>
        
         )

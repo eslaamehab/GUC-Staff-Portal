@@ -316,7 +316,7 @@ export default class rejectedRequestsInfo extends Component {
 
 
         return (
-            <div> 
+            <div  className ="alla"> 
             <Navbar/>
 
 <h3>Your rejected Day Off Requests</h3>            

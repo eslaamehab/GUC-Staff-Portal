@@ -35,9 +35,7 @@ function SidebarLeaves() {
     <List disablePadding dense>
      
 
-     <ListItem button onClick={viewAllLeaves}>
-        <ListItemText>View All Leaves </ListItemText>
-      </ListItem>
+     
       <ListItem button onClick={sendLeaveRequest}>
         <ListItemText>send Leave Request</ListItemText>
       </ListItem>

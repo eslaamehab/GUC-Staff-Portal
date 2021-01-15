@@ -4,14 +4,15 @@ import { render } from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Nav, NavDropdown, DropdownButton,MenuItem, Form , LabelDropdown, Tabs, ButtonToolbar, Button, Table, ButtonGroup, Row, Col, Grid, Panel, FormGroup, FormControl} from 'react-bootstrap';
 import '../loginInfo.css'
-import SidebarLogin from './SidebarLogin';
-export default class loginInfo extends Component {
+
+export default class login2 extends Component {
     
     constructor(props){
         super(props);
 
         this.onChangeEmail = this.onChangeEmail.bind(this);
         this.onChangePassword = this.onChangePassword.bind(this);
+        this.onChangeNewPassword = this.onChangeNewPassword.bind(this);
         this.onSubmit = this.onSubmit.bind(this)
 
         this.state= {
@@ -22,9 +23,7 @@ export default class loginInfo extends Component {
 
     onChangeEmail(e){
         this.setState({
-
-            Email: e.target.value,
-            v:''
+            Email: e.target.value
         });
     }
 
@@ -34,35 +33,29 @@ export default class loginInfo extends Component {
         });
     }
 
+    onChangeNewPassword(e){
+        this.setState({
+            newpassword: e.target.value
+        });
+    }
+
     onSubmit(e){
         e.preventDefault();
 
         const log = {
             Email:this.state.Email,
-            password:this.state.password
+            password:this.state.password,
+            newpassword:this.state.newpassword
         }
 
         
 
         console.log(log);
 
-            axios.post('http://localhost:3000/login',log)
+            axios.post('http://localhost:3000/login2',log)
         .then(res=> {
-            this.setState({v: res.data})
             console.log(res.data)
-            
-            if(res.data =="Wrong Pass"){
-            window.location = '/login'; 
-            }
-          
-           else if(res.data =="You need to enter your new password at first login!"){
-                    window.location = '/login2'; 
-                    
-                    }
-         else{
-                window.location = '/profile'; 
-            
-            }
+            window.location = '/profile'; 
         })
         .catch((error)=>{
             console.log('Wrong Email or password');
@@ -71,14 +64,10 @@ export default class loginInfo extends Component {
     }
 
 
-   
-     
+
+
 
     render() {
-
-        
-         
-
         return (
 
 
@@ -96,7 +85,7 @@ export default class loginInfo extends Component {
                   
               </div>
               <div className="font-weight-bold"> 
-                <label>password: </label>
+                <label>Old password: </label>
                 <input  type="password"
                     required
                     className="form-control"
@@ -104,19 +93,25 @@ export default class loginInfo extends Component {
                     onChange={this.onChangePassword}
                     />
               </div>
+
+              
+              <div className="font-weight-bold"> 
+                <label>New password: </label>
+                <input  type="password"
+                    required
+                    className="form-control"
+                    value={this.state.newpassword}
+                    onChange={this.onChangeNewPassword}
+                    />
+              </div>
+  
               <div className="App-link">
               <button className ="btn-lg btn-dark btn-block" input type="submit "> 
               LOGIN
                </button>
 
-               
-             </div>
-
-             <p className ="Alert">{this.state.v}</p>
-              <h1 className ="App-header">
-                      <SidebarLogin />
-                      </h1>
-                      
+              
+              </div>
             </form>
          
           

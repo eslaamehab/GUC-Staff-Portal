@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class attendanceInfo extends Component {
@@ -31,7 +32,9 @@ export default class attendanceInfo extends Component {
 
           axios.post('http://localhost:3000/attendance',log)
   .then(response => {
+    
       this.setState({attendance: response.data})
+      
       console.log(response)
     }
       )
@@ -46,9 +49,10 @@ export default class attendanceInfo extends Component {
       //console.log(x[0].date);
       return (
           
-          <div>
+          <div  className ="alla">
+            <Navbar/>
           <h1>This is your Attendance Record</h1>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox"onSubmit={this.onSubmit}>
           <div className="form-group"> 
             <label>Month: </label>
             <input  type="text"
@@ -60,7 +64,7 @@ export default class attendanceInfo extends Component {
                 />
 
           <div className="form-group">
-            <input type="submit" value="Submit" className="btn btn-primary" />
+            <input type="submit" value="Submit" className="btn btn-info" />
           </div>
               
           </div>
@@ -81,7 +85,7 @@ export default class attendanceInfo extends Component {
           {x.map(item => <div>{item.date}</div>)}
 
          
-      
+          <p className ="alert">{this.state.v}</p>
           </div>
       )
     }

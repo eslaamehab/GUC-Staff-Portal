@@ -62,11 +62,11 @@ export default class deletecoursesInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
              <Navbar />
              
           <h3>delete courses</h3>
-          <form onSubmit={this.onSubmit}>
+          <form className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
               <label>  courseName: </label>
@@ -83,12 +83,12 @@ export default class deletecoursesInfo extends Component {
            
 
             <div className="form-group">
-              <input type="submit" value="Delete courses" className="btn btn-primary" />
+              <input type="submit" value="Delete courses" className="btn btn-info" />
             </div>
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p  className ="alert">{this.state.v}</p>
              </div>
           </form>
         </div>

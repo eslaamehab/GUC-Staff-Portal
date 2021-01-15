@@ -96,10 +96,10 @@ export default class AssignUpdateDeleteTAInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div className ="alla">
             <Navbar/>
           <h3> Assign or Update or delete TA </h3>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox" onSubmit={this.onSubmit}>
 
         
           <div className="form-group"> 
@@ -162,12 +162,12 @@ export default class AssignUpdateDeleteTAInfo extends Component {
         
 
             <div className="form-group">
-              <input type="submit" value="Done" className="btn btn-primary" />
+              <input type="submit" value="Done" className="btn btn-info" />
             </div>
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p className ="alert">{this.state.v}</p>
              </div>
           </form>
         </div>

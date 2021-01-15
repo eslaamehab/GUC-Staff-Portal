@@ -68,7 +68,7 @@ export default class viewLocationsInfo extends Component {
 
            
            return(
-               <div>
+               <div className = "all">
                     <Navbar />
 
                     <h1 className ="sidebar">

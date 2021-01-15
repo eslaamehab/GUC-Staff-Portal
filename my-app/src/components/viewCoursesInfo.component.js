@@ -71,7 +71,7 @@ export default class viewCoursesInfo extends Component {
 
            
            return(
-               <div>
+               <div className = "all">
                     <Navbar /> 
 
                     <h1 className ="sidebar">

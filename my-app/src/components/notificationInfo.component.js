@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
@@ -81,7 +82,8 @@ export default class notificationInfo extends Component {
 
 
         return (
-            <div> 
+            <div  className ="alla"> 
+              <Navbar/>
             <h1> YOUR REPLACEMENT REQUESTS:</h1>
             {zeft}
                     </div>

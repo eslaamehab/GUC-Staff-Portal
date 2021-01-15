@@ -270,6 +270,64 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
       
         const u =await user.findOne({Email: req.body.Email})
         if (!u)
+        return res.send('Not found')
+
+        const equal =await bcrypt.compare(req.body.password,u.password)
+        if(!equal)
+        return res.send('Wrong Pass')
+
+        if(u.firstTime==0){   
+
+            if(req.body.newpassword!=null){
+                u.firstTime=1;
+                console.log('update')
+                const salt = await bcrypt.genSalt(12);
+                const hashedPassword= await bcrypt.hash(req.body.newpassword,salt);
+                u.password=hashedPassword;
+                res.send("your password has been updated successfully, please try to login with your new password");
+                u.save();
+            }
+            else{
+            res.send("You need to enter your new password at first login!");
+            }
+
+    
+    }
+
+
+
+
+        
+        
+        
+       // await user.findOne({Email: req.body.Email}).update({$set:
+           // {signintime: timestamp}});
+            
+
+        //u.signintime = current.toLocaleDateString() + current.toLocaleTimeString();
+       
+        const payload={
+            ID: u.ID,
+            type: u.type
+         }
+       // const mail = u.Email;
+        emailTest = u.Email;
+        //res.header('Email',mail);
+        u.save;
+        const token = jwt.sign(payload,key);
+        res.header('auth-token',token);
+        res.send(`login successful`);
+        
+
+    })
+
+    app.post('/login2', async(req,res)=>{
+        //validate first
+      // timestamp=(new Date()).toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
+
+      
+        const u =await user.findOne({Email: req.body.Email})
+        if (!u)
         return res.status(403).send('Not found')
 
         const equal =await bcrypt.compare(req.body.password,u.password)
@@ -438,7 +496,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
     app.get('/missingdays', async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
         let day;
-        
+        let v=[];
         switch (u.dayoff) {
             case "sunday":
               day = 0;
@@ -466,14 +524,14 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             var x = new Date(u.attendance[i].date).getDay();
             if(u.attendance[i].minsspent == 0 )
                 if( day != x){
-                    console.log(u.attendance[i].date);
-                    console.log('Absent');
+                        v[i]=u.attendance[i].date;
+                    
+                    //console.log('Absent');
                 }
 
 
         }
-
-        res.send('These are your missing days');
+        res.send(v);
     })
 
     app.get('/missinghours', async(req,res)=>{
@@ -492,11 +550,12 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             var hours = Math.floor(num / 60);  
             var minutes = num % 60;
             //return hours + ":" + minutes;     
-            console.log("missing hours: " + hours + " missing minutes: " + minutes);
 
 
 
         }
+        let s= hours + " hours and " + minutes +"minutes"
+        res.send(s)
 
         })
 
@@ -689,7 +748,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
 /////////////////////
     app.post('/deleteMember', async(req,res)=>{
-      try{  const u =await user.findOne({Email: emailTest}); //HR User
+     const u =await user.findOne({Email: emailTest}); //HR User
         const u3 =await user.findOne({Email: req.body.Email});
         if(u3){
 
@@ -703,10 +762,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
             res.send('Deleted')
         }
         res.send('Not Deleted')
-    }
-    catch(error){
-        console.log("err")
-    }})
+  
+    })
     
 //-------------------------------------------------------------------------------------------------------------------------------------------------
     app.post('/AddLocation',async(req,res)=>{
@@ -1275,7 +1332,7 @@ app.post('/viewAssignedSlots',async(req,res)=>{
     else{
          res.send("not found")
     }
-    if(u.type == "Instructor"){
+    if(u.type == "Instructor"||u.type == "HOD"||u.type == "HR"||u.type == "Coordinator"){
         res.send(s)
         }
         else{
@@ -1364,45 +1421,46 @@ const u1 = await user.findOne({Email:emailTest})
 
 
 
-    app.post('/accessAttendance' ,async(req,res)=>{
-        const u =await user.findOne({Email: emailTest});
-        if(u.type=="HR"){
-            const u2 =await user.findOne({Email: req.body.Email});
-            for(let i =0; i<30; i++){
-                //input month
-                //compared with first or second elemnts of date string (u.attendance[i].date)
-                var m = (u2.attendance[i].date); //month in array
-                //console.log(m);
-                var d = new Date(u2.attendance[i].date).getMonth();
-                d=d+1;
-                //console.log(d);
-    
-                var month = req.body.month; //month we want
-               
-    
-                if(d==month){
-                   // console.log(x);
-                    console.log(u2.attendance[i].date)
-                    //console.log(u.attendance[i].minsspent)
-    
-                    var num = u2.attendance[i].minsspent; 
-                    var hours = Math.floor(num / 60);  
-                    var minutes = num % 60;
-                    //return hours + ":" + minutes;     
-                    console.log("hours: " + hours + " minutes: " + minutes);
-    
-                }
-    
-               
-                
+app.post('/accessAttendance' ,async(req,res)=>{
+    const u =await user.findOne({Email: emailTest});
+    const u2 =await user.findOne({Email: req.body.Email});
+    const month=req.body.month;
+    let v=[];
+    if(u.type=="HR"){
+        for(let i =0; i<30; i++){
+            //input month
+            //compared with first or second elemnts of date string (u.attendance[i].date)
+            var m = (u2.attendance[i].date); //month in array
+            //console.log(m);
+            var d = new Date(u2.attendance[i].date).getMonth();
+            d=d+1;
+            //console.log(d);
+
+             //month we want
+           
+
+            if(d==month){
+               // console.log(x);
+            v[i]=u2.attendance[i].date;
+                //console.log(u.attendance[i].minsspent)
+
+                var num = u2.attendance[i].minsspent; 
+                var hours = Math.floor(num / 60);  
+                var minutes = num % 60;
+                //return hours + ":" + minutes;     
+                console.log("hours: " + hours + " minutes: " + minutes);
+
             }
-                res.send(u2.attendance);
+
+           
             
         }
-        else
-            res.send('Only HR members can access attendance record!');
-    })
-//--NOT DONE
+            res.send(v);
+        
+    }
+    else
+        res.send(v);
+})
     app.post('/accessMissingHours' ,async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
         const u2 = await user.findOne({Email: req.body.Email});
@@ -1421,21 +1479,21 @@ const u1 = await user.findOne({Email:emailTest})
             var hours = Math.floor(num / 60);  
             var minutes = num % 60;
             //return hours + ":" + minutes;     
-            console.log("missing hours: " + hours + " missing minutes: " + minutes);  
+           // console.log("missing hours: " + hours + " missing minutes: " + minutes);  
 
         }
+        let s="missing hours: " + hours + " missing minutes: " + minutes
 
-        res.send('These are the hours');
+        res.send(s);
 
     }
     else
         res.send('Only HR members can acceess missing hours!');
     })
-//--NOT DONE
     app.post('/accessMissingDays' ,async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
         const u2 = await user.findOne({Email: req.body.Email});
-
+        let v=[];
         if(u.type=="HR"){
 
         
@@ -1469,19 +1527,21 @@ const u1 = await user.findOne({Email:emailTest})
                 var x = new Date(u2.attendance[i].date).getDay();
                 if(u2.attendance[i].minsspent == 0 )
                     if( day != x){
-                        console.log(u2.attendance[i].date);
-                        console.log('Absent');
+                        v[i]=u2.attendance[i].date;
+                        //console.log('Absent');
                     }
     
     
             }
     
-            res.send('These are your missing days');
+            res.send(v);
 
     }
     else
         res.send('Only HR members can acceess missing days!');
     })
+
+
 //--NOT DONE
     app.post('/updateSalary' ,async(req,res)=>{
         const u = await user.findOne({Email: emailTest});
@@ -1647,7 +1707,6 @@ const u1 = await user.findOne({Email:emailTest})
     }) //front end done
     }) 
 
-    
 
     app.get('/viewSlot',async(req,res)=>{
     const o =await user.findOne({Email:emailTest})
@@ -2366,19 +2425,38 @@ else if( u3.available==1 && dayz!=userdayoff && ax==1){
     res.send('leave sent successfuly');
    })//amr
 
-//--ALMOST DONE (just display the shit)
-   app.get('/viewLeaveRequests',async(req,res)=>{ //HOD app.get(ViewLeaveRequests)
-    //View all requests sent to this HOD (all types of leaves)
-    var x = await leaves.find({HODemail: emailTest});
-    console.log(x);
-    res.send(x);
-    //for(let i =0; i<leaves.length; i++){
-       
-       // if(leaves[i].HODemail==emailTest){
-         //   console.log(leaves[i]);
-        //}
+
+   app.post('/viewAllLeaves',async(req,res)=>{ //HOD app.get(ViewLeaveRequests)
+    const u = await user.findOne({Email:emailTest})
+    const s = await leaves.find()
+  
+   
+        return res.send(s)
         
-   // }
+       
+   })//amr
+
+
+
+//--ALMOST DONE (just display the shit)
+   app.post('/viewLeaveRequests',async(req,res)=>{ //HOD app.get(ViewLeaveRequests)
+    const u = await user.findOne({Email:emailTest})
+    console.log(req.body)
+    const s = await leaves.find({Email:req.body.Email})
+    const s1 = await leaves.findOne({Email:req.body.Email})
+
+    if(s1){
+        
+    }
+    else{
+         res.send("not found")
+    }
+    if(u.type == "HR"){
+        res.send(s)
+        }
+        else{
+            res.send("HR ONLY")
+        }
    })//amr
 
    //Clash with zeina

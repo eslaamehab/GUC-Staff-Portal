@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import { render } from 'react-dom';
 import Navbar from './layouts/Navbar';
+import { render } from 'react-dom';
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class ViewStaffInfoByDepartment extends Component {
@@ -13,8 +13,8 @@ export default class ViewStaffInfoByDepartment extends Component {
         this.state= {
            
 
-                  User:[{courses:[],id:'',Email: '',name:'',ID: '',type: '',password:'',salary:'',faculty:'',department:'',gender:'',officelocation:'',firstTime:0, dayoff:''}  ]
-      
+                  User:[{courses:[],id:'',Email: '',name:'',ID: '',type: '',password:'',salary:'',faculty:'',department:'',gender:'',officelocation:'',firstTime:0, dayoff:''}  ],
+                  v:String
         //replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
 
         }
@@ -44,7 +44,17 @@ export default class ViewStaffInfoByDepartment extends Component {
         const reg = {department:this.state.department};
         axios.post('http://localhost:3000/ViewStaffByDepartment',reg)
         .then(response => {
-            this.setState({User: response.data})
+           
+            if(response.data=="department not found" ){
+              this.setState({v:"department not found"})
+
+
+
+            }
+            else{
+              this.setState({User: response.data})
+            }
+
             console.log(response.data)
           }
             )
@@ -58,73 +68,38 @@ export default class ViewStaffInfoByDepartment extends Component {
     
     
       render() {
+if(this.state.User!="department not found" && this.state.User!="HOD ONLY"){
       const  zeft=            this.state.User.map((invoice, index) => {
                 
-            return (<div>
+            return (<div className ="alla">
                 
                 
-               
                 
+              
                 
-                <table>
-
                 <tr key={invoice.department}>
-                    <tr>
-<th scope="col">Courses</th>
+                 
 
-<th scope="col">|</th>
-<th scope="col">Email</th>
-<th scope="col">|</th>
-<th scope="col">name</th>
-<th scope="col">|</th>
-<th scope="col">ID</th>
-<th scope="col">|</th>
-<th scope="col">type</th>
-<th scope="col">|</th>
-<th scope="col" >salary</th>
-<th scope="col">|</th>
-<th scope="col" >faculty</th>
-<th scope="col">|</th>
-<th scope="col" >gender</th>
-<th scope="col">|</th>
-<th scope="col" >officelocation</th>
-<th scope="col">|</th>
-<th scope="col" >FirstTime</th>
-<th scope="col">|</th>
-<th scope="col" >dayoff</th>
-<th scope="col">|</th>
-</tr>
-<tr><th scope="row">{invoice.courses}</th>
-                    <td> {" |"}</td>
+                  <h4>Courses: {invoice.courses}</h4>
+                  <h4>Email: {invoice.Email}</h4>
+                  <h4>ID: {invoice.ID}</h4>
+                  <h4>type: {invoice.type}</h4>
+                  <h4>salary: {invoice.salary}</h4>
+                  <h4>gender: {invoice.gender}</h4>
+                  <h4>Office Location: {invoice.officelocation}</h4>
+                  <h4>first Time: {invoice.firstTime}</h4>
+                  <h4>dayOff: {invoice.dayoff}</h4>
+                  <h4>
+
+----------------------------------------------------------------------------------------------------------------
+
+                  </h4>
+
+
                   
-                    <td> {invoice.Email}</td>
-                    <td> {" |"}</td>
+              </tr>
 
-                    <td> {invoice.name}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.ID}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.type}</td>
-                    <td> {" |"}</td>
-                   
-                    <td>{invoice.salary}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.faculty}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.gender}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.officelocation}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.firstTime}</td>
-                    <td> {" |"}</td>
-                    <td> {invoice.dayoff}</td>
-                    <td> {" |"}</td>
-
-    </tr>
-
-                    
-
-                </tr> </table>
+          
 
 
       </div>
@@ -135,9 +110,12 @@ export default class ViewStaffInfoByDepartment extends Component {
 
             )
         })
+      
+
+
         return (
-            <div>
-               <Navbar/>
+            <div className ="alla">
+              <Navbar/>
             <form onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
@@ -150,18 +128,74 @@ export default class ViewStaffInfoByDepartment extends Component {
                   /> 
             </div>
             <div className="form-group">
-                        <input type="submit" value="View" className="btn btn-primary" />
+                        <input type="submit" value="View" className="btn btn-info" />
                       </div>
                     </form>,
             {zeft}
                     </div>
             
         )
-
-
-
-
+      
+      
       } 
-    } 
-    
 
+else if(this.state.User=="department not found" || this.state.User=="HOD ONLY" ){
+  return (
+    <div className ="alla">
+      <Navbar/>
+    <form onSubmit={this.onSubmit}>
+
+    <div className="form-group"> 
+      <label>department: </label>
+      <input  type="text"
+          required
+          className="form-control"
+          value={this.state.department}
+          onChange={this.onChangedepartment}
+          /> 
+    </div>
+    <div className="form-group">
+                <input type="submit" value="View" className="btn btn-primary" />
+              </div>
+            </form>,
+   <h1> {this.state.v}</h1>
+            </div>
+    
+)
+        
+        
+        } 
+ else{
+    return (
+      <div  className ="alla">
+        <Navbar/>
+      <form  className = "textbox" onSubmit={this.onSubmit}>
+
+      <div className="form-group"> 
+        <label>department: </label>
+        <input  type="text"
+            required
+            className="form-control"
+            value={this.state.department}
+            onChange={this.onChangedepartment}
+            /> 
+      </div>
+      <div className="form-group">
+                  <input type="submit" value="View" className="btn btn-primary" />
+                </div>
+              </form>,
+     <h1 className ="alert"> {this.state.v}</h1>
+              </div>
+      
+  )
+
+
+  }  
+    
+    
+    
+    }
+
+
+
+    }

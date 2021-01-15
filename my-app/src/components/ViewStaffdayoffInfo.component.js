@@ -72,10 +72,10 @@ export default class ViewStaffdayoffInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
           <Navbar/>
           <h3> View Staff DayOff</h3>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox"onSubmit={this.onSubmit}>
 
 
          
@@ -102,7 +102,7 @@ export default class ViewStaffdayoffInfo extends Component {
 
             <div> 
               
-              <p>{this.state.v}</p>
+              <p className ="alert">{this.state.v}</p>
              </div>
 
 

@@ -1,7 +1,7 @@
 //import logo from './logo.svg';
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-import {BrowserRouter as Router, Route} from "react-router-dom";
+import {BrowserRouter as Router, Route ,redirect} from "react-router-dom";
 import loginInfo from "./components/loginInfo.component";
 import regInfo from "./components/regInfo.component";
 import profile from "./components/profile.component";
@@ -64,6 +64,7 @@ import cancelPendingReplacementReq from './components/cancelPendingReplacementRe
 //import replacementRequestIDResponse from './components/replacementRequestIDResponse.component';
 //      <Route path = "/viewReplacementRequestbyID" exact component={replacementRequestIDResponse}/>
 import cancelPendingDayOff from './components/cancelPendingDayOff.component';
+import login2 from './components/login2.component';
 
 import Signin from './components/signin.component';
 import Signout from './components/signout.component';
@@ -99,6 +100,15 @@ import rejectSlotLinking from './components/rejectSlotLinking.component';
 import RejectRepReqTA from './components/RejectRepReqTA.component';
 import RejectRepReqHOD from './components/RejectRepReqHOD.component';
 
+
+import accessMissingHours from'./components/accessMissingHours.component';
+import accessMissingDays from './components/accessMissingDays.component';
+
+
+
+
+
+
 function App() {
   return (
 
@@ -106,8 +116,9 @@ function App() {
 
     <Router>
       <br/>
+      <Route path = "/" exact component = {loginInfo}/>
       <Route path = "/login" exact component = {loginInfo}/>
-
+      <Route path = "/login2" exact component = {login2}/>
       <Route path = "/viewAllLeaves" exact component = {viewAllLeavesInfo}/>
       <Route path = "/empty" exact component = {emptyInfo}/>
 
@@ -174,7 +185,8 @@ function App() {
       <Route path="/viewdepartments" exact component={viewdepartmentsInfo}/>
       <Route path="/viewusers" exact component={viewusersInfo}/>
     
-    
+      <Route path="/accessMissingHours" exact component={accessMissingHours}/>
+      <Route path="/accessMissingDays" exact component={accessMissingDays}/>
     
       <Route path = "/signin" exact component={Signin}/>
       <Route path = "/signout" exact component={Signout}/>

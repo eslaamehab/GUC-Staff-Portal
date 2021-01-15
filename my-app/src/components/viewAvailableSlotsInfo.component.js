@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import replacementrequest from '../../../replacementrequest';
 //import Dropdown from './dropdownmenu/Dropdown';
@@ -102,8 +103,10 @@ export default class viewAvailableSlotsInfo extends Component {
             )
         })
         return (
-            <div>
-            <form onSubmit={this.onSubmit}>
+            <div  className ="alla">
+
+              <Navbar/>
+            <form className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
               <label>Enter the name of the course you wish to view its available slots : </label>
@@ -115,7 +118,7 @@ export default class viewAvailableSlotsInfo extends Component {
                   /> 
             </div>
             <div className="form-group">
-                        <input type="submit" value="view" className="btn btn-primary" />
+                        <input type="submit" value="view" className="btn btn-info" />
                       </div>
                     </form>,
             {zeft}

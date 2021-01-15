@@ -33,6 +33,7 @@ export default class viewAllLeavesInfo extends Component {
     axios.post('http://localhost:3000/viewAllLeaves')
     .then(response => {
         this.setState({leaves: response.data})
+
         console.log(response)
       }
         )
@@ -50,6 +51,7 @@ export default class viewAllLeavesInfo extends Component {
     
     
       render() {
+     
        const zeft=    
             this.state.leaves.map((invoice, index) => {
                   return (
@@ -89,13 +91,17 @@ export default class viewAllLeavesInfo extends Component {
 
            
            return(
-               <div>
+               <div className ="all">
                     <Navbar />
 
                     <h1 className ="sidebar">
                       <SidebarLeaves />
                       </h1>
-                   <h1> All Leaves 
+                      <h1>
+                      All Leaves for  {this.state.leaves[0].HODemail}
+
+                      </h1>
+                   <h1>
                        { zeft}
                    </h1>
 

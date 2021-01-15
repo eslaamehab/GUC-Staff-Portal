@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
+import Navbar from './layouts/Navbar';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 export default class sendLeaveRequest extends Component {
@@ -137,9 +138,10 @@ export default class sendLeaveRequest extends Component {
 
     render() {
         return (
-        <div>
+        <div className ="alla">
+            <Navbar/>
           <h3>Send Leave Request</h3>
-          <form onSubmit={this.onSubmit}>
+          <form  className = "textbox" onSubmit={this.onSubmit}>
             <div className="form-group"> 
               <label>Email: </label>
               <input  type="text"
@@ -246,7 +248,7 @@ export default class sendLeaveRequest extends Component {
             
 
             <div className="form-group">
-              <input type="submit" value="Submit Leave Request" className="btn btn-primary" />
+              <input type="submit" value="Submit Leave Request" className="btn btn-info" />
             </div>
           </form>
         </div>

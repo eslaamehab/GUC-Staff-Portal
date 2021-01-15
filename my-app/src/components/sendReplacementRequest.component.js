@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Navbar from './layouts/Navbar';
 import { render } from 'react-dom';
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class sendreplacementreq extends Component {
@@ -99,6 +100,7 @@ export default class sendreplacementreq extends Component {
     render() {
         return (
         <div>
+            <Navbar/>
           <h3>Replacement Request</h3>
           <form onSubmit={this.onSubmit}>
 

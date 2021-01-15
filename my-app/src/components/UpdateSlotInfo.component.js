@@ -103,6 +103,7 @@ export default class regInfo extends Component {
 
             axios.post('http://localhost:3000/updateSlot',upd)
         .then(res=> {
+            this.setState({v: res.data})
             console.log(res.data)
             //window.location = '/profile'; 
         })
@@ -118,9 +119,9 @@ export default class regInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
             <Navbar/>
-          <form onSubmit={this.onSubmit}>
+          <form   className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="form-group"> 
               <label>Enter email of TA teaching the slot you want to update: </label>
@@ -202,9 +203,11 @@ export default class regInfo extends Component {
   
 
             <div className="form-group">
-              <input type="submit" value="Update Slot" className="btn btn-primary" />
+              <input type="submit" value="Update Slot" className="btn btn-info" />
             </div>
           </form>
+
+          <p className ="alert">{this.state.v}</p>
         </div>
         )
       }

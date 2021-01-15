@@ -316,7 +316,7 @@ export default class acceptedRequestsInfo extends Component {
 
 
         return (
-            <div> 
+            <div  className ="alla"> 
                             <Navbar/>
 
 <h3>Your accepted Day Off Requests</h3>            

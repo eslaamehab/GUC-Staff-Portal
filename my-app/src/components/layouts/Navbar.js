@@ -64,6 +64,24 @@ import './Navbar.css'
   const goToMyAvailableslots = () => {
     history.push('/viewAvailableSlots')
   }
+
+
+
+
+  const goToAllSlots= () => {
+    history.push('/viewAssignedSlots')
+  }
+  
+
+  const goToMySlots = () => {
+    history.push('/viewMySlots')
+  }
+
+  const viewTeachingAssignments = () => {
+    history.push('/viewTeachingAssignments')
+  }
+
+  
     return (
        
          
@@ -112,17 +130,28 @@ import './Navbar.css'
           <a class="nav-link text-white text-uppercase ml-2" onClick ={goToLocations}>Locations</a>
         </li>
          
-        <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2">Slots</a>
-        </li>
+       
 
         <li className="nav-item  m-auto">
-          <a class="nav-link text-white text-uppercase ml-2" >Requests</a>
+          <a class="nav-link text-white text-uppercase ml-2" href="#" onClick = {goToMyRequests}>Requests</a>
         </li>
 
         <li className="nav-item  m-auto">
           <a class="nav-link text-white text-uppercase ml-2" onClick ={goToleaves}>Leaves</a>
         </li>
+
+        
+
+        <DropdownButton  id="dropdown-basic-button   m-auto ml-5" title="slots">
+       <Dropdown.Item onClick = {goToMySlots} href="#/action-1">View My Schedule</Dropdown.Item>
+       <Dropdown.Item onClick = {goToMyAvailableslots} href="#/action-1">View Available Slots </Dropdown.Item>
+       <Dropdown.Item onClick = {viewTeachingAssignments} href="#/action-1">View Teaching Assignment </Dropdown.Item>
+      <Dropdown.Item  onClick = {goToAllSlots} href="#/action-2">View An academic member's slots</Dropdown.Item>
+    <Dropdown.Item  onClick = {goToDatabaseSlots} href="#/action-2">View All slots in Database</Dropdown.Item>
+
+</DropdownButton>
+
+       
         
       
        
@@ -137,14 +166,9 @@ import './Navbar.css'
 
 
         
-          <li className="nav-item ">
-          <a className="nav-link disabled" href="#" tabindex="1" aria-disabled="true"> </a>
-        </li>
+          
       </ul>
-      <form className="d-flex">
-        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button className="btn btn-outline-success " type="submit">Search</button>
-      </form>
+     
 
       </div>
 

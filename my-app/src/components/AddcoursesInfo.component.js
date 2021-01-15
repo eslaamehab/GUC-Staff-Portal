@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
 import Navbar from './layouts/Navbar';
+
+import Alert from 'react-bootstrap/Alert'
 //import Dropdown from './dropdownmenu/Dropdown';
 export default class AddcoursesInfo extends Component {
 
@@ -18,7 +20,8 @@ export default class AddcoursesInfo extends Component {
         this.state= {
             courseName : '',
             DepartmentName: '',
-            id:''
+            id:'',
+            visibale: false
         }
 
     }
@@ -77,10 +80,10 @@ export default class AddcoursesInfo extends Component {
 
     render() {
         return (
-        <div>
+        <div  className ="alla">
              <Navbar />
           <h3>ADD courses</h3>
-          <form onSubmit={this.onSubmit}>
+          <form   className = "textbox" onSubmit={this.onSubmit}>
 
             <div className="text-center"> 
               <label>  courseName: </label>
@@ -117,12 +120,13 @@ export default class AddcoursesInfo extends Component {
            
 
             <div className="form-group">
-              <input type="submit" value="Addcourses" className="btn btn-primary" />
+              <input type="submit" value="Addcourses" className="btn btn-info" />
             </div>
 
             <div> 
            
-              <p>{this.state.v}</p>
+              <p className ="alert">{this.state.v}</p>
+              
              </div>
           </form>
         </div>

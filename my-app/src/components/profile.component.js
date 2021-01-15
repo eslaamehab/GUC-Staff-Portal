@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { render } from 'react-dom';
 import Sidebar from './sidebar'
-import Sidebar2 from './sidebar2';
+import SidebarProfile from './SidebarProfile';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './layouts/Navbar';
 import '../profileInfo.css'
@@ -51,16 +51,16 @@ export default class profile extends Component {
      render(){
       const x = this.state.user.courses;
       
-       const zeft = <div className = "welcome"  >
+       const zeft = <div className = "body"  >
 
             
-       <h1   >
+       <h1   className = "titleb">
          WELCOME {this.state.user.name} 
          
          </h1>
        
       
-       <p className = "welcome2" >
+       <p className = "title" >
        <h10>
        <li classNalignleftame ="">ID: {this.state.user.ID}</li>
        <li>Type: {this.state.user.type}</li>
@@ -73,9 +73,12 @@ export default class profile extends Component {
        <li>Accidental Leave Balance: {this.state.user.accidentalLeaveBalance}</li>
 
        <li>Courses:{this.state.user.courses} </li>
+
+      
        </h10>
       
-       
+
+            
        </p>
 
       
@@ -83,10 +86,29 @@ export default class profile extends Component {
        return(
 
          
-         <div>
+         <div className ="bg">
            <Navbar />
+           <h1 className ="sidebar">
+                      <SidebarProfile />
+                      </h1>
 
            {zeft}
+
+           <h90>
+        
+        
+       
+<li className ="bg">
+       Contact Us: GermanUniversityInCairo@gmail.com </li>
+    <li className ="bg">   Address: tagamoa el talet</li>
+    <li className ="bg">   Done by
+    <li className ="bg">  mohamedyasser15999@gmail.com</li>
+    <li className ="bg">  zeinashabaka@gmail.com</li>
+    <li className ="bg">  AmrHesham@gmail.com</li>
+    <li className ="bg">  EslamEhab@gmail.com</li>
+    <li className ="bg">   Thank you</li>
+    </li>
+        </h90> 
          </div>
        )
      }

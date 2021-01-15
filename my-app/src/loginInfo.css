@@ -1,4 +1,5 @@
 .login-form{
+  background-color:  #161e29;;
   width: 100%;
   max-width:330px;
   padding:15px;
@@ -7,7 +8,7 @@
 }
 
 .App-header {
-  background-color: #61679b;
+  background-color:  #161e29;;
   min-height: 100vh;
   display: flex;
   flex-direction: column;

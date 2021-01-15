@@ -68,7 +68,7 @@ export default class viewdepartmentsInfo extends Component {
 
            
            return(
-               <div>
+               <div className = "all">
                     <Navbar />
                     <h1 className ="sidebar">
                       <Sidebar />

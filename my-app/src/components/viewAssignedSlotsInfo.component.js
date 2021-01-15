@@ -17,7 +17,12 @@ export default class viewAssignedSlotsInfo extends Component {
          slot:[{_id:'',Email:'',day:'',type:'',no:'',time:'',location:'',course:'',date:''}]
         //replacementrequest:[{Email:'',replacingTAEmail:'',date:'',slot:'',course:'',location:'',time:'',status:'',reasonOfrejection:''}]
 
-        }
+        }}
+       onChangeEmail(e){
+        this.setState({
+            Email: e.target.value
+        });
+    }
 
 
     /* axios.get('/profile', {
@@ -32,9 +37,15 @@ export default class viewAssignedSlotsInfo extends Component {
     }*/
     
     
+    onSubmit(e){
+      e.preventDefault();
+      const s = {
+        // Email:this.state.Email,
+         Email:this.state.Email
 
+     }
 
-        axios.get('http://localhost:3000/viewAllSlots')
+        axios.post('http://localhost:3000/viewAssignedSlots',s)
         .then(response => {
             this.setState({slot: response.data})
             console.log(response)
@@ -49,12 +60,10 @@ export default class viewAssignedSlotsInfo extends Component {
     
     
       render() {
-      const  zeft=            this.state.slot.map((invoice, index) => {
-                
-            return ( 
+      const zeft =this.state.slot.map((invoice, index) => {
+        return (
             
-            
-            <tr key={invoice.replacingTAEmail}>
+            <tr key={invoice._id}>
                 
   
               <h4>ID: {invoice._id}</h4>
@@ -78,11 +87,29 @@ export default class viewAssignedSlotsInfo extends Component {
 
 
         return (
-            <div>
+            <div className ="alla">
             <Navbar />
+            <form onSubmit={this.onSubmit}>
+
+           
+
+<div className="form-group"> 
+  <label>Email: </label>
+  <input  type="text"
+      required
+      className="form-control"
+      value={this.state.Email}
+      onChange={this.onChangeEmail}
+      /> 
+</div>
+<div className="form-group">
+              <input type="submit" value="Create Slot" className="btn btn-info" />
+            </div>
+
             {zeft}
+            </form>
                     </div>
-            
+                    
         )
 
 
