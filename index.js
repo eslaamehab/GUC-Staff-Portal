@@ -11,7 +11,7 @@ const notification=require('./notification.js')
 const replacementrequest=require('./replacementrequest.js')
 const courses=require('./Courses.js');
 const HOD = require('./HOD.js');
-const faculties = require('./Faculties.js');
+const faculties = require('./faculties.js');
 
 const slot=require('./slot.js');
 
