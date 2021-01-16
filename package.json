@@ -20,7 +20,11 @@
   "scripts": {
     
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node index.js"
+    "start":"node index.js",
+    "server":"nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev":"concurrently \"npm run server \"\"npm run client\"",
+    "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false npm install --prefix my-app && npm run build --prefix my-app"
   },
   "engines" : {
     "node": "v14.13.1"

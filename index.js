@@ -12,7 +12,8 @@ const replacementrequest=require('./replacementrequest.js')
 const courses=require('./Courses.js');
 const HOD = require('./HOD.js');
 const faculties = require('./faculties');
-
+const path = require('path');
+const items =require('.routes/api/items');
 const slot=require('./slot.js');
 
 const departements =require('./departements.js');
@@ -379,7 +380,7 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
 
     })
 
-   // app.use(authenticate); //works on  any route under it
+  // app.use(authenticate); //works on  any route under it
 ////////////
     app.get('/profile', async(req,res)=>{
 
@@ -410,6 +411,8 @@ mongoose.connect('mongodb+srv://dbUser:password328@cluster0.yt28z.mongodb.net/<d
       // u.save;
         res.send(`logout successful`);
     })
+
+
 
     ////////////////
     app.post('/updateProfile', async(req,res)=>{
@@ -3073,6 +3076,14 @@ else{
         catch(err){
             return res.status(403).send("token madroob")
         }
+    }
+   app.use('api/items', items)
+    if(proccess.env.NODE_ENV === 'production'){
+        app.use(express.static('my-app/build'));
+        app.get('*',(req, res)=>{
+          res.sendFile(path.resolve(__dirname,'my-app','build','index.html'))
+
+        });
     }
 
     app.listen(process.env.PORT || 3000, ()=>{
