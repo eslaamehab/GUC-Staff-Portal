@@ -1,3 +1,18 @@
+Technologies used :-
+
+Nodejs -> for building the backend's different routes.
+MongoDB/Mongoose -> for building the database models.
+Bcrypt -> for any hashing related logic.
+JsonWebToken -> for implementing the appropriate authentication/authorization functionalities. Tokens have to be sent in the request headers, under “auth-token” field.
+Reactjs -> for building the frontend and UI
+
+For all routes -> proper data validation, authentication and authorization is done.
+
+----------------------------
+----------------------------
+
+Documentation & prerequisites :-
+
 
 File to run the server --> index.js
 
