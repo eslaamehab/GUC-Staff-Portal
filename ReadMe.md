@@ -1,4 +1,6 @@
 TECHNOLOGIES USED :-  
+
+  
   
 Nodejs -> for building the backend's different routes.    
 
@@ -16,6 +18,8 @@ For all routes -> proper data validation, authentication and authorization is do
 ----------------------------
 
 DOCUMENTATION & PREREQUISITES :-
+
+   
 
 
 File to run the server --> index.js
