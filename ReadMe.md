@@ -8,7 +8,7 @@ MongoDB/Mongoose -> for building the database models.
 
 Bcrypt -> for any hashing related logic.   
 
-JsonWebToken -> for implementing the appropriate authentication/authorization functionalities. Tokens have to be sent in the request headers, under “auth-token” field.   
+JsonWebToken -> for implementing the appropriate authentication/authorization functionalities. Tokens are sent in the request headers, under “auth-token” field.   
 
 Reactjs -> for building the frontend and UI.   
 
